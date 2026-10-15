@@ -6,6 +6,43 @@ from spine_tools.atlas import process_atlas_textures
 
 
 class BasisRoutingTests(unittest.TestCase):
+    def test_nested_and_shared_pages_keep_paths_relative_to_each_atlas(self):
+        with TemporaryDirectory() as temporary_dir:
+            root = Path(temporary_dir)
+            texture = root / "textures" / "hero.png"
+            texture.parent.mkdir()
+            texture.write_bytes(b"png")
+            nested_atlas = root / "角色" / "hero.atlas"
+            nested_atlas.parent.mkdir()
+            root_atlas = root / "hero.atlas"
+            references = {
+                root_atlas: "textures/hero.png",
+                nested_atlas: "../textures/hero.png",
+            }
+            for atlas, reference in references.items():
+                atlas.write_text(reference + "\nsize: 16,16\n", encoding="utf-8")
+            calls = []
+
+            class Converter:
+                def get_output_ext(self):
+                    return ".webp"
+
+                def convert(self, path):
+                    calls.append(path)
+                    output = Path(path).with_suffix(".webp")
+                    output.write_bytes(b"converted")
+                    return output
+
+            result = process_atlas_textures(root, Converter())
+
+            self.assertEqual(len(calls), 1)
+            self.assertEqual(result.atlas_modified, 2)
+            self.assertFalse(texture.exists())
+            for atlas, reference in references.items():
+                page = atlas.read_text(encoding="utf-8").splitlines()[0]
+                self.assertEqual(page, reference.replace(".png", ".webp"))
+                self.assertTrue((atlas.parent / page).is_file())
+
     def test_shared_png_is_converted_once_and_all_atlases_are_updated(self):
         with TemporaryDirectory() as temporary_dir:
             runtime_dir = Path(temporary_dir)

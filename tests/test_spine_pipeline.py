@@ -8,6 +8,7 @@ from unittest.mock import patch
 from spine_tools.models import FileProcessResult, PreparedSpineFile
 from spine_tools.pipeline import (
     collect_spine_copy_tasks,
+    copy_spine_file,
     commit_prepared_files,
     preflight_spine_directories,
     prepare_spine_json,
@@ -16,6 +17,44 @@ from spine_tools.pipeline import (
 
 
 class SpinePipelineTests(unittest.TestCase):
+    def test_arbitrary_names_and_duplicate_basenames_preserve_relative_paths(self):
+        with tempfile.TemporaryDirectory() as temporary_dir:
+            source = Path(temporary_dir) / "任意素材"
+            output = Path(temporary_dir) / "target" / "program" / "spine"
+            inputs = {
+                "root.json": b"root",
+                "角色/hero.png": b"first",
+                "角色/动画/hero.png": b"second",
+                "特效/hero.atlas": b"atlas",
+            }
+            for relative_name, data in inputs.items():
+                path = source / relative_name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(data)
+
+            for root, name in collect_spine_copy_tasks(source, output):
+                copy_spine_file(Path(root) / name, source, output)
+
+            actual = {
+                path.relative_to(output).as_posix(): path.read_bytes()
+                for path in output.rglob("*") if path.is_file()
+            }
+            self.assertEqual(actual, inputs)
+            self.assertTrue(all((source / name).read_bytes() == data for name, data in inputs.items()))
+
+    def test_source_inside_output_is_rejected_before_files_change(self):
+        with tempfile.TemporaryDirectory() as temporary_dir:
+            output = Path(temporary_dir) / "program" / "spine"
+            source = output / "角色"
+            source.mkdir(parents=True)
+            asset = source / "hero.png"
+            asset.write_bytes(b"original")
+            for invalid_source in (source, output):
+                with self.subTest(source=invalid_source):
+                    with self.assertRaisesRegex(ValueError, "源目录不能"):
+                        collect_spine_copy_tasks(invalid_source, output)
+            self.assertEqual(asset.read_bytes(), b"original")
+
     def test_copy_tasks_exclude_previous_output_inside_source(self):
         with tempfile.TemporaryDirectory() as temporary_dir:
             source = Path(temporary_dir)

@@ -16,7 +16,12 @@ from .validator import validate_spine_json
 
 
 def collect_spine_copy_tasks(source: Path, output_directory: Path) -> list[tuple[str, str]]:
+    source = Path(source).resolve()
     output_directory = Path(output_directory).resolve()
+    if not source.is_dir():
+        raise ValueError(f"Spine 源目录不存在: {source}")
+    if source.is_relative_to(output_directory):
+        raise ValueError("Spine 源目录不能位于待清理的 program/spine 输出目录内")
     tasks: list[tuple[str, str]] = []
     for root, directories, files in os.walk(source):
         root_path = Path(root).resolve()
@@ -27,10 +32,17 @@ def collect_spine_copy_tasks(source: Path, output_directory: Path) -> list[tuple
             name for name in directories
             if not (root_path / name).resolve().is_relative_to(output_directory)
         ]
-        folder = root_path.name.lower()
-        if not directories and ("mp" in folder or "pc" in folder):
-            tasks.extend((str(root), name) for name in files)
+        tasks.extend((str(root), name) for name in files)
     return tasks
+
+
+def copy_spine_file(source_path: Path, source_directory: Path, output_directory: Path) -> Path:
+    source_path = Path(source_path).resolve()
+    relative_path = source_path.relative_to(Path(source_directory).resolve())
+    destination = Path(output_directory) / relative_path
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source_path, destination)
+    return destination
 
 
 def _read_json(path: Path) -> dict:

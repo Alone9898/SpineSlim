@@ -63,7 +63,8 @@ def process_atlas_textures(folder: Path, converter: Any) -> AtlasProcessResult:
                         raise FileNotFoundError(f"Atlas PNG page missing: {page_path}")
                     output_path = converted_pages.get(page_path) or converted_textures.get(page_path)
                     if output_path is not None:
-                        new_lines[index] = line.replace(line.strip(), output_path.name)
+                        target_name = os.path.relpath(output_path, atlas_path.parent).replace("\\", "/")
+                        new_lines[index] = line.replace(line.strip(), target_name)
                         changed = True
                         continue
                     expected_output = page_path.with_suffix(converter.get_output_ext())
@@ -76,7 +77,7 @@ def process_atlas_textures(folder: Path, converter: Any) -> AtlasProcessResult:
                     if not output_existed:
                         created_outputs.append(output_path)
 
-                    target_name = output_path.name
+                    target_name = os.path.relpath(output_path, atlas_path.parent).replace("\\", "/")
                     new_lines[index] = line.replace(line.strip(), target_name)
                     converted_pages[page_path] = output_path
                     result.converted += 1

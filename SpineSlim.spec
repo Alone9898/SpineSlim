@@ -8,7 +8,7 @@ a = Analysis(
     ["main.py"],
     pathex=[],
     binaries=dnd_binaries,
-    datas=dnd_datas + [("LICENSE", "."), ("THIRD_PARTY.md", ".")],
+    datas=dnd_datas + [("LICENSE", "."), ("THIRD_PARTY.md", "."), ("assets/app-icon.ico", "assets"), ("assets/app-icon.png", "assets")],
     hiddenimports=dnd_hiddenimports,
     hookspath=[],
     hooksconfig={},
@@ -32,5 +32,5 @@ exe = EXE(
     console=False,
     disable_windowed_traceback=False,
     version="version_info.txt",
-    icon="NONE",
+    icon="assets/app-icon.ico",
 )

@@ -61,8 +61,10 @@ def package_release() -> None:
             archive.write(path, Path("licenses") / path.relative_to(notices))
     with ZipFile(dist / f"{name}.zip", "w", ZIP_DEFLATED) as archive:
         archive.write(executable, Path(name) / executable.name)
-        for filename in ("README.md", "LICENSE", "THIRD_PARTY.md", "RELEASE_NOTES.md", "config.example.json"):
+        for filename in ("README.md", "README.zh-CN.md", "README.en-US.md", "LICENSE", "THIRD_PARTY.md", "RELEASE_NOTES.md", "config.example.json"):
             archive.write(ROOT / filename, Path(name) / filename)
+        for filename in ("ui-zh.png", "ui-en.png"):
+            archive.write(ROOT / "assets" / filename, Path(name) / "assets" / filename)
         for path in license_files:
             archive.write(path, Path(name) / "licenses" / path.relative_to(notices))
     assets = [executable, dist / f"{name}.zip", dist / "licenses.zip"]

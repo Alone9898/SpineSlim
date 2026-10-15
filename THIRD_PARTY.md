@@ -7,7 +7,7 @@ External asset-processing tools and game assets are not bundled. Release executa
 | 组件 / Component | 注意事项 / Conditions to verify |
 | --- | --- |
 | TexturePacker | 开发环境随附协议限制被许可方内部使用，并禁止向第三方提供其功能或服务；试用许可禁止商业用途。需确认适用于内部使用、对外服务或分发的授权。`--agree-to-license` 不代表购买或激活。The inspected agreement restricts use to the licensee's internal purposes and prohibits providing its functionality as a third-party service. Evaluation use is not commercial authorization. |
-| BMFont | 随附说明允许免费使用，但分发该程序需联系作者许可；另提到源码使用 zlib 许可，自行构建也应核对相应源码及依赖条款。The inspected binary distribution asks users to obtain the author's permission before redistribution; its readme also identifies a zlib-licensed source release. |
+| BMFont（旧版 / Legacy） | 最新源码已移除此程序依赖，艺术字由 Pillow 生成；已发布 v1.0.0 仍有程序检查。旧程序的分发要求应核实作者许可。The latest source uses Pillow instead; published v1.0.0 retains the legacy executable check. Verify the author's terms if redistributing the old program. |
 | FFmpeg | 开发环境的二进制为 GPL v3 或更新版本构建。可商用，但分发必须履行适用的许可、归属和对应源码义务。独立进程调用本身不能直接决定整个 Python 项目的许可。The inspected binary is GPL v3-or-later. Commercial use is permitted subject to applicable terms; redistribution carries license and corresponding-source obligations. |
 | ImageMagick | 允许商业使用及分发；分发时应附带许可并提供适用归属声明，也需核对随附依赖。Commercial use and redistribution are permitted subject to the applicable license, attribution, and bundled dependency terms. |
 | Basis Universal | 核对实际二进制、源码和第三方依赖的许可及归属要求。Verify the exact build and dependency licenses. |

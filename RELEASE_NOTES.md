@@ -1,35 +1,50 @@
-# SpineSlim v1.0.0
+# SpineSlim v1.1.0
 
-首个公开 Windows x64 桌面版本。First public Windows x64 desktop release.
+## 更新内容
+
+- 重新设计 Windows 界面，加入应用图标、GitHub / Star 入口及中英文切换。
+- Spine 支持任意输入目录名，输出保留源目录结构，不再要求 `mp` / `pc`。
+- Spine 和 UI 图片分别支持原格式（默认）、WebP、PNG、JPG 和 Basis。
+- PNG 使用无损压缩，结果更大时保留原文件；JPG 透明部分合成白底。
+- UI 背景图统一输出到 `program/bg`，保留原尺寸。
+- 优化工具检测：自动搜索、手动指定路径、官网下载入口，保存已选择的路径。
+- 移除游戏名称及远端配置请求，艺术字改用 Pillow 生成。
+- 完善中英文文档、完整窗口截图和二期路线图。
+
+## What's new
+
+- Redesigned Windows UI with the application icon, GitHub / Star links, and Chinese/English selection.
+- Arbitrary Spine input folder names with source paths preserved in output.
+- Independent Spine/UI texture choices: original (default), WebP, PNG, JPG, and Basis.
+- Lossless PNG compression keeps the original when larger; JPG flattens alpha onto white.
+- UI backgrounds go directly to `program/bg` at their original dimensions.
+- Tool discovery, manual path selection, official download links, and saved tool paths.
+- Removed game-name input and remote configuration requests; bitmap fonts now use Pillow.
+- Separate Chinese/English documentation, full-window screenshots, and phase-two plans.
 
 ## 下载 / Downloads
 
-- 推荐 `SpineSlim-1.0.0-windows-x64.zip`：包含 EXE、运行说明及许可文件。
-- `SpineSlim-1.0.0-windows-x64.exe`：独立 EXE，无需安装 Python。
-- `SHA256SUMS.txt`：下载文件的 SHA-256 校验值。
-- `licenses.zip`：EXE 内置运行依赖的许可材料。
+- `SpineSlim-1.1.0-windows-x64.zip`：推荐，含 EXE、中英文说明、截图及许可文件。Recommended: EXE, bilingual documentation, screenshots, and license notices.
+- `SpineSlim-1.1.0-windows-x64.exe`：独立程序，无需 Python。Standalone executable; Python is not required.
+- `licenses.zip`：运行依赖许可。Runtime license notices.
+- `SHA256SUMS.txt`：下载文件校验值。Download checksums.
 
-Extract the ZIP into a writable folder and launch the EXE. Python is not required. The ZIP includes instructions and license notices. SHA-256 checksums and runtime license materials are provided separately as well.
+## 使用说明 / Usage notes
 
-## 功能 / Features
+EXE 包含 Python、Pillow、Tkinter 和拖拽运行依赖，不含外部资源处理程序。ImageMagick、Basis Universal、TexturePacker、SpineSkeletonDataConverter、FFmpeg 需按功能另行获取；BMFont 不再需要。第三方工具和素材遵循各自授权，不包含在项目 MIT 许可内。
 
-- Spine JSON 升级及 setup pose attachment 时间线处理。
-- WebP / KTX2 纹理处理，PC / 移动端资源整理。
-- UI 图集、艺术字和 WebM 视频处理。
-- 修复共用 PNG 被提前删除和重复扫描输出目录导致 `_1` 副本的问题。
+The EXE includes Python, Pillow, Tkinter, and drag-and-drop dependencies. Install external processing tools separately as needed: ImageMagick, Basis Universal, TexturePacker, SpineSkeletonDataConverter, and FFmpeg. BMFont is no longer required. Third-party tools and assets retain their respective licenses.
 
-Spine JSON conversion, attachment timeline handling, texture compression, PC/mobile asset organization, UI/font workflows, and video processing. Shared textures are converted once; output folders are excluded from source scanning.
+处理会清理相应输出目录。Spine 清空 `program/spine`；UI 清理 `program` 下除 `spine` 外的内容；视频模式清理输出目录中的旧 WebM。请先使用素材副本和独立空目标目录验证。UI 图集帧名已不含旧游戏标识前缀，依赖旧路径的项目需同步调整。
 
-## 外部依赖 / External processing tools
+Processing clears relevant output folders. Spine clears `program/spine`; UI clears everything under `program` except `spine`; video mode removes old output WebM files. Test with copied assets and a separate empty target. UI atlas frame names no longer include the legacy game identifier prefix; update consumers that depend on it.
 
-**EXE 包含 Python 及界面运行依赖，但不包含 ImageMagick、BasisU、TexturePacker、BMFont、SpineSkeletonDataConverter 或 FFmpeg。** 按需从各自发布方获取适用版本并核实授权，再按 README 放到 EXE 同目录的指定位置。
+当前主要支持 Windows x64，EXE 未签名。部分运行日志、工具提示和弹窗仍可能包含中文。单元测试不替代实际动画视觉验证，也不代表已在全新电脑上验证所有第三方工具组合。
 
-**External processing tools are installed separately.** Obtain the tools required by your workflow from their publishers, verify their licenses, and follow the directory layout in README. The project's MIT license does not cover those tools.
+Windows x64 is the primary supported platform. The EXE is unsigned. Some runtime messages, tool prompts, and dialogs may still contain Chinese. Unit tests do not replace animation visual checks or validation of all external tool combinations on a clean computer.
 
-## 验证与限制 / Validation and limitations
+## 二期规划 / Phase two
 
-- 单元测试覆盖资源扫描、共享纹理、转换失败清理、Spine JSON 处理与 EXE 工具目录定位。
-- EXE 在构建电脑的独立目录中执行启动检查；尚未在另一台全新电脑上完整验证所有资源处理流程。
-- 未进行 Windows 代码签名。处理会清理对应输出目录，首次请使用素材副本和独立空目标目录。
+计划加入 Spine 在线查看器，支持资源加载、动画与皮肤切换、播放控制和处理前后对比。尚未实现，版本支持范围和上线时间待确定。
 
-Unit tests cover scanning, shared textures, failure cleanup, Spine transformations, and frozen application paths. Startup is checked in an isolated directory on the build machine; full workflows on a separate clean computer remain to be verified. This release is unsigned. Use copied assets and an empty target folder for initial testing.
+An online Spine viewer is planned for asset loading, animation/skin selection, playback controls, and before/after comparisons. It is not included in this release; support and timing remain to be determined.
