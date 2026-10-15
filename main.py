@@ -14,8 +14,6 @@ except ImportError:
     DND_FILES = None
     DND_AVAILABLE = False
 import re
-import urllib.request
-import urllib.error
 import os
 import struct
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -120,17 +118,12 @@ except ImportError:
     Image = None
     PIL_AVAILABLE = False
 
-# -------------------- 游戏名称配置 --------------------
-REMOTE_GAME_CONFIG_URL = os.environ.get("SPINESLIM_GAME_CONFIG_URL", "").strip()
-LOCAL_GAMES_CACHE = os.path.join(DATA_DIR, "games_cache.json")
-GAMES_LIST = []
-
 def load_config():
     for path in [CONFIG_FILE, DEFAULT_CONFIG_FILE]:
         if os.path.exists(path):
             with open(path, "r", encoding="utf-8") as f:
                 return json.load(f)
-    return {"source": "", "target": "", "res_type": "spine", "process_mode": "imagemagick", "game_name": "", "webp_quality": 50, "force_bg": False, "video_transparency": True, "video_crf": 36, "tp_license_accepted": False}
+    return {"source": "", "target": "", "res_type": "spine", "process_mode": "imagemagick", "webp_quality": 50, "force_bg": False, "video_transparency": True, "video_crf": 36, "tp_license_accepted": False}
 
 def save_config():
     data = {
@@ -138,7 +131,6 @@ def save_config():
         "target": target_var.get(),
         "res_type": res_type.get(),
         "process_mode": process_mode.get(),
-        "game_name": game_name_var.get(),
         "webp_quality": webp_quality_var.get(),
         "force_bg": bool(force_bg_var.get()),
         "video_transparency": bool(video_transparency_var.get()),
@@ -384,70 +376,6 @@ VIDEO_PROGRESS_STAGES = [
     {"name": "清理旧视频", "weight": 10},
     {"name": "生成 PC/Mobile WebM", "weight": 90},
 ]
-
-# -------------------- 游戏名称管理 --------------------
-def load_cached_games():
-    global GAMES_LIST
-    if os.path.exists(LOCAL_GAMES_CACHE):
-        try:
-            with open(LOCAL_GAMES_CACHE, "r", encoding="utf-8") as file:
-                data = json.load(file)
-            if "games" in data:
-                GAMES_LIST = data["games"]
-                log(f"使用缓存游戏列表: {len(GAMES_LIST)} 个")
-                return GAMES_LIST
-        except Exception as error:
-            log(f"加载缓存失败: {error}")
-    GAMES_LIST = []
-    return GAMES_LIST
-
-
-def fetch_remote_games():
-    """从远端配置文件获取游戏列表"""
-    global GAMES_LIST
-    if not REMOTE_GAME_CONFIG_URL:
-        games = load_cached_games()
-        if not games:
-            log("游戏列表为空，可直接手动输入游戏名称")
-        return games
-    try:
-        log("正在获取远端游戏列表...")
-        response = urllib.request.urlopen(REMOTE_GAME_CONFIG_URL, timeout=5)
-        data = json.loads(response.read().decode('utf-8'))
-
-        # 期望的格式: {"games": [{"label": "游戏1", "val": "game1"}, ...]}
-        if "games" in data:
-            GAMES_LIST = data["games"]
-            # 缓存到本地
-            os.makedirs(DATA_DIR, exist_ok=True)
-            with open(LOCAL_GAMES_CACHE, "w", encoding="utf-8") as f:
-                json.dump(data, f)
-            log(f"成功获取 {len(GAMES_LIST)} 个游戏")
-            return GAMES_LIST
-        else:
-            log("错误: 远端配置文件格式不正确")
-            return []
-    except urllib.error.URLError as e:
-        log(f"获取远端配置失败: {e}，尝试使用本地缓存")
-        return load_cached_games()
-    except Exception as e:
-        log(f"获取游戏列表失败: {e}")
-        return []
-
-def update_game_list():
-    global GAME_MAP
-
-    games = fetch_remote_games()
-
-    # label -> val 映射
-    GAME_MAP = {game["label"]: game["val"] for game in games}
-
-    game_values = list(GAME_MAP.keys())  # 显示 label
-
-    try:
-        run_on_ui_thread(lambda values=game_values: game_combo.configure(values=values))
-    except Exception:
-        pass
 
 # -------------------- 拷贝 --------------------
 def copy_safe(src, dst_dir):
@@ -834,7 +762,7 @@ def convert_png_to_basis(folder):
 
     log("Basis 转换完成")
 
-def process_atlas_parallel(program_dir, game_name, quality, progress_callback=None, excluded_dirs=None):
+def process_atlas_parallel(program_dir, quality, progress_callback=None, excluded_dirs=None):
     tasks = []
     excluded_dir_names = {name.lower() for name in (excluded_dirs or [])}
 
@@ -851,7 +779,7 @@ def process_atlas_parallel(program_dir, game_name, quality, progress_callback=No
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
-            executor.submit(process_single_atlas, program_dir, game_name, item, quality): item
+            executor.submit(process_single_atlas, program_dir, item, quality): item
             for item in tasks
         }
 
@@ -863,7 +791,7 @@ def process_atlas_parallel(program_dir, game_name, quality, progress_callback=No
 
     log("🎉 全部 atlas 处理完成")
 
-def process_single_atlas(program_dir, game_name, item, quality):
+def process_single_atlas(program_dir, item, quality):
     item_path = os.path.join(program_dir, item)
 
     png_count = sum(1 for f in os.listdir(item_path) if f.lower().endswith(".png"))
@@ -872,7 +800,7 @@ def process_single_atlas(program_dir, game_name, item, quality):
 
     log(f"为 {item} 打图集 ({png_count} 个 PNG 文件)...")
 
-    success = pack_atlas(item_path, item, game_name, item)
+    success = pack_atlas(item_path, item, item)
 
     if not success:
         log(f"❌ {item} 图集生成失败")
@@ -917,7 +845,7 @@ def process_single_atlas(program_dir, game_name, item, quality):
     log(f"✅ {item} 完成（{atlas_convert_count} 个）")
 
 # -------------------- 打图集 --------------------
-def pack_atlas(source_dir, atlas_name, game_name, first_part):
+def pack_atlas(source_dir, atlas_name, first_part):
     """使用 TexturePacker 打图集"""
     if not os.path.exists(TEXTUREPACKER_EXE):
         log(f"警告: TexturePacker 未找到: {TEXTUREPACKER_EXE}")
@@ -932,16 +860,6 @@ def pack_atlas(source_dir, atlas_name, game_name, first_part):
         # 规范化路径：统一使用正斜杠，避免混合使用
         source_dir_norm = os.path.normpath(source_dir).replace("\\", "/")
 
-        # 构建 replace 参数
-        # TexturePacker 的 --replace 格式: --replace <searchPath> <replacePath>
-        # 我们使用第一种格式：将源路径中的 first_part/ 替换为 assets/game_name/game/first_part/
-        # 构建 replace 参数
-        # TexturePacker 的 --replace 格式: --replace <regexp>=<string>
-        # 我们使用正则表达式格式，将 first_part/ 替换为 assets/game_name/game/first_part/
-        search_path = f"{first_part}/"
-        replace_path = f"assets/{game_name}/game/{first_part}/"
-        replace_param = f"{search_path}={replace_path}"
-
         # 为 multipack 模式，输出文件名需要特殊处理
         # TexturePacker 会自动在文件名后添加数字（如 atlas1.png, atlas2.png）
         output_json_base = os.path.normpath(os.path.join(atlas_dir,first_part)).replace("\\", "/")
@@ -955,8 +873,6 @@ def pack_atlas(source_dir, atlas_name, game_name, first_part):
             "--sheet", output_sheet_base + n + ".png",
             "--format", "pixijs",
             "--prepend-folder-name",
-            "--replace", replace_param,  # 单个参数，格式: regexp=string
-            # "--replace", f"{first_part}/", f"assets/{game_name}/game/{first_part}/",
             "--opt", "RGBA8888",
             "--alpha-handling", "KeepTransparentPixels",
             "--size-constraints", "POT",
@@ -974,7 +890,6 @@ def pack_atlas(source_dir, atlas_name, game_name, first_part):
         log(f"是否存在: {os.path.exists(TEXTUREPACKER_EXE)}")
         log(f"图集源路径: {source_dir_norm}")
         log(f"输出路径: {atlas_dir}")
-        log(f"Replace 参数: {replace_param}")
         log(f"TexturePacker 命令: {' '.join(cmd)}")
 
         # 使用 shell=False 以避免路径解析问题
@@ -1282,7 +1197,6 @@ def process_files():
 
     # ✅ 当前选择类型
     selected_type = res_type.get()  # "spine" 或 "ui"
-    selected_label = game_name_var.get() if selected_type == "ui" else ""
     force_bg = selected_type == "ui" and bool(force_bg_var.get())
     preserve_video_alpha = bool(video_transparency_var.get())
     try:
@@ -1306,44 +1220,6 @@ def process_files():
             return False
         else:
             log(f"⚠️ 类型与目录不匹配，但继续执行: {selected_type} / {last_folder}")
-    # ✅ UI 额外校验：源和目标“完整路径”需包含 game val
-    if selected_type == "ui":
-        game_val = GAME_MAP.get(selected_label, "").lower()
-
-        if game_val:
-            import re
-
-            def normalize(path):
-                # 去掉路径中的符号，提高匹配鲁棒性
-                return re.sub(r'[^a-z0-9]', '', path.lower())
-
-            source_norm = normalize(source)
-            target_norm = normalize(target)
-            game_norm = normalize(game_val)
-
-            source_ok = game_norm in source_norm
-            target_ok = game_norm in target_norm
-
-            if not source_ok or not target_ok:
-                msg = (
-                    f"当前游戏: 【{selected_label}】({game_val})\n\n"
-                    f"源路径匹配: {'✔' if source_ok else '❌'}\n"
-                    f"目标路径匹配: {'✔' if target_ok else '❌'}\n\n"
-                    f"源路径: {source}\n"
-                    f"目标路径: {target}\n\n"
-                    "路径未包含游戏标识，是否继续？"
-                )
-
-                result = call_on_ui_thread(lambda: messagebox.askyesno("路径校验", msg))
-
-                if not result:
-                    log("❌ 用户取消处理（路径不包含游戏名）")
-                    return False
-                else:
-                    log("⚠️ 路径未匹配游戏名，但继续执行")
-        else:
-            log("⚠️ 未选择游戏名称，跳过路径校验")
-
     type = selected_type
     mp_count = 0
     pc_count = 0
@@ -1772,7 +1648,6 @@ def process_files():
 
         # 对pce类型的文件进行打图集
         log("开始处理 pce 文件打图集...")
-        game_name = GAME_MAP.get(selected_label, selected_label)
         art_group_names = list(font_groups.keys())
         art_group_name_set = {name.lower() for name in art_group_names}
         atlas_tasks = [
@@ -1787,14 +1662,10 @@ def process_files():
             log("强制背景图模式：跳过碎图 TexturePacker 打图集")
             progress_tracker.advance(detail="跳过碎图打图集")
             progress_tracker.finish_stage("已跳过碎图打图集")
-        elif not game_name:
-            log("警告: 未输入游戏名称，跳过打图集")
-            progress_tracker.finish_stage("未选择游戏名，已跳过")
         else:
             t0 = time.perf_counter()
             process_atlas_parallel(
                 program_dir,
-                game_name,
                 quality,
                 lambda item: progress_tracker.advance(detail=item),
                 art_group_names
@@ -2064,7 +1935,6 @@ source_var = StringVar(value=config.get("source", ""))
 target_var = StringVar(value=config.get("target", ""))
 process_mode = StringVar(value=config.get("process_mode", "imagemagick"))
 res_type = StringVar(value=config.get("res_type", "spine"))
-game_name_var = StringVar(value=config.get("game_name", ""))
 webp_quality_var = IntVar(value=config.get("webp_quality", 50))
 spine_compat_var = BooleanVar(value=False)
 force_bg_var = BooleanVar(value=config.get("force_bg", False))
@@ -2185,14 +2055,6 @@ Label(quality_frame, text="WebP质量:").pack(side=LEFT)
 Entry(quality_frame, textvariable=webp_quality_var, width=5).pack(side=LEFT)
 Label(quality_frame, text="(0-100)").pack(side=LEFT)
 
-# 游戏名称行
-game_name_label = Label(frame, text="游戏名称")
-game_name_label.grid(row=8, column=0)
-game_combo = ttk.Combobox(frame, textvariable=game_name_var, width=52, state="normal")
-game_combo.grid(row=8, column=1)
-game_refresh_button = Button(frame, text="刷新", command=update_game_list)
-game_refresh_button.grid(row=8, column=2)
-
 if res_type.get() == "spine":
     force_bg_frame.grid_remove()
     video_options_frame.grid_remove()
@@ -2209,13 +2071,6 @@ if DND_AVAILABLE:
     source_entry.dnd_bind("<<Drop>>", drop_source)
     target_entry.drop_target_register(DND_FILES)
     target_entry.dnd_bind("<<Drop>>", drop_target)
-
-# 初始化游戏列表（后台加载）
-def load_games_async():
-    t = threading.Thread(target=update_game_list, daemon=True)
-    t.start()
-
-load_games_async()
 
 start_btn = Button(
     root_ui,

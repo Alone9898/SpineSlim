@@ -20,7 +20,7 @@ Spine conversion and setup-pose attachment migration, texture compression, share
 
 ### Windows EXE
 
-从 [Releases](https://github.com/Alone9898/SpineSlim/releases/latest) 下载 `SpineSlim-1.0.0-windows-x64.zip`，解压到可写目录后双击 `SpineSlim-1.0.0-windows-x64.exe`。无需安装 Python。处理所需的外部工具仍需单独安装，并按下表放在 EXE 同目录下；配置和游戏列表缓存也保存在该目录。EXE 未进行代码签名。
+从 [Releases](https://github.com/Alone9898/SpineSlim/releases/latest) 下载 `SpineSlim-1.0.0-windows-x64.zip`，解压到可写目录后双击 `SpineSlim-1.0.0-windows-x64.exe`。无需安装 Python。处理所需的外部工具仍需单独安装，并按下表放在 EXE 同目录下；配置也保存在该目录。EXE 未进行代码签名。已发布的 v1.0.0 仍含游戏名称功能，以下移除说明适用于最新源码。
 
 Download the Windows x64 ZIP from [Releases](https://github.com/Alone9898/SpineSlim/releases/latest), extract it to a writable folder, and launch the EXE. Python is not required. Install external processing tools beside the EXE using the layout below. Settings and cache are saved beside the EXE. The executable is unsigned.
 
@@ -69,16 +69,9 @@ Verify the origin and license of SpineSkeletonDataConverter before use. Keep req
 
 Select existing source and target folders, choose the resource type and conversion options, then start processing. Spine inputs use leaf folders containing `mp` or `pc` in their names. **Processing clears relevant output folders. Use copies of your assets and a separate empty target for the first run. UI processing clears contents of `program` other than `spine`.**
 
-游戏名称可手动输入，也可以配置可选的远端 JSON 列表：
+最新源码已移除游戏名称、游戏列表缓存和远端列表请求。UI 图集帧名使用 `分组名/图片名`，不再添加原来的 `assets/<游戏标识>/game/` 前缀。依赖旧帧名的调用方需要同步调整；已有配置中的 `game_name` 会被忽略。
 
-Game names can be entered manually. To load an optional remote list matching `games_config_example.json`, set:
-
-```powershell
-$env:SPINESLIM_GAME_CONFIG_URL = "https://example.com/games.json"
-.\.venv\Scripts\python.exe .\main.py
-```
-
-未配置地址时使用本地游戏列表缓存（如存在）。No remote URL is required; a local cache is used when available.
+The latest source removes game-name input, game-list caching, and remote requests. UI atlas frame names use `group/image` instead of the previous `assets/<game>/game/group/image` format. Update consumers that depend on the old frame names. Legacy `game_name` settings are ignored. Published v1.0.0 binaries retain the previous behavior.
 
 ## 测试 / Tests
 
