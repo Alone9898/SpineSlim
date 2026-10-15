@@ -92,6 +92,6 @@ Unit tests run without third-party executables. They do not verify every externa
 
 ## 许可与商用 / Licensing and commercial use
 
-自有代码的许可范围见仓库 `LICENSE`（如已提供）。第三方组件和用户素材不包含在该许可内。第三方使用及分发条件见 [THIRD_PARTY.md](THIRD_PARTY.md)，更多项目说明见 [main.md](main.md)。
+本项目自有代码采用 [MIT License](LICENSE)，允许使用、修改、分发及商用，须保留许可和版权声明。第三方组件和用户素材不包含在该许可内。第三方使用及分发条件见 [THIRD_PARTY.md](THIRD_PARTY.md)，更多项目说明见 [main.md](main.md)。
 
-See `LICENSE`, when provided, for the project's own code. Third-party software and user assets retain their respective licenses. See [THIRD_PARTY.md](THIRD_PARTY.md) for dependency notes.
+The project's own code is licensed under the [MIT License](LICENSE), permitting use, modification, redistribution, and commercial use with the required license and copyright notice. Third-party software and user assets retain their respective licenses. See [THIRD_PARTY.md](THIRD_PARTY.md) for dependency notes.
