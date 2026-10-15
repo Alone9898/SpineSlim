@@ -1,8 +1,8 @@
 # 第三方组件与商用 / Third-party components and commercial use
 
-本仓库不附带第三方程序或游戏素材。公开项目源码、添加免责声明或接受许可提示，都不代表取得第三方的使用或分发授权。以下按开发环境中检查到的信息整理，不是完整的依赖授权审计；应以实际使用版本及权利方提供的条款为准。
+本仓库不附带外部资源处理程序或游戏素材。Release EXE 包含 Python、Tcl/Tk、Pillow、tkinterdnd2、tkdnd 及 PyInstaller 引导程序；其许可材料随发布 ZIP 提供，也可单独下载 `licenses.zip`。公开项目源码、添加免责声明或接受许可提示，都不代表取得第三方的额外使用或分发授权。以下按开发环境中检查到的信息整理，不是完整的依赖授权审计；应以实际使用版本及权利方提供的条款为准。
 
-This repository does not bundle third-party executables or game assets. Publishing source or accepting a license prompt does not grant additional rights. These notes reflect information inspected in the development environment, not a complete license audit. Verify the terms for the exact versions you use.
+External asset-processing tools and game assets are not bundled. Release executables include Python, Tcl/Tk, Pillow, tkinterdnd2, tkdnd, and the PyInstaller bootloader; license materials are included in the release ZIP and available in `licenses.zip`. Publishing source or accepting a license prompt does not grant additional rights. These notes reflect information inspected in the development environment, not a complete license audit. Verify the terms for the exact versions you use.
 
 | 组件 / Component | 注意事项 / Conditions to verify |
 | --- | --- |

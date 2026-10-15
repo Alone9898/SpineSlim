@@ -4,15 +4,15 @@ python .\main.py
 
 ##### 打包
 python -m pip install -r requirements.txt pyinstaller
-python -m PyInstaller --noconfirm --clean --distpath dist-current --workpath build-current ResManage.spec
+python -m PyInstaller --noconfirm --clean --distpath dist --workpath build SpineSlim.spec
 
 ##### 说明
 - 不要直接使用 `pyinstaller` 命令，机器上有多套 Python 时容易调用到错误环境。
 - 先用 `python -c "import sys; print(sys.executable)"` 确认当前解释器。
 - 如果打包后提示 `No module named PIL`，说明打包时没有走当前这套 Python 环境。
-- 优先使用 `dist-current` 里的新包，不要继续运行旧的 `dist\ResManage-v1.1.exe`。
-- 打包产物必须包含 `SpineSkeletonDataConverter.exe`，用于可选的 Spine 4.2 兼容处理。
-- v1.4 打包产物必须包含 `ffmpeg.exe`，用于生成 `program/video/pc` 和 `program/video/mobile` 下的 WebM 视频。
+- v1.0.0 打包产物为 `dist/SpineSlim-1.0.0-windows-x64.exe`，无需用户安装 Python。
+- 不内置第三方资源处理程序；用户按 README 中的目录布局将所需工具放在 EXE 同目录下。
+- Spine 版本升级需要 `SpineSkeletonDataConverter.exe`，视频处理需要 `ffmpeg.exe`，其他功能依赖见 README。
 
 
 ##### 处理规则

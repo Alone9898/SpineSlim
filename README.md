@@ -18,7 +18,15 @@ Spine conversion and setup-pose attachment migration, texture compression, share
 
 ## 本地运行 / Run locally
 
-使用 Windows 和 Python 3.10+；当前使用 Python 3.13 验证。Use Windows and Python 3.10+; tested with Python 3.13.
+### Windows EXE
+
+从 [Releases](https://github.com/Alone9898/SpineSlim/releases/latest) 下载 `SpineSlim-1.0.0-windows-x64.zip`，解压到可写目录后双击 `SpineSlim-1.0.0-windows-x64.exe`。无需安装 Python。处理所需的外部工具仍需单独安装，并按下表放在 EXE 同目录下；配置和游戏列表缓存也保存在该目录。EXE 未进行代码签名。
+
+Download the Windows x64 ZIP from [Releases](https://github.com/Alone9898/SpineSlim/releases/latest), extract it to a writable folder, and launch the EXE. Python is not required. Install external processing tools beside the EXE using the layout below. Settings and cache are saved beside the EXE. The executable is unsigned.
+
+### Python 源码 / Python source
+
+使用 Windows 和 Python 3.12+；当前使用 Python 3.13 验证。Use Windows and Python 3.12+; tested with Python 3.13.
 
 ```powershell
 git clone https://github.com/Alone9898/SpineSlim.git
@@ -47,9 +55,9 @@ This repository contains source, tests, and documentation. Obtain external tools
 | SpineSkeletonDataConverter | `SpineSkeletonDataConverter.exe` | Spine 版本转换 / Version conversion |
 | [FFmpeg](https://ffmpeg.org/) | `ffmpeg.exe` | 视频转换 / Video conversion |
 
-SpineSkeletonDataConverter 的获取来源及授权需使用者自行核实，仓库不提供该程序。ImageMagick 等目录需要完整的配套文件；若使用其他版本或目录，应调整 `main.py` 和打包配置中的路径。
+SpineSkeletonDataConverter 的获取来源及授权需使用者自行核实，仓库不提供该程序。ImageMagick 等目录需要完整的配套文件；若使用其他版本或目录，应调整 `main.py` 中的路径。使用 EXE 时，这些位置相对于 EXE 所在目录。
 
-Verify the origin and license of SpineSkeletonDataConverter before use. Keep required companion files. For different installation paths or versions, update `main.py` and the packaging configuration.
+Verify the origin and license of SpineSkeletonDataConverter before use. Keep required companion files. For different installation paths or versions, update `main.py`. For packaged applications, these paths are relative to the EXE directory.
 
 ## 使用说明 / Usage
 
@@ -84,9 +92,17 @@ Unit tests run without third-party executables. They do not verify every externa
 
 ## 打包 / Packaging
 
-`ResManage.spec` 和 `build.ps1` 保留现有打包方式。打包前应在本地准备 `config.json`、自有 `icon.ico` 及所需外部工具。产物沿用 `ResManage-v1.4` 名称。
+在安装了项目依赖和 PyInstaller 的 Python 环境中运行：
 
-`ResManage.spec` and `build.ps1` retain the existing packaging workflow. Prepare local settings, your own icon, and the external tools first. The output retains the name `ResManage-v1.4`.
+```powershell
+python -m pip install -r requirements.txt pyinstaller
+python -m PyInstaller --noconfirm --clean --distpath dist --workpath build SpineSlim.spec
+python package_release.py
+```
+
+生成 EXE、带使用说明和运行依赖许可的 ZIP，以及 SHA-256 校验值。打包许可材料时需联网获取 Tcl 和 tkdnd 的许可文本。EXE 包含 Python、Tkinter、Pillow 和拖拽运行依赖，不包含外部资源处理工具、个人配置或游戏素材。窗口版本定义在 `app_runtime.py`，Windows 文件版本定义在 `version_info.txt`。也可运行 `build.ps1`。
+
+Builds a standalone Windows EXE with Python and UI/image runtime dependencies. External asset-processing tools, local settings, and game assets are excluded. Update `app_runtime.py` and `version_info.txt` together for future releases.
 
 **能成功打包不等于拥有分发权。对外分发前需核对全部依赖授权。** See [THIRD_PARTY.md](THIRD_PARTY.md) before redistribution. Successful packaging does not grant redistribution rights.
 

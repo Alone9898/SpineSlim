@@ -21,6 +21,7 @@ import struct
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
 from pathlib import Path
+from app_runtime import APP_VERSION, get_application_directory
 
 from spine_tools.atlas import process_atlas_textures
 from spine_tools.converter import check_spine_converter
@@ -82,9 +83,7 @@ def get_resource_dir():
 
 
 def get_data_dir():
-    if getattr(sys, "frozen", False):
-        return os.path.dirname(sys.executable)
-    return os.path.dirname(os.path.abspath(__file__))
+    return str(get_application_directory())
 
 
 RESOURCE_DIR = get_resource_dir()
@@ -92,14 +91,14 @@ DATA_DIR = get_data_dir()
 APP_ICON_FILE = os.path.join(RESOURCE_DIR, "icon.ico")
 DEFAULT_CONFIG_FILE = os.path.join(RESOURCE_DIR, "config.json")
 CONFIG_FILE = os.path.join(DATA_DIR, "config.json")
-IMAGEMAGICK_DIR = os.path.join(RESOURCE_DIR, "./ImageMagick-7.1.2-19-portable-Q16-HDRI-x64")
+IMAGEMAGICK_DIR = os.path.join(DATA_DIR, "ImageMagick-7.1.2-19-portable-Q16-HDRI-x64")
 IMAGEMAGICK_EXE = os.path.join(IMAGEMAGICK_DIR, "magick.exe")
-BASISU_EXE = os.path.join(RESOURCE_DIR, "basisu.exe")
-TEXTUREPACKER_DIR = os.path.join(RESOURCE_DIR, "./TexturePacker/bin")
+BASISU_EXE = os.path.join(DATA_DIR, "basisu.exe")
+TEXTUREPACKER_DIR = os.path.join(DATA_DIR, "TexturePacker/bin")
 TEXTUREPACKER_EXE = os.path.join(TEXTUREPACKER_DIR, "TexturePacker.exe")
-BMFONT_EXE = os.path.join(RESOURCE_DIR, "bmfont1.14a", "bmfont64.com")
-SPINE_CONVERTER_EXE = os.path.join(RESOURCE_DIR, "SpineSkeletonDataConverter.exe")
-FFMPEG_EXE = os.path.join(RESOURCE_DIR, "ffmpeg.exe")
+BMFONT_EXE = os.path.join(DATA_DIR, "bmfont1.14a", "bmfont64.com")
+SPINE_CONVERTER_EXE = os.path.join(DATA_DIR, "SpineSkeletonDataConverter.exe")
+FFMPEG_EXE = os.path.join(DATA_DIR, "ffmpeg.exe")
 
 # 设置环境变量
 # os.environ["MAGICK_CODER_MODULE_PATH"] = IMAGEMAGICK_DIR
@@ -2045,7 +2044,7 @@ def on_process_done(success, total):
 
 # -------------------- GUI --------------------
 root_ui = TkinterDnD.Tk() if DND_AVAILABLE else Tk()
-root_ui.title("资源分类工具 Pro")
+root_ui.title(f"SpineSlim v{APP_VERSION}")
 root_ui.geometry("650x590")
 try:
     root_ui.iconbitmap(APP_ICON_FILE)
@@ -2239,6 +2238,8 @@ progress_tracker = ProgressTracker(root_ui, progress, progress_text_var)
 log_text = Text(root_ui, height=18)
 log_text.pack(fill="both", expand=True, padx=10, pady=10)
 _schedule_log_flush()
+
+log(f"SpineSlim v{APP_VERSION} | 外部工具目录: {DATA_DIR}")
 
 if not DND_AVAILABLE:
     dnd_warning = (
