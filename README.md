@@ -1,5 +1,7 @@
 # SpineSlim
 
+[下载最新版本 / Download latest release](https://github.com/Alone9898/SpineSlim/releases/latest) · [所有版本 / All releases](https://github.com/Alone9898/SpineSlim/releases)
+
 Spine 资源优化与批量处理工具，支持 Spine 版本转换、纹理压缩、UI 图集和视频处理。
 
 Spine asset optimization and batch processing for Windows.
