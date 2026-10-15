@@ -386,12 +386,31 @@ VIDEO_PROGRESS_STAGES = [
 ]
 
 # -------------------- 游戏名称管理 --------------------
+def load_cached_games():
+    global GAMES_LIST
+    if os.path.exists(LOCAL_GAMES_CACHE):
+        try:
+            with open(LOCAL_GAMES_CACHE, "r", encoding="utf-8") as file:
+                data = json.load(file)
+            if "games" in data:
+                GAMES_LIST = data["games"]
+                log(f"使用缓存游戏列表: {len(GAMES_LIST)} 个")
+                return GAMES_LIST
+        except Exception as error:
+            log(f"加载缓存失败: {error}")
+    GAMES_LIST = []
+    return GAMES_LIST
+
+
 def fetch_remote_games():
     """从远端配置文件获取游戏列表"""
     global GAMES_LIST
+    if not REMOTE_GAME_CONFIG_URL:
+        games = load_cached_games()
+        if not games:
+            log("游戏列表为空，可直接手动输入游戏名称")
+        return games
     try:
-        if not REMOTE_GAME_CONFIG_URL:
-            raise urllib.error.URLError("未配置 SPINESLIM_GAME_CONFIG_URL")
         log("正在获取远端游戏列表...")
         response = urllib.request.urlopen(REMOTE_GAME_CONFIG_URL, timeout=5)
         data = json.loads(response.read().decode('utf-8'))
@@ -410,18 +429,7 @@ def fetch_remote_games():
             return []
     except urllib.error.URLError as e:
         log(f"获取远端配置失败: {e}，尝试使用本地缓存")
-        # 尝试加载本地缓存
-        if os.path.exists(LOCAL_GAMES_CACHE):
-            try:
-                with open(LOCAL_GAMES_CACHE, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                    if "games" in data:
-                        GAMES_LIST = data["games"]
-                        log(f"使用缓存游戏列表: {len(GAMES_LIST)} 个")
-                        return GAMES_LIST
-            except Exception as e:
-                log(f"加载缓存失败: {e}")
-        return []
+        return load_cached_games()
     except Exception as e:
         log(f"获取游戏列表失败: {e}")
         return []
