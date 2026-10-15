@@ -4,6 +4,7 @@ import json
 import threading
 import subprocess
 import sys
+import webbrowser
 from tkinter import *
 from tkinter import filedialog, messagebox, ttk
 try:
@@ -2097,6 +2098,25 @@ Label(root_ui, textvariable=progress_text_var, anchor="w").pack(fill="x", padx=2
 progress = ttk.Progressbar(root_ui, length=500, mode="determinate")
 progress.pack(pady=5)
 progress_tracker = ProgressTracker(root_ui, progress, progress_text_var)
+
+github_frame = Frame(root_ui)
+github_frame.pack(side=BOTTOM, fill="x", padx=10, pady=(0, 8))
+github_link = Label(
+    github_frame,
+    text="GitHub: github.com/Alone9898/SpineSlim",
+    fg="#0969da",
+    cursor="hand2",
+)
+github_link.pack(side=LEFT)
+github_link.bind(
+    "<Button-1>",
+    lambda event: webbrowser.open("https://github.com/Alone9898/SpineSlim"),
+)
+ttk.Button(
+    github_frame,
+    text="喜欢这个工具？给个 Star ★",
+    command=lambda: webbrowser.open("https://github.com/Alone9898/SpineSlim"),
+).pack(side=RIGHT)
 
 log_text = Text(root_ui, height=18)
 log_text.pack(fill="both", expand=True, padx=10, pady=10)

@@ -4,6 +4,10 @@ Spine 资源优化与批量处理工具，支持版本转换、纹理压缩和 P
 
 A Windows desktop toolkit for Spine version conversion, texture compression, and PC/mobile asset organization.
 
+如果这个工具对你有帮助，欢迎在 [GitHub](https://github.com/Alone9898/SpineSlim) 点一个 Star ★。
+
+If you find SpineSlim useful, please consider giving the project a [Star on GitHub](https://github.com/Alone9898/SpineSlim).
+
 独立第三方工具，与 Spine 官方无关联。Independent project, not affiliated with or endorsed by the makers of Spine.
 
 ## 功能 / Features
