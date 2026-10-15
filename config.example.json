@@ -1,0 +1,12 @@
+{
+  "source": "",
+  "target": "",
+  "res_type": "spine",
+  "process_mode": "imagemagick",
+  "game_name": "",
+  "webp_quality": 50,
+  "force_bg": false,
+  "video_transparency": true,
+  "video_crf": 36,
+  "tp_license_accepted": false
+}

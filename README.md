@@ -1,0 +1,97 @@
+# SpineSlim
+
+Spine 资源优化与批量处理工具，支持版本转换、纹理压缩和 PC / 移动端资源整理。
+
+A Windows desktop toolkit for Spine version conversion, texture compression, and PC/mobile asset organization.
+
+独立第三方工具，与 Spine 官方无关联。Independent project, not affiliated with or endorsed by the makers of Spine.
+
+## 功能 / Features
+
+- Spine JSON 校验、升级至 4.2.11，以及 setup pose attachment 首帧迁移。
+- PNG 转 WebP / KTX2，更新 Atlas 引用并复用共享纹理。
+- 按 PC / 移动端整理资源，支持 UI 图集和艺术字处理。
+- FFmpeg WebM / VP9 视频转换，可选保留透明通道。
+- 桌面界面、拖拽目录、处理日志、进度及包体统计。
+
+Spine conversion and setup-pose attachment migration, texture compression, shared atlas texture handling, UI/font processing, and video conversion with optional alpha preservation.
+
+## 本地运行 / Run locally
+
+使用 Windows 和 Python 3.10+；当前使用 Python 3.13 验证。Use Windows and Python 3.10+; tested with Python 3.13.
+
+```powershell
+git clone https://github.com/Alone9898/SpineSlim.git
+cd SpineSlim
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe .\main.py
+```
+
+界面可以直接启动；资源处理功能需要另外安装对应的外部工具，见下表。首次使用会保存本地 `config.json`，也可从 `config.example.json` 复制生成。
+
+The UI starts without bundled external tools. Install the tools required by your workflow separately. Local settings are saved to `config.json`; an example is provided in `config.example.json`.
+
+## 外部工具 / External tools
+
+本仓库仅发布源码、测试及文档，不包含第三方可执行程序、商业素材或已打包应用。以下是当前代码查找工具的位置，相对项目根目录：
+
+This repository contains source, tests, and documentation. Obtain external tools from their official publishers, verify their licenses, and place them at the paths below.
+
+| 工具 / Tool | 路径 / Expected path | 用途 / Purpose |
+| --- | --- | --- |
+| [ImageMagick](https://imagemagick.org/) | `ImageMagick-7.1.2-19-portable-Q16-HDRI-x64/magick.exe` | 图片处理 / Image processing |
+| [Basis Universal](https://github.com/BinomialLLC/basis_universal) | `basisu.exe` | KTX2 压缩 / Texture compression |
+| [TexturePacker](https://www.codeandweb.com/texturepacker) | `TexturePacker/bin/TexturePacker.exe` 及配套 resources | UI 图集 / Sprite sheets |
+| [BMFont](https://www.angelcode.com/products/bmfont/) | `bmfont1.14a/bmfont64.com` 及配套文件 | 艺术字 / Bitmap fonts |
+| SpineSkeletonDataConverter | `SpineSkeletonDataConverter.exe` | Spine 版本转换 / Version conversion |
+| [FFmpeg](https://ffmpeg.org/) | `ffmpeg.exe` | 视频转换 / Video conversion |
+
+SpineSkeletonDataConverter 的获取来源及授权需使用者自行核实，仓库不提供该程序。ImageMagick 等目录需要完整的配套文件；若使用其他版本或目录，应调整 `main.py` 和打包配置中的路径。
+
+Verify the origin and license of SpineSkeletonDataConverter before use. Keep required companion files. For different installation paths or versions, update `main.py` and the packaging configuration.
+
+## 使用说明 / Usage
+
+1. 选择源目录和已经存在的目标目录，再选择 `spine`、`ui` 或 `video`。
+2. Spine 输入按叶子文件夹名称识别：名称包含 `mp` 的文件夹进入移动端，包含 `pc` 的进入 PC 端。
+3. 选择压缩方式，按需启用 Spine 4.2.11 升级，然后开始处理。
+
+**处理会清理对应输出目录。首次请使用素材副本和独立的空目标目录。UI 模式会清理 `program` 下除 `spine` 以外的内容。** Spine 模式会跳过目标 `program/spine`，避免重复扫描之前的输出。
+
+Select existing source and target folders, choose the resource type and conversion options, then start processing. Spine inputs use leaf folders containing `mp` or `pc` in their names. **Processing clears relevant output folders. Use copies of your assets and a separate empty target for the first run. UI processing clears contents of `program` other than `spine`.**
+
+游戏名称可手动输入，也可以配置可选的远端 JSON 列表：
+
+Game names can be entered manually. To load an optional remote list matching `games_config_example.json`, set:
+
+```powershell
+$env:SPINESLIM_GAME_CONFIG_URL = "https://example.com/games.json"
+.\.venv\Scripts\python.exe .\main.py
+```
+
+未配置地址时使用本地游戏列表缓存（如存在）。No remote URL is required; a local cache is used when available.
+
+## 测试 / Tests
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+```
+
+单元测试不需要真实第三方程序，不代表已验证所有外部工具组合或动画视觉效果。
+
+Unit tests run without third-party executables. They do not verify every external tool combination or visual animation result.
+
+## 打包 / Packaging
+
+`ResManage.spec` 和 `build.ps1` 保留现有打包方式。打包前应在本地准备 `config.json`、自有 `icon.ico` 及所需外部工具。产物沿用 `ResManage-v1.4` 名称。
+
+`ResManage.spec` and `build.ps1` retain the existing packaging workflow. Prepare local settings, your own icon, and the external tools first. The output retains the name `ResManage-v1.4`.
+
+**能成功打包不等于拥有分发权。对外分发前需核对全部依赖授权。** See [THIRD_PARTY.md](THIRD_PARTY.md) before redistribution. Successful packaging does not grant redistribution rights.
+
+## 许可与商用 / Licensing and commercial use
+
+自有代码的许可范围见仓库 `LICENSE`（如已提供）。第三方组件和用户素材不包含在该许可内。第三方使用及分发条件见 [THIRD_PARTY.md](THIRD_PARTY.md)，更多项目说明见 [main.md](main.md)。
+
+See `LICENSE`, when provided, for the project's own code. Third-party software and user assets retain their respective licenses. See [THIRD_PARTY.md](THIRD_PARTY.md) for dependency notes.

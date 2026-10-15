@@ -1,0 +1,28 @@
+{
+  "skeleton": {
+    "hash": "",
+    "spine": "3.8.99",
+    "x": 0,
+    "y": 0,
+    "width": 16,
+    "height": 16,
+    "images": "./images/",
+    "audio": ""
+  },
+  "bones": [
+    {"name": "root"}
+  ],
+  "slots": [
+    {"name": "image-slot", "bone": "root", "attachment": "image"}
+  ],
+  "skins": {
+    "default": {
+      "image-slot": {
+        "image": {"width": 16, "height": 16}
+      }
+    }
+  },
+  "animations": {
+    "idle": {}
+  }
+}
