@@ -265,6 +265,9 @@ class Service:
     def commit(staging, program, mode, backup):
         program.mkdir(exist_ok=True)
         backup.mkdir()
+        if mode == "spine":
+            Service.commit_directory_contents(staging / mode, program / mode, backup / mode)
+            return
         names = {mode} if mode in ("spine", "video") else {path.name for path in program.iterdir() if path.name.lower() != "spine"} | {path.name for path in staging.iterdir()}
         saved, installed = [], []
         failed_move = None
@@ -285,6 +288,38 @@ class Service:
                     replace_with_retry(backup / name, program / name)
             except Exception as rollback_error:
                 recovery = program.parent / ("spineslim-recovery-" + str(time.time_ns()))
+                shutil.copytree(backup, recovery)
+                raise ProcessingError("recovery_required", path=str(recovery), detail=str(rollback_error)) from rollback_error
+            if isinstance(failed_move, PermissionError):
+                raise ProcessingError(
+                    "output_locked",
+                    source=str(program),
+                    detail="请关闭正在使用输出目录的程序后重试。",
+                ) from failed_move
+            raise failed_move
+
+    @staticmethod
+    def commit_directory_contents(staging, program, backup):
+        program.mkdir(exist_ok=True)
+        backup.mkdir()
+        saved, installed = [], []
+        failed_move = None
+        try:
+            for item in sorted(program.iterdir(), key=lambda path: path.name):
+                replace_with_retry(item, backup / item.name)
+                saved.append(item.name)
+            for item in sorted(staging.iterdir(), key=lambda path: path.name):
+                replace_with_retry(item, program / item.name)
+                installed.append(item.name)
+        except Exception as error:
+            failed_move = error
+            try:
+                for name in reversed(installed):
+                    replace_with_retry(program / name, staging / name)
+                for name in reversed(saved):
+                    replace_with_retry(backup / name, program / name)
+            except Exception as rollback_error:
+                recovery = program.parent.parent / ("spineslim-recovery-" + str(time.time_ns()))
                 shutil.copytree(backup, recovery)
                 raise ProcessingError("recovery_required", path=str(recovery), detail=str(rollback_error)) from rollback_error
             if isinstance(failed_move, PermissionError):

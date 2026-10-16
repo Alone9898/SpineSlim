@@ -161,9 +161,10 @@ class WorkerTests(unittest.TestCase):
         (program / "spine").mkdir()
         (program / "spine/old.txt").write_text("old")
         (staging / "spine").mkdir()
+        (staging / "spine/new.txt").write_text("new")
         original_replace = os.replace
         def replace(source, target):
-            if Path(source) == staging / "spine":
+            if Path(source) == staging / "spine/new.txt":
                 raise PermissionError("locked")
             return original_replace(source, target)
         with patch("backend.service.os.replace", side_effect=replace):
