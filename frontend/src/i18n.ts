@@ -58,6 +58,7 @@ const words: Record<string, [string, string]> = {
   error: ['操作失败', 'Operation failed'], saveError: ['配置保存失败', 'Could not save settings'],
   missing_texture: ['Atlas 引用的纹理不存在。', 'A texture referenced by the Atlas is missing.'],
   recovery_required: ['输出恢复未完成，旧文件已保存在恢复目录。', 'Output recovery was incomplete. Previous files are in the recovery folder.'],
+  output_locked: ['输出目录正在被其他程序占用，请关闭资源管理器、Spine 或杀毒软件的扫描后重试。', 'The output folder is locked. Close Explorer, Spine, or security scans and retry.'],
   stats: ['统计包体', 'Package statistics'], total: ['总计', 'Total'],
 };
 

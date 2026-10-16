@@ -60,6 +60,20 @@ def copy_unique(source, folder):
     return destination
 
 
+def replace_with_retry(source, destination, attempts=8):
+    """Retry Windows antivirus/indexer locks during the atomic output swap."""
+    last_error = None
+    for attempt in range(attempts):
+        try:
+            os.replace(source, destination)
+            return
+        except PermissionError as error:
+            last_error = error
+            if attempt + 1 < attempts:
+                time.sleep(0.2)
+    raise last_error
+
+
 class TextureConverter:
     def __init__(self, service):
         self.service = service
@@ -253,25 +267,33 @@ class Service:
         backup.mkdir()
         names = {mode} if mode in ("spine", "video") else {path.name for path in program.iterdir() if path.name.lower() != "spine"} | {path.name for path in staging.iterdir()}
         saved, installed = [], []
+        failed_move = None
         try:
             for name in sorted(names):
                 if (program / name).exists():
-                    os.replace(program / name, backup / name)
+                    replace_with_retry(program / name, backup / name)
                     saved.append(name)
                 if (staging / name).exists():
-                    os.replace(staging / name, program / name)
+                    replace_with_retry(staging / name, program / name)
                     installed.append(name)
-        except Exception:
+        except Exception as error:
+            failed_move = error
             try:
                 for name in reversed(installed):
-                    os.replace(program / name, staging / name)
+                    replace_with_retry(program / name, staging / name)
                 for name in reversed(saved):
-                    os.replace(backup / name, program / name)
+                    replace_with_retry(backup / name, program / name)
             except Exception as rollback_error:
                 recovery = program.parent / ("spineslim-recovery-" + str(time.time_ns()))
                 shutil.copytree(backup, recovery)
                 raise ProcessingError("recovery_required", path=str(recovery), detail=str(rollback_error)) from rollback_error
-            raise
+            if isinstance(failed_move, PermissionError):
+                raise ProcessingError(
+                    "output_locked",
+                    source=str(program),
+                    detail="请关闭正在使用输出目录的程序后重试。",
+                ) from failed_move
+            raise failed_move
 
     def spine(self, source, files, destination):
         destination.mkdir()

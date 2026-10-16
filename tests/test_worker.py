@@ -167,8 +167,9 @@ class WorkerTests(unittest.TestCase):
                 raise PermissionError("locked")
             return original_replace(source, target)
         with patch("backend.service.os.replace", side_effect=replace):
-            with self.assertRaises(PermissionError):
+            with self.assertRaises(ProcessingError) as error:
                 Service.commit(staging, program, "spine", self.root / "backup")
+        self.assertEqual(error.exception.key, "output_locked")
         self.assertEqual((program / "spine/old.txt").read_text(), "old")
 
     def test_background_mode_does_not_require_texturepacker(self):
