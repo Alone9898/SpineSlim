@@ -4,7 +4,6 @@ import json
 import shutil
 import subprocess
 import sys
-from datetime import datetime
 from pathlib import Path
 
 
@@ -20,9 +19,15 @@ def main():
     for path in required:
         if not path.is_file():
             raise FileNotFoundError(path)
-    folder = root / "output" / ("local-full-" + datetime.now().strftime("%Y%m%d-%H%M%S"))
-    folder.mkdir(parents=True)
+    folder = root / "output" / "local-full"
     payload = folder / "payload"
+    if folder.resolve() != folder or payload.resolve() != payload:
+        raise ValueError("Build output must not redirect outside its fixed directory")
+    if source.is_relative_to(payload) or args.imagemagick.resolve().is_relative_to(payload):
+        raise ValueError("Tool sources must be outside the generated payload directory")
+    folder.mkdir(parents=True, exist_ok=True)
+    if payload.exists():
+        shutil.rmtree(payload)
     tool_root = payload / "tools"
     for key, filename in (("ffmpeg", "ffmpeg.exe"), ("basis", "basisu.exe"), ("spine_converter", "SpineSkeletonDataConverter.exe")):
         target = tool_root / key
@@ -47,7 +52,7 @@ def main():
         "换电脑后 TexturePacker 仍可能需要合法授权及激活。\n"
         "Redistribution eligibility for all bundled tools has NOT been established. Local testing only.\n"
         "第三方工具再分发许可尚未完成确认，此包仅供本地测试，请勿公开发布。\n"
-        "Settings are hidden in this production build. Bundled tools are detected automatically.\n",
+        "Settings are available at the bottom of the sidebar. Bundled tools are detected automatically.\n",
         encoding="utf-8",
     )
     manifest = []
@@ -66,14 +71,18 @@ def main():
     subprocess.run([sys.executable, str(root / "scripts/build_worker.py")], cwd=root, check=True)
     worker = root / "src-tauri/binaries/spineslim-worker-x86_64-pc-windows-msvc.exe"
     subprocess.run([sys.executable, str(root / "scripts/verify_local_full.py"), str(payload), str(worker)], cwd=root, check=True)
-    npm = shutil.which("npm.cmd") or shutil.which("npm")
-    subprocess.run([npm, "run", "tauri", "--", "build", "--config", str(config)], cwd=root, check=True)
+    node = shutil.which("node")
+    if not node:
+        raise RuntimeError("Node.js is required to build the installer")
+    subprocess.run([node, str(root / "node_modules/@tauri-apps/cli/tauri.js"), "build", "--config", str(config)], cwd=root, check=True)
     version = json.loads((root / "src-tauri/tauri.conf.json").read_text(encoding="utf-8"))["version"]
     installers = list((root / "src-tauri/target/release/bundle/nsis").glob(f"*{version}*setup.exe"))
     if len(installers) != 1:
         raise RuntimeError(f"Expected one installer, got {installers}")
-    destination = folder / f"SpineSlim_{version}_windows-x64_local-full-setup.exe"
-    shutil.copy2(installers[0], destination)
+    destination = folder / "SpineSlim_windows-x64_local-full-setup.exe"
+    temporary = destination.with_suffix(".exe.tmp")
+    shutil.copy2(installers[0], temporary)
+    temporary.replace(destination)
     print(f"LOCAL_FULL_INSTALLER={destination}", flush=True)
 
 

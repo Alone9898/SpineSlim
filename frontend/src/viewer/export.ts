@@ -27,6 +27,12 @@ export async function exportAnimation(options: ExportOptions, signal: AbortSigna
     renderer = (await loadRenderer(source, options.catalog, options.asset, options.atlas, signal)).renderer;
     renderer.reset(options.animation, options.skin, false);
     const view = { ...options.view, width, height, scale: options.view.scale * width / options.view.width, bones: false };
+    const bounds = renderer.bounds();
+    if ([bounds.x, bounds.y, bounds.width, bounds.height].every(Number.isFinite) && bounds.width > 0 && bounds.height > 0) {
+      view.x = bounds.x + bounds.width / 2;
+      view.y = bounds.y + bounds.height / 2;
+      view.scale = Math.max(.001, Math.min(100, Math.min(width / bounds.width, height / bounds.height) * .8));
+    }
     for (let index = 0; index < frames; index++) {
       signal.throwIfAborted();
       if (index > 0 && options.duration > 0) {

@@ -1,11 +1,12 @@
 import { Application, BaseTexture, ALPHA_MODES } from 'pixi.js';
+import '@pixi/unsafe-eval';
 import { TextureAtlas, SpineDebugRenderer, Vector2 } from '@pixi-spine/base';
 import type { Renderer } from './model';
 
 export async function create(canvas: HTMLCanvasElement, text: string, images: Map<string, ImageBitmap>, data: Uint8Array, binary: boolean, version: string): Promise<Renderer> {
   const runtimeVersion = version === '3.8' ? '3.8' : '4.1';
   const runtime = (runtimeVersion === '3.8' ? await import('@pixi-spine/runtime-3.8') : await import('@pixi-spine/runtime-4.1')) as unknown as typeof import('@pixi-spine/runtime-3.8');
-  const app = new Application({ view: canvas, backgroundAlpha: 0, antialias: true, autoStart: false, resolution: Math.min(devicePixelRatio, 2), autoDensity: true });
+    const app = new Application({ view: canvas, backgroundAlpha: 0, antialias: true, autoStart: false, preserveDrawingBuffer: true, resolution: Math.min(devicePixelRatio, 2), autoDensity: true });
   const textures = new Map<string, BaseTexture>();
   let atlas: TextureAtlas | undefined;
   try {

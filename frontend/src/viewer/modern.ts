@@ -2,7 +2,7 @@ import * as spine from '@esotericsoftware/spine-webgl';
 import type { Renderer } from './model';
 
 export async function create(canvas: HTMLCanvasElement, text: string, images: Map<string, ImageBitmap>, data: Uint8Array, binary: boolean): Promise<Renderer> {
-  const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: true });
+  const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: true, preserveDrawingBuffer: true });
   if (!gl) throw new Error('viewer.webgl');
   const scene = new spine.SceneRenderer(canvas, gl);
   const atlas = new spine.TextureAtlas(text);

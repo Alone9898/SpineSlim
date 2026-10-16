@@ -16,6 +16,7 @@
     "@pixi-spine/runtime-3.8": "4.0.6",
     "@pixi-spine/runtime-4.0": "4.0.6",
     "@pixi-spine/runtime-4.1": "4.0.6",
+    "@pixi/unsafe-eval": "7.4.3",
     "@tauri-apps/api": "^2.0.0",
     "@tauri-apps/plugin-dialog": "^2.0.0",
     "@tauri-apps/plugin-opener": "^2.0.0",
