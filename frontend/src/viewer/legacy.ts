@@ -45,6 +45,7 @@ export async function create(canvas: HTMLCanvasElement, text: string, images: Ma
         if (view.pma !== pmaOverride) { atlas!.pages.forEach((page, index) => { page.baseTexture.alphaMode = (view.pma ?? pma[index]) ? ALPHA_MODES.PMA : ALPHA_MODES.NPM; }); pmaOverride = view.pma; }
         debugTarget.debug = view.bones ? debug : undefined;
         if (view.bones) debug.renderDebug(display);
+        app.renderer.clear();
         app.render();
       },
       dispose() { app.destroy(false, { children: true, texture: false, baseTexture: false }); atlas!.dispose(); },
