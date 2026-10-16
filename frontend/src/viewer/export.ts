@@ -27,12 +27,23 @@ export async function exportAnimation(options: ExportOptions, signal: AbortSigna
     renderer = (await loadRenderer(source, options.catalog, options.asset, options.atlas, signal)).renderer;
     renderer.reset(options.animation, options.skin, false);
     const view = { ...options.view, width, height, scale: options.view.scale * width / options.view.width, bones: false };
-    const bounds = renderer.bounds();
-    if ([bounds.x, bounds.y, bounds.width, bounds.height].every(Number.isFinite) && bounds.width > 0 && bounds.height > 0) {
+    let left = Infinity; let top = Infinity; let right = -Infinity; let bottom = -Infinity;
+    const sampleFrames = Math.max(1, Math.ceil(options.duration * Math.min(options.fps, 60)));
+    for (let sample = 0; sample <= sampleFrames; sample++) {
+      const bounds = renderer.bounds();
+      if ([bounds.x, bounds.y, bounds.width, bounds.height].every(Number.isFinite) && bounds.width > 0 && bounds.height > 0) {
+        left = Math.min(left, bounds.x); top = Math.min(top, bounds.y);
+        right = Math.max(right, bounds.x + bounds.width); bottom = Math.max(bottom, bounds.y + bounds.height);
+      }
+      if (sample < sampleFrames) renderer.step(options.speed / Math.min(options.fps, 60));
+    }
+    if ([left, top, right, bottom].every(Number.isFinite) && right > left && bottom > top) {
+      const bounds = { x: left, y: top, width: right - left, height: bottom - top };
       view.x = bounds.x + bounds.width / 2;
       view.y = bounds.y + bounds.height / 2;
       view.scale = Math.max(.001, Math.min(100, Math.min(width / bounds.width, height / bounds.height) * .8));
     }
+    renderer.reset(options.animation, options.skin, false);
     for (let index = 0; index < frames; index++) {
       signal.throwIfAborted();
       if (index > 0 && options.duration > 0) {
