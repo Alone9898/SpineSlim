@@ -52,9 +52,7 @@ const words: Record<string, [string, string]> = {
   linked_path: ['检测到链接目录或越界路径，已停止处理。', 'A linked or out-of-scope path was detected. Processing stopped.'],
   collision: ['输出名称冲突，请调整素材名称。', 'Output name conflict. Rename the affected assets.'], empty_source: ['没有找到可处理的素材。', 'No processable assets were found.'],
   empty_output: ['工具未生成有效输出。', 'The tool did not produce valid output.'], invalid_spine: ['Spine 数据校验或转换失败。', 'Spine validation or conversion failed.'],
-  missing_tool: import.meta.env.DEV
-    ? ['所需工具不可用，请在设置中指定路径。', 'A required tool is unavailable. Set its path in Settings.']
-    : ['所需工具不可用，请安装对应工具并加入系统 PATH 后重启应用。', 'A required tool is unavailable. Install it, add it to PATH, and restart the app.'],
+  missing_tool: ['所需工具不可用，请在设置中指定路径。', 'A required tool is unavailable. Set its path in Settings.'],
   tool_failed: ['外部工具执行失败。', 'An external tool failed.'], tool_timeout: ['外部工具响应超时。', 'An external tool timed out.'],
   unexpected: ['处理发生异常。', 'An unexpected processing error occurred.'], raw_output: ['原始工具输出', 'Original tool output'],
   error: ['操作失败', 'Operation failed'], saveError: ['配置保存失败', 'Could not save settings'],

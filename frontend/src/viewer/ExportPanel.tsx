@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { save, confirm } from '@tauri-apps/plugin-dialog';
 import { invoke, isTauri } from '@tauri-apps/api/core';
-import { getCurrentWindow } from '@tauri-apps/api/window';
+import { registerCloseGuard } from '../close';
 import { Download, LoaderCircle, X } from 'lucide-react';
 import { exportAnimation, type ExportOptions } from './export';
 import { diagnostic, label } from './i18n';
@@ -25,17 +25,14 @@ export default function ExportPanel({ language, enabled, options, assetKey }: Pr
   }, [assetKey]);
   useEffect(() => {
     if (!isTauri()) return;
-    const subscription = getCurrentWindow().onCloseRequested(async event => {
-      if (!control.current) return;
-      event.preventDefault();
-      if (await confirm(label(language, 'export.close'), { title: label(language, 'export.title'), kind: 'warning' })) {
-        control.current.abort();
-        await pending.current?.catch(() => {});
-        control.current = null;
-        await getCurrentWindow().close();
-      }
+    return registerCloseGuard(async () => {
+      if (!control.current) return true;
+      if (!await confirm(label(language, 'export.close'), { title: label(language, 'export.title'), kind: 'warning' })) return false;
+      control.current?.abort();
+      await pending.current?.catch(() => {});
+      control.current = null;
+      return true;
     });
-    return () => { subscription.then(stop => stop()); };
   }, [language]);
   const start = async (format: 'gif' | 'mp4') => {
     if (control.current && !control.current.signal.aborted) return;

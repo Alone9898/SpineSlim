@@ -18,9 +18,7 @@ const labels: Record<string, [string, string]> = {
   'export.size': ['最长边', 'Longest side'], 'export.fps': ['帧率', 'Frame rate'], 'export.transparent': ['GIF 透明背景（MP4 使用背景色）', 'Transparent GIF (MP4 uses background color)'],
   'export.choose': ['选择保存位置', 'Choose destination'], 'export.loading': ['准备导出', 'Preparing export'], 'export.rendering': ['渲染帧', 'Rendering frames'], 'export.encoding': ['正在编码，请稍候', 'Encoding, please wait'],
   'export.success': ['导出完成', 'Export complete'], 'export.cancel': ['取消导出', 'Cancel export'], 'export.cancelled': ['已取消导出', 'Export cancelled'], 'export.open': ['打开导出目录', 'Open export folder'],
-  'export.ffmpeg': import.meta.env.DEV
-    ? ['FFmpeg 不可用，请在设置中指定有效路径。', 'FFmpeg is unavailable. Select a valid path in Settings.']
-    : ['FFmpeg 不可用，请安装并加入系统 PATH 后重启应用。', 'FFmpeg is unavailable. Install it, add it to PATH, and restart the app.'],
+  'export.ffmpeg': ['FFmpeg 不可用，请在设置中指定有效路径。', 'FFmpeg is unavailable. Select a valid path in Settings.'],
   'export.busy': ['已有导出任务正在运行。', 'Another export is running.'], 'export.options': ['导出参数或帧数据无效。', 'Invalid export settings or frame data.'],
   'export.extension': ['请保留保存文件名的 .gif 或 .mp4 扩展名。', 'Keep the .gif or .mp4 extension in the saved filename.'],
   'export.close': ['正在导出，关闭窗口将取消导出。继续关闭？', 'An export is running. Closing will cancel it. Close anyway?'],

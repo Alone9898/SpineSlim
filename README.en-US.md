@@ -124,7 +124,7 @@ MP3 VBR: 0 is best quality, 9 smallest; OGG VBR: 9 best quality, 0 smallest. For
 | UI atlases within Asset processing | [TexturePacker](https://www.codeandweb.com/texturepacker/download) |
 | Spine JSON upgrades | SpineSkeletonDataConverter |
 
-Discovery uses saved paths, application and `tools/<tool-key>/` folders, PATH and other supported locations. **Settings is hidden in packaged builds.** Install tools on PATH and restart; development builds can choose paths in Settings. Keep portable tools' companion files.
+Discovery uses saved paths, application and `tools/<tool-key>/` folders, PATH and other supported locations. Open Settings at the bottom of the sidebar in both development and packaged builds to detect tools or choose their paths. Keep portable tools' companion files.
 
 The default Tauri package does not bundle these external tools. The full-package script is for local testing and does not establish redistribution rights. Check each release's contents and [third-party notices](THIRD_PARTY.md).
 

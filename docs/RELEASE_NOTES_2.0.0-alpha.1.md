@@ -12,7 +12,7 @@ SpineSlim 2.0 使用 Tauri 2 + React + TypeScript + Python 后台，加入四个
 - **图集打包**：独立本地打包，无需 TexturePacker；透明裁剪、边距、边缘扩展、多页和实时布局；支持 Cocos、Unity、Godot 4、PixiJS、Phaser 3、Spine。
 - **资源处理**：Spine JSON 升级、原格式 / WebP / PNG / JPG / Basis 纹理处理、UI 分类、位图字体和 WebM / VP9 视频；逐文件阶段进度、日志和包体统计。
 - **音频处理**：批量转换 MP3 / OGG / WAV，试听、裁剪、淡入淡出、短音频拼接；音频图集输出 Howler.js / Phaser JSON，支持进度、取消与体积对比。
-- **桌面体验**：中文默认、English 切换，侧栏 GitHub Star 与 TG 群入口；生产构建隐藏设置并禁用右键菜单。
+- **桌面体验**：中文默认、English 切换，侧栏 GitHub Star 与 TG 群入口；设置始终显示在侧栏底部，生产构建禁用右键菜单。修复窗口关闭权限及重复关闭监听，已验证普通、最大化及最小化恢复后的退出。
 
 ### 安装与依赖
 

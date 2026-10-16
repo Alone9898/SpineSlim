@@ -124,7 +124,7 @@ MP3 VBR：0 质量最好、9 最小；OGG VBR：9 质量最好、0 最小。严�
 | 资源处理中的 UI 图集 | [TexturePacker](https://www.codeandweb.com/texturepacker/download) |
 | JSON 升级 | SpineSkeletonDataConverter |
 
-查找已保存路径、应用目录及 `tools/<工具键>/`、系统 PATH 等位置。**正式版隐藏设置入口**，可将工具安装并加入 PATH 后重启；开发版可在设置中选路径。便携工具应保留配套文件，不能一律只复制 EXE。
+查找已保存路径、应用目录及 `tools/<工具键>/`、系统 PATH 等位置。开发版和正式版均可从侧栏底部打开设置，检测工具或手动指定路径。便携工具应保留配套文件，不能一律只复制 EXE。
 
 默认 Tauri 构建不捆绑这些外部工具。完整包脚本用于本地测试，不代表可直接公开再分发；发布附件是否带工具及其许可条件以 Release 为准，详见 [第三方说明](THIRD_PARTY.md)。
 
