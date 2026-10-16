@@ -1,0 +1,22 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main-capability",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-close",
+    "dialog:allow-open",
+    "dialog:allow-save",
+    "dialog:allow-confirm",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [
+        { "url": "https://github.com/*" },
+        { "url": "https://t.me/+XlcsJcxyKZtlNGYy" },
+        { "url": "https://imagemagick.org/*" },
+        { "url": "https://www.codeandweb.com/*" },
+        { "url": "https://ffmpeg.org/*" }
+      ]
+    }
+  ]
+}

@@ -15,7 +15,9 @@ TOOL_INFO = {
 def _candidates(key, application_directory):
     _, filename, _, _ = TOOL_INFO[key]
     root = Path(application_directory)
-    candidates = [root / filename, root / "TexturePacker" / "bin" / filename]
+    candidates = [root / "tools" / key / filename, root / filename, root / "TexturePacker" / "bin" / filename]
+    if key == "texturepacker":
+        candidates.insert(0, root / "tools" / key / "bin" / filename)
     path_match = shutil.which(filename)
     if path_match:
         candidates.append(Path(path_match))

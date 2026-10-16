@@ -30,3 +30,10 @@ video-alpha-diagnostics/
 tmp*/
 tests/runtime_tmp/*
 !tests/runtime_tmp/.gitkeep
+node_modules/
+dist-web/
+src-tauri/target/
+src-tauri/gen/
+src-tauri/binaries/
+output/
+.playwright-cli/

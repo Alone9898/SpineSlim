@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "SpineSlim",
+  "version": "2.0.0-alpha.1",
+  "identifier": "com.alone9898.spineslim",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "devUrl": "http://127.0.0.1:1420",
+    "frontendDist": "../dist-web"
+  },
+  "app": {
+    "windows": [{ "title": "SpineSlim", "width": 1200, "height": 860, "minWidth": 960, "minHeight": 720 }],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data:; media-src 'self' blob:; style-src 'self' 'unsafe-inline'; connect-src ipc: http://ipc.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "icon": ["../assets/app-icon.ico", "../assets/app-icon.png"],
+    "externalBin": ["binaries/spineslim-worker"],
+    "resources": ["../LICENSE", "../THIRD_PARTY.md", "../docs/licenses/"],
+    "windows": { "webviewInstallMode": { "type": "downloadBootstrapper" } }
+  }
+}

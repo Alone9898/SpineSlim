@@ -1,0 +1,50 @@
+const labels: Record<string, [string, string]> = {
+  title: ['Spine 预览', 'Spine viewer'], description: ['打开目录，查看动画。素材始终留在本机。', 'Explore animations from a folder. Your assets stay on this device.'],
+  folder: ['选择文件夹', 'Choose folder'], files: ['选择文件', 'Choose files'], refresh: ['刷新', 'Refresh'], cancel: ['取消扫描', 'Cancel scan'],
+  empty: ['把 Spine 目录拖到这里', 'Drop a Spine folder here'], hint: ['也可选择 JSON / SKEL、Atlas 和纹理文件。无需先转换或升级。', 'Or select JSON / SKEL, Atlas and texture files. No conversion required.'],
+  support: ['当前接入 3.8 / 4.0 / 4.1 / 4.2 · 本地测试版', 'Adapters: 3.8 / 4.0 / 4.1 / 4.2 · Local alpha'],
+  search: ['搜索名称或路径', 'Search name or path'], all: ['全部资源', 'All assets'], problems: ['需要检查', 'Needs attention'], available: ['版本已接入', 'Runtime available'],
+  scanning: ['正在扫描', 'Scanning'], count: ['个骨架', 'skeletons'], skipped: ['已跳过文件/目录', 'Skipped files/folders'],
+  none: ['没有找到 Spine 骨架', 'No Spine skeletons found'], select: ['选择左侧资源开始预览', 'Select an asset to preview'], loading: ['正在加载资源…', 'Loading asset…'],
+  atlas: ['匹配 Atlas', 'Match Atlas'], match: ['请选择 Atlas', 'Choose an Atlas'], missingAtlas: ['没有找到 Atlas，请重新选择包含 Atlas 和纹理的目录。', 'No Atlas found. Select a folder containing the Atlas and textures.'],
+  animation: ['动画', 'Animation'], skin: ['皮肤', 'Skin'], setup: ['初始姿态', 'Setup pose'], speed: ['速度', 'Speed'],
+  play: ['播放', 'Play'], pause: ['暂停', 'Pause'], start: ['回到开头', 'Restart'], loop: ['循环', 'Loop'], fit: ['适应画布', 'Fit view'],
+  grid: ['网格', 'Grid'], origin: ['原点', 'Origin'], checker: ['透明棋盘', 'Checkerboard'], background: ['背景', 'Background'], bones: ['骨骼调试', 'Bone debug'],
+  auto: ['自动（Atlas）', 'Auto (Atlas)'], straight: ['直通 Alpha', 'Straight alpha'], premultiplied: ['预乘 Alpha', 'Premultiplied alpha'],
+  properties: ['预览设置', 'Preview settings'], info: ['资源信息', 'Asset info'], exportVersion: ['导出版本', 'Export version'], runtime: ['运行时', 'Runtime'],
+  instructions: ['滚轮缩放 · 拖动画布平移 · Esc 退出全屏', 'Scroll to zoom · Drag to pan · Esc to exit fullscreen'], copy: ['复制诊断', 'Copy diagnostics'], copied: ['已复制', 'Copied'], retry: ['重新加载', 'Reload'],
+  'viewer.fullscreen': ['画布全屏', 'Fullscreen'], 'viewer.exitFullscreen': ['退出全屏', 'Exit fullscreen'], 'viewer.fullscreenFailed': ['全屏失败，请再次点击全屏按钮。', 'Fullscreen failed. Click the fullscreen button again.'],
+  'export.title': ['导出 GIF / MP4', 'Export GIF / MP4'], 'export.hint': ['导出当前动画、皮肤和取景，按当前速度播放。不含网格和调试线。需要 FFmpeg。', 'Exports the current animation, skin, framing and speed without grid or debug overlays. Requires FFmpeg.'],
+  'export.size': ['最长边', 'Longest side'], 'export.fps': ['帧率', 'Frame rate'], 'export.transparent': ['GIF 透明背景（MP4 使用背景色）', 'Transparent GIF (MP4 uses background color)'],
+  'export.choose': ['选择保存位置', 'Choose destination'], 'export.loading': ['准备导出', 'Preparing export'], 'export.rendering': ['渲染帧', 'Rendering frames'], 'export.encoding': ['正在编码，请稍候', 'Encoding, please wait'],
+  'export.success': ['导出完成', 'Export complete'], 'export.cancel': ['取消导出', 'Cancel export'], 'export.cancelled': ['已取消导出', 'Export cancelled'], 'export.open': ['打开导出目录', 'Open export folder'],
+  'export.ffmpeg': import.meta.env.DEV
+    ? ['FFmpeg 不可用，请在设置中指定有效路径。', 'FFmpeg is unavailable. Select a valid path in Settings.']
+    : ['FFmpeg 不可用，请安装并加入系统 PATH 后重启应用。', 'FFmpeg is unavailable. Install it, add it to PATH, and restart the app.'],
+  'export.busy': ['已有导出任务正在运行。', 'Another export is running.'], 'export.options': ['导出参数或帧数据无效。', 'Invalid export settings or frame data.'],
+  'export.extension': ['请保留保存文件名的 .gif 或 .mp4 扩展名。', 'Keep the .gif or .mp4 extension in the saved filename.'],
+  'export.close': ['正在导出，关闭窗口将取消导出。继续关闭？', 'An export is running. Closing will cancel it. Close anyway?'],
+  'export.limit': ['单次导出最长 30 秒，请提高播放速度或选择较短动画。', 'Exports are limited to 30 seconds. Increase playback speed or choose a shorter animation.'],
+  'export.failed': ['编码失败，请查看详情并检查 FFmpeg 是否支持对应编码器。', 'Encoding failed. Check the details and FFmpeg encoder support.'],
+  'export.write': ['无法写入导出文件，请检查目录权限和磁盘空间。', 'Cannot write export file. Check permissions and free disk space.'], 'export.timeout': ['编码超时，任务已停止。', 'Encoding timed out and was stopped.'],
+  seeking: ['正在定位…', 'Seeking…'], noAnimations: ['此骨架没有动画，显示初始姿态。', 'This skeleton has no animations. Showing setup pose.'],
+  'viewer.cancelled': ['扫描已取消', 'Scan cancelled'], 'viewer.read': ['文件无法读取，请检查路径和权限。', 'Cannot read file. Check the path and permissions.'],
+  'viewer.link': ['资源引用超出授权目录，或经过符号链接。请重新选择资源目录。', 'Resource is outside the selected folder or uses a symbolic link. Select the resource folder again.'],
+  'viewer.large': ['资源超过预览限制：文件 64 MB、纹理边长 8192、总像素 6400 万。', 'Preview limit exceeded: 64 MB per file, 8192 per texture side, 64M decoded pixels.'],
+  'viewer.limit': ['目录超过 50,000 项，请选择更小的目录。', 'Folder exceeds 50,000 entries. Choose a smaller folder.'],
+  'viewer.version': ['无法识别 Spine 导出版本。', 'Cannot identify the Spine export version.'],
+  'viewer.unsupported': ['此版本尚未接入，当前支持加载 3.8 / 4.0 / 4.1 / 4.2。', 'No adapter for this version. Currently loads 3.8 / 4.0 / 4.1 / 4.2.'],
+  'viewer.missing': ['Atlas 引用的纹理未找到', 'Atlas texture not found'], 'viewer.texture': ['此纹理格式尚不支持，请使用 PNG/JPG/WebP', 'Unsupported texture format. Use PNG/JPG/WebP'],
+  'viewer.atlas': ['Atlas 无有效页面。', 'Atlas contains no valid pages.'], 'viewer.expired': ['目录会话已过期，请刷新。', 'Folder session expired. Refresh the folder.'],
+  'viewer.webgl': ['无法创建 WebGL 画布，请检查显卡和 WebView2。', 'Cannot create a WebGL canvas. Check the GPU and WebView2.'],
+  'viewer.context': ['显卡上下文已丢失，请重新加载。', 'Graphics context lost. Reload the asset.'],
+  'viewer.mixed': ['4.2 暂不支持同一 Atlas 混合 PMA 页面，请统一导出设置。', 'Mixed PMA pages are not yet supported by the 4.2 adapter. Use consistent export settings.'],
+  'viewer.empty': ['请选择资源目录或文件。', 'Choose an asset folder or files.'],
+  previewOnly: ['请在 SpineSlim 桌面窗口中选择本地资源。', 'Choose local assets in the SpineSlim desktop window.'],
+  failed: ['加载失败', 'Load failed'], unknown: ['未知', 'Unknown'], collapse: ['资源目录', 'Asset directory'], timeline: ['播放进度', 'Playback position'],
+};
+export function label(language: 'zh' | 'en', key: string) { return labels[key]?.[language === 'en' ? 1 : 0] ?? key; }
+export function diagnostic(language: 'zh' | 'en', value: string) {
+  const [key, ...details] = value.split('|');
+  return [label(language, key), ...details].join(' · ');
+}

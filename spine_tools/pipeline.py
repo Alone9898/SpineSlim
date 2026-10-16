@@ -238,13 +238,16 @@ def process_spine_directories(
     converter_executable: Path,
     *,
     converter_func: Callable = run_spine_converter,
+    progress_func: Callable | None = None,
 ) -> BatchResult:
     json_paths = _collect_json_paths(directories)
 
     batch = BatchResult()
     prepared_files: list[PreparedSpineFile] = []
 
-    for path in json_paths:
+    for index, path in enumerate(json_paths):
+        if progress_func:
+            progress_func(index, len(json_paths), path)
         try:
             data = _read_json(path)
         except Exception as exc:
@@ -287,6 +290,8 @@ def process_spine_directories(
                 )
             )
 
+    if progress_func:
+        progress_func(len(json_paths), len(json_paths), None)
     if batch.success:
         commit_prepared_files(prepared_files)
     else:

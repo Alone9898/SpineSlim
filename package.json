@@ -1,0 +1,37 @@
+{
+  "name": "spineslim-desktop",
+  "private": true,
+  "version": "2.0.0-alpha.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 1420 --strictPort",
+    "build": "tsc --noEmit && vite build",
+    "tauri": "tauri",
+    "desktop": "tauri dev",
+    "package": "tauri build"
+  },
+  "dependencies": {
+    "@esotericsoftware/spine-webgl": "4.2.120",
+    "@pixi-spine/base": "4.0.6",
+    "@pixi-spine/runtime-3.8": "4.0.6",
+    "@pixi-spine/runtime-4.0": "4.0.6",
+    "@pixi-spine/runtime-4.1": "4.0.6",
+    "@tauri-apps/api": "^2.0.0",
+    "@tauri-apps/plugin-dialog": "^2.0.0",
+    "@tauri-apps/plugin-opener": "^2.0.0",
+    "fflate": "^0.8.3",
+    "lucide-react": "^0.468.0",
+    "maxrects-packer": "^3.0.0",
+    "pixi.js": "7.4.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "~5.7.3",
+    "vite": "^6.1.0"
+  }
+}

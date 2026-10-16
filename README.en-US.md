@@ -1,151 +1,187 @@
-# SpineSlim
+# SpineSlim · Spine Viewer, Texture Atlas Packer & Game Asset Toolkit
 
-[中文说明](README.zh-CN.md) · [Releases](https://github.com/Alone9898/SpineSlim/releases) · [Report an issue](https://github.com/Alone9898/SpineSlim/issues)
+**A Windows desktop toolkit for Unity, Cocos Creator, Godot, PixiJS and Phaser game developers.**
 
-SpineSlim is a Windows desktop tool for batch processing Spine assets, UI images, and videos.
+SpineSlim helps indie developers, 2D game artists and technical artists preview Spine JSON/SKEL animations, create sprite sheets and texture atlases, optimize textures, and process game audio locally. HTML5 and web game developers can also export audio sprites for Howler.js and Phaser. Engine-specific formats and compatibility limits are listed below.
 
-![SpineSlim English interface](assets/ui-en.png)
+[Home](README.md) · [中文](README.zh-CN.md) · [Download / Releases](https://github.com/Alone9898/SpineSlim/releases) · [Telegram group](https://t.me/+XlcsJcxyKZtlNGYy) · [Star ⭐](https://github.com/Alone9898/SpineSlim)
 
-If SpineSlim helps you, please [star the repository](https://github.com/Alone9898/SpineSlim). SpineSlim is an independent project and is not affiliated with Spine.
+This guide covers the Tauri 2.0 development line, currently `2.0.0-alpha.1`. Check the release notes for your downloaded build: older 1.x packages do not include all new modules. Windows x64 is the primary platform; no macOS installer is available yet.
 
-## Features
+## Quick start
 
-- Validate Spine JSON and upgrade data to Spine 4.2.11.
-- Migrate Setup Pose attachments while preserving existing animation keys.
-- Choose original format, WebP, PNG, JPG, or Basis for Spine and UI textures.
-- Update Atlas references when texture formats change.
-- Accept Spine folders with any name and preserve the source directory structure.
-- Process UI images, atlases, bitmap fonts, BG assets, and WebM / VP9 videos.
-- Chinese and English UI, folder drag-and-drop, progress, logs, and package statistics.
+1. Choose a Windows x64 build from [Releases](https://github.com/Alone9898/SpineSlim/releases). Development builds may be marked Pre-release.
+2. Run the installer or fully extract the portable archive, depending on the attachments provided. Packaged builds do not require Python, Node.js or Rust.
+3. Choose **Spine viewer / Atlas packer / Asset processing / Audio processing** and import local files or folders.
+4. Install the external tools required for your workflow. Asset processing source and output folders must not overlap.
 
-This document describes the current source. For a downloaded binary, also read its release notes. Windows is the primary supported platform; no macOS package is currently available. The online Spine viewer is planned for phase two; animation preview is not available yet.
+Chinese is the default language; select English at the bottom of the sidebar. The app runs in its own desktop window and processes assets locally. Windows needs WebView2; check the release notes for offline runtime availability.
 
-## Choosing a texture format
+## Spine animation viewer for JSON and SKEL files
 
-| Option | Behavior | Suggested use |
-| --- | --- | --- |
-| Original (default) | Keep extensions; attempt lossless PNG compression and retain other existing formats | Preserve the existing asset integration |
-| WebP | Lossy compression with adjustable quality and transparency support | Reduce size when your runtime supports WebP |
-| PNG | Lossless, preserving dimensions and transparency; keep an existing PNG if compression makes it larger | Lossless assets with transparency |
-| JPG | Lossy with adjustable quality; flatten transparent areas onto white | Backgrounds without transparency |
-| Basis | The current converter produces `.basis`; requires runtime decoding or transcoding support | Projects with a compatible GPU texture pipeline |
+![SpineSlim Windows Spine viewer with JSON and SKEL animation playback and skin controls](assets/screenshots/viewer-en.png)
 
-The selection applies to textures handled by each workflow, rather than every file in a folder. Spine processes Atlas textures and other PNG files separately. UI background conversion handles PNG/JPG/JPEG; original mode only compresses PNG files. Spine and UI format settings are saved separately. WebP/JPG quality ranges from 0–100; higher values generally produce clearer, larger images. Compression results depend on the input.
+- Scan directories, browse/search skeletons, and match Atlas files and textures.
+- Load Spine **3.8 / 4.0 / 4.1 / 4.2** JSON and SKEL files with PNG / JPG / WebP textures.
+- Switch animations and skins; play, pause, loop, adjust speed and seek on the timeline.
+- Zoom, pan, fit, fullscreen, grid, origin, checkerboard, background color and bone debug.
+- Inspect export/runtime versions and texture information; select Alpha modes and copy diagnostics.
+- Export the current animation, skin, framing and speed as **GIF / MP4** using FFmpeg. Exports are limited to 30 seconds; GIF supports optional transparency, MP4 uses the background color. Grid/debug overlays are excluded.
 
-## Output structure
+Preview does not need the Spine editor or modify source skeletons. **Preview support differs from JSON upgrade support.** Spine 3.5–3.7, 4.3 and Basis/KTX textures are not supported by the viewer. Test unusual assets in your project.
+
+## Sprite sheet and texture atlas packer for game engines
+
+![SpineSlim sprite sheet packer with alpha trimming, multipage preview and engine metadata export](assets/screenshots/atlas-en.png)
+
+The standalone packer runs locally and **does not require TexturePacker**. Import PNG / JPG / WebP files or directories, append/search/remove images, inspect the layout and switch pages. Adjust dimensions, power-of-two/fixed sizing, scale, alpha trimming and threshold, padding and edge extrusion; packing updates automatically.
+
+| Target | Export |
+| --- | --- |
+| PixiJS | PNG + spritesheet JSON with multipack references |
+| Spine | PNG + a multipage Atlas |
+| Cocos Creator / cocos2d-x | PNG + plist format 3 |
+| Godot 4 | PNG + AtlasTexture `.tres` resources |
+| Unity | PNG + `.spineslim.json` + an Editor importer |
+| Phaser 3 | PNG + multiatlas JSON |
+
+Save a ZIP, optionally including both PixiJS JSON and Spine Atlas. Unity mode keeps full canvases and disables trimming. Install the importer once under `Assets/Editor`, then use `Tools → SpineSlim → Import Atlas` to create Multiple Sprites. It does not generate a Unity `.spriteatlas` asset.
+
+Rotation and duplicate-image merging are not implemented. Limits: 500 images, 32 Mi source pixels, 32 MiB per file, 16 output pages / 64 Mi output pixels, maximum dimension 8192. New formats have structure and coordinate tests; actual Unity / Godot / Cocos editor imports still need validation in your target project.
+
+[Export formats and import instructions](docs/ATLAS_PACKER.md)
+
+## Game asset processing and texture optimization
+
+![SpineSlim game asset processing with Spine texture compression and output format options](assets/screenshots/processing-en.png)
+
+### Spine and textures
+
+Recursively process Spine folders, preserve relative paths and update Atlas texture references. Spine and UI texture settings are saved independently.
+
+| Format | Behavior |
+| --- | --- |
+| Original (default) | Preserve extensions; attempt lossless compression for PNGs handled by the workflow |
+| WebP | Adjustable quality and transparency |
+| PNG | Lossless; keep an existing PNG if compression makes it larger |
+| JPG | Adjustable quality; flatten transparency onto white |
+| Basis | Export `.basis`; requires support in your game runtime |
+
+Optionally upgrade JSON to **Spine 4.2.11**, migrate setup-pose attachments and preserve existing animation keys. Preflight accepts 3.5 / 3.6 / 3.7 / 3.8 / 4.0 / 4.1 and recognizes 4.2 as already upgraded. An accepted version does not guarantee conversion of every asset. The upgrade uses an external converter and does not upgrade binary `.skel` files.
+
+### UI images, fonts and video
+
+- Classify UI assets into backgrounds, atlases and fonts, or enable “Process all images as backgrounds.”
+- The UI atlas pipeline uses TexturePacker, unlike the standalone Atlas packer. Background-only mode does not require TexturePacker.
+- Skip image filenames containing `guide`. A third underscore-separated segment of `pce` selects atlas packing; `pack` selects a background. Otherwise JPG/JPEG becomes a background, PNG smaller than 2048 × 1024 on both axes becomes a sprite, and larger PNG becomes a background.
+- `winnum` assets use Pillow-based bitmap font generation, without BMFont. The pipeline also handles TTF / OTF files and JSON under `part`.
+- Convert MOV / MP4 / M4V / WebM / MKV / AVI to WebM / VP9, with Opus audio when present. CRF ranges from 0–63; higher generally means smaller. Alpha requires a source and playback environment that support it.
+
+### Output and tasks
+
+![Video processing](assets/screenshots/video-en.png)
 
 ```text
-output/
-└─ program/
-   ├─ spine/          # Preserve paths inside the selected Spine source
-   ├─ bg/             # UI backgrounds at their original dimensions
-   ├─ atlas/          # UI atlas output
-   ├─ fonts/          # TTF / OTF fonts
-   ├─ part/           # JSON from a folder named part
-   └─ video/
-      ├─ pc/          # WebM at original dimensions
-      └─ mobile/      # WebM at approximately half width and height, rounded to even sizes
+output/program/
+├─ spine/           Original Spine folder hierarchy
+├─ bg/              UI backgrounds at original dimensions
+├─ atlas/           UI atlases
+├─ fonts/           Fonts
+├─ part/            Classified JSON
+└─ video/
+   ├─ pc/           Original-size WebM
+   └─ mobile/       Approximately half size, rounded to even dimensions
 ```
 
-This shows the main directories; actual output depends on the mode and assets. Spine inputs do not need to be named `mp` or `pc`. For example, `source/characters/hero.atlas` becomes `output/program/spine/characters/hero.atlas`. Videos still produce separate PC/Mobile outputs.
+Current-file and stage progress, logs, size statistics and cancellation are available. Processing uses staging before committing results. **A successful commit replaces existing output in its scope:** Spine replaces `program/spine`; UI replaces everything under `program` except `spine`; video updates PC/Mobile WebM outputs. Use a dedicated output folder and review the confirmation dialog.
 
-### UI classification
+## Game audio processing: compression, merging and audio sprites
 
-- PNG/JPG/JPEG inputs are supported. Files with `guide` in their names are skipped.
-- If the third underscore-separated name segment is `pce`, the image enters atlas packing; `pack` marks it as a background.
-- Without these markers, JPG/JPEG files become backgrounds. PNG files with width below 2048 and height below 1024 enter atlas packing; other sizes become backgrounds.
-- Files beginning with `winnum` enter the bitmap font workflow, which uses Pillow and does not require BMFont.
-- “Process all images as backgrounds” skips regular sprite atlas packing. Fonts, bitmap font assets, and videos still follow their own classification paths.
+![SpineSlim game audio editor for trimming, fades, merging and Howler.js Phaser audio sprites](assets/screenshots/audio-en.png)
 
-### Video options
+- Import files/folders or drag and drop MP3, OGG, WAV, FLAC, M4A, AAC, OPUS, AIFF and WMA.
+- Inspect duration, codec, sample rate, channels and size; preview source audio within an optional trim range.
+- Set start/end times and fade-in/out per clip. Reorder with arrow buttons or drag and drop.
+- Batch convert/compress to **MP3, OGG Vorbis or PCM 16-bit WAV**, with sample rate, mono/stereo, VBR quality or target bitrate settings.
+- **Merge short clips** in order, even with mixed formats or sample rates: normalize to PCM, concatenate, then encode.
+- **Audio sprites:** export a merged audio file with Howler.js / Phaser JSON, configurable gaps and named playback segments.
+- Track progress and input/output sizes, cancel work and open the result folder.
 
-MOV, MP4, M4V, WebM, MKV, and AVI inputs are converted to WebM / VP9. Audio, when present, is encoded as Opus. CRF ranges from 0–63; higher values generally produce smaller files. Start with 32–40. Alpha preservation requires a source with alpha and a playback environment that supports VP9 Alpha.
+Each export creates a unique `SpineSlim-audio-*` folder and preserves sources. Batch mode preserves imported directory structure. Limits: 500 clips, two hours per source and total processing duration. Preview loads the first ten minutes; fades apply at export. All exports re-encode. Lossy processing may reduce quality and does not guarantee smaller files.
 
-## Run locally
+MP3 VBR: 0 is best quality, 9 smallest; OGG VBR: 9 best quality, 0 smallest. For strict timing or gapless playback, use WAV and validate in your game runtime.
 
-Download the Windows x64 archive from [Releases](https://github.com/Alone9898/SpineSlim/releases/latest), extract it, and launch the EXE. Python is not required. The app searches common tool locations and offers automatic search, manual path selection, or official download pages when a tool is missing.
+[Audio workflow and game integration](docs/AUDIO_PROCESSING.md)
 
-For source runs, use Windows and Python 3.12+:
+## External tools
+
+| Feature | Dependency |
+| --- | --- |
+| Spine preview and standalone atlas packing | No external asset-processing executable |
+| GIF / MP4, audio processing and video conversion | [FFmpeg](https://ffmpeg.org/download.html); audio needs libmp3lame/libvorbis, MP4 needs libx264 |
+| Standard image optimization/conversion | [ImageMagick](https://imagemagick.org/script/download.php) |
+| Basis textures | [Basis Universal](https://github.com/BinomialLLC/basis_universal/releases) |
+| UI atlases within Asset processing | [TexturePacker](https://www.codeandweb.com/texturepacker/download) |
+| Spine JSON upgrades | SpineSkeletonDataConverter |
+
+Discovery uses saved paths, application and `tools/<tool-key>/` folders, PATH and other supported locations. **Settings is hidden in packaged builds.** Install tools on PATH and restart; development builds can choose paths in Settings. Keep portable tools' companion files.
+
+The default Tauri package does not bundle these external tools. The full-package script is for local testing and does not establish redistribution rights. Check each release's contents and [third-party notices](THIRD_PARTY.md).
+
+## Develop and build
+
+Install Windows x64, Node.js 20.19+ or 22.12+, Python 3.12+, stable Rust, MSVC C++ build tools and WebView2.
 
 ```powershell
 git clone https://github.com/Alone9898/SpineSlim.git
 cd SpineSlim
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe .\main.py
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt pyinstaller
+npm ci
+.\.venv\Scripts\python.exe scripts/build_worker.py
+npm run desktop
 ```
 
-## External tools
-
-Third-party tools are not bundled. Obtain them from their official publishers:
-
-| Tool | Purpose |
-| --- | --- |
-| [ImageMagick](https://imagemagick.org/) | Image compression and conversion |
-| [Basis Universal](https://github.com/BinomialLLC/basis_universal) | Basis / KTX2 compression |
-| [TexturePacker](https://www.codeandweb.com/texturepacker) | UI atlases |
-| SpineSkeletonDataConverter | Spine version conversion |
-| [FFmpeg](https://ffmpeg.org/) | Video conversion |
-
-The Spine converter is used when upgrading is enabled. Image conversion uses ImageMagick or Basis Universal, UI atlas packing uses TexturePacker, and video conversion uses FFmpeg. The current UI startup check requires both ImageMagick and TexturePacker, including when all images are treated as backgrounds. UI inputs containing videos also require FFmpeg.
-
-Discovery checks saved paths, the application folder, system PATH, and common TexturePacker installation locations. Manual selections are saved in `config.json`. Keep companion files with portable tools. SpineSkeletonDataConverter is a separate third-party converter, not the Spine editor; verify its origin and license before use.
-
-## Workflow
-
-1. Select 中文 / Chinese or English from the top-right menu.
-2. Choose source, output, and resource type: Spine, UI images, or video.
-3. Select a texture format. “Original” keeps the input extension by default.
-4. Review the options and click Start.
-
-Processing clears the relevant output folders, so use asset copies and a separate empty output folder for the first run. Spine output is written to `target/program/spine` with the source structure preserved. UI BG assets are written directly to `target/program/bg` without `mobile` or `pc` subfolders.
-
-- Spine mode clears the entire `program/spine` tree, including legacy `mobile` / `pc` folders. The source must be outside that output tree.
-- UI mode clears everything under `program` except `spine`, affecting previous UI, font, and video output.
-- Video mode removes existing WebM files from `program/video/pc` and `program/video/mobile`.
-- Spine 4.2 upgrading is optional, and not every input version is supported. Check preflight and conversion logs, then verify animation results in your target runtime.
-
-JSON preflight currently accepts the 3.5, 3.6, 3.7, 3.8, 4.0, and 4.1 series for upgrading and recognizes the 4.2 series as already 4.2. Other versions are marked unsupported. An accepted version does not guarantee conversion success; JSON contents and the external converter still matter. Binary `.skel` version upgrading is not provided.
-
-## Troubleshooting
-
-| Problem | What to check |
-| --- | --- |
-| `Atlas PNG page missing` | Confirm that the referenced texture exists and its relative path is correct; select the complete folder containing skeleton data, Atlas, and textures |
-| Compatibility summary says `failed=0`, but the job fails | The summary covers only version compatibility; inspect subsequent texture, Atlas, or video errors |
-| External tool not found | Search automatically or select its executable manually, keeping required companion files |
-| Drag-and-drop unavailable | Install `tkinterdnd2` for source runs, or use Choose folder |
-| Little size reduction | Assets may already be compressed; lossless PNG does not guarantee a large reduction. Try WebP if your runtime supports it |
-| White background after JPG conversion | JPG has no alpha channel. Use PNG, WebP, or original format for transparency |
-
-When reporting a problem, include the app version, Windows version, resource mode, format settings, and relevant error logs. Share a minimal sample only if you have permission to publish it.
-
-## Roadmap
-
-### Phase one: Windows batch processing
-
-The current focus is Spine/UI/video processing, format selection, tool discovery, Chinese/English UI, and output workflow improvements. Source code and a Windows build workflow are available; see Releases for the contents of each published version.
-
-### Phase two: Online Spine viewer (planned)
-
-A browser-based Spine animation viewer is planned to help inspect assets before and after conversion or compression. Proposed capabilities include:
-
-- Load skeleton data, Atlas files, and textures, prioritizing local file selection or drag-and-drop.
-- Switch animations and skins, with playback, pause, looping, and speed controls.
-- Zoom and pan the canvas; choose a background color or checkerboard.
-- Display resource information and loading errors to help diagnose texture references.
-- Explore original-versus-processed previews and integration with the desktop tool.
-
-These features are planned, not implemented, and have no committed release date. Supported Spine versions, JSON/binary formats, and texture decoding will be announced after runtime selection and validation. A viewer URL will be added when available.
-
-## Tests and packaging
+Rebuild the worker after editing Python code. `npm run dev` alone starts the web development server, without full desktop capabilities. The Tauri app no longer starts through the legacy `python main.py` entry point.
 
 ```powershell
+npm run build
+cargo check --manifest-path src-tauri/Cargo.toml
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
-python -m pip install pyinstaller
-python -m PyInstaller --noconfirm --clean --distpath dist --workpath build SpineSlim.spec
+
+.\.venv\Scripts\python.exe scripts/build_worker.py
+npm run package
 ```
 
-## License
+The default NSIS installer is generated under `src-tauri/target/release/bundle/nsis/`. The main EXE alone is insufficient: the Python worker and other packaged files are required. Validate installation, tool discovery and core workflows on a clean computer before releasing.
 
-The project code is licensed under the [MIT License](LICENSE), allowing modification, redistribution, and commercial use with the required license notice. Third-party tools, components, and user assets remain under their respective licenses; see [THIRD_PARTY.md](THIRD_PARTY.md).
+## FAQ
+
+### How can I preview Spine SKEL animations on Windows?
+
+Import the complete folder containing SKEL, Atlas and texture files into SpineSlim's Spine viewer. It loads Spine 3.8 / 4.0 / 4.1 / 4.2 and provides animation and skin controls without requiring the Spine editor. Previewing does not upgrade or rewrite source files.
+
+### Can I pack sprite sheets without TexturePacker?
+
+Yes. SpineSlim's standalone Atlas packer packs PNG/JPG/WebP images locally without TexturePacker. Choose PixiJS spritesheet JSON, Phaser 3 multiatlas JSON, Cocos plist, Godot 4 AtlasTexture, Unity's included Editor importer, or Spine Atlas. The separate UI classification workflow in Asset processing still uses TexturePacker.
+
+### How do I combine short sound effects for an HTML5 game?
+
+Use Audio sprite mode to merge clips and export timing metadata for Howler.js or Phaser, then play clips by name. Use Merge mode for continuous sequential playback, or Batch mode to keep separate files for Unity, Godot, Cocos and other workflows.
+
+| Question | Answer |
+| --- | --- |
+| `Atlas PNG page missing` | A referenced texture is missing or has the wrong relative path; import the complete asset folder |
+| Compatibility summary passes, task fails | The summary only covers upgrades; inspect subsequent texture/video errors |
+| Does atlas packing require TexturePacker? | The standalone module does not; the UI classification atlas pipeline does |
+| FFmpeg or another tool is missing | Install the complete tool on PATH and restart, or set its path in development Settings |
+| How do I play clips separately after merging? | Export an audio sprite and use the Howler.js / Phaser timing metadata |
+| New modules missing after download? | Check whether you downloaded legacy 1.x; 2.0 builds may be under Pre-release |
+| Where is Settings? | Hidden in packaged builds by the current product configuration |
+| Why white JPG backgrounds / little PNG savings? | JPG has no transparency; already optimized PNGs may not shrink |
+
+## Community and license
+
+Report issues through [GitHub Issues](https://github.com/Alone9898/SpineSlim/issues) or [Telegram](https://t.me/+XlcsJcxyKZtlNGYy). Include the app/Windows version, module, options, logs and a minimal sample you can share. If useful, please [star SpineSlim ⭐](https://github.com/Alone9898/SpineSlim).
+
+Original project code uses the [MIT License](LICENSE). Spine runtimes, external tools and assets retain their own terms; see [THIRD_PARTY.md](THIRD_PARTY.md). SpineSlim is independent and not affiliated with Spine. Screenshots use self-created examples in the development app; packaged builds hide Settings.

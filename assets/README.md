@@ -1,5 +1,13 @@
 # 图标资源 / Icon assets
 
+## 文档截图 / Documentation screenshots
+
+`screenshots/` 包含当前 Tauri 开发版的中英文截图：Spine 预览、图集打包、资源处理、视频和音频。截图中的图形与声音为本项目文档自制示例，不包含商业游戏素材。旧 `ui-zh.png` / `ui-en.png` 为旧版界面，当前 README 不再引用。
+
+`screenshots/` contains Chinese/English captures of the Tauri development app. Graphics and audio are self-created documentation examples, not commercial game assets. The older `ui-zh.png` / `ui-en.png` images show the legacy app and are no longer used in the current README.
+
+## 应用图标 / Application icons
+
 - `app-icon.ico`：Windows EXE 和窗口图标，包含多个尺寸。Windows executable and window icon in multiple resolutions.
 - `app-icon.png`：512 × 512 的界面图标。512 × 512 icon used by the desktop interface.
 - `brand.png`：用户提供的原始图标，用于重新生成资源，不随 EXE 打包。Original artwork retained for regeneration; not bundled in the executable.
