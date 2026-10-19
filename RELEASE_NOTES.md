@@ -1,3 +1,19 @@
+# SpineSlim v2.0.0-alpha.2
+
+## 修复日志 / Fix log
+
+- 修复 Windows `WinError 5`：Spine 输出提交不再整体重命名 `program/spine`，改为逐项迁移并支持失败回滚，降低资源管理器、杀毒软件或 ACL 导致的拒绝访问。
+- 修复桌面版 worker 未同步更新的问题，重新打包并验证 Pillow 图像依赖可正常加载。
+- 构建 worker 增加依赖预检，缺少 `Pillow` 或 `tkinterdnd2` 时会在构建前明确提示。
+- 新增 Spine 输出目录锁定提示，处理失败时给出关闭占用程序并重试的建议。
+
+## Fix log
+
+- Fixed Windows `WinError 5` during Spine output commits by replacing directory contents item by item with rollback support instead of renaming `program/spine` as a whole.
+- Rebuilt and synchronized the desktop worker so Pillow image processing is available in packaged builds.
+- Added worker build dependency checks for `Pillow` and `tkinterdnd2`.
+- Added a clear output-locked message with retry guidance.
+
 # SpineSlim v1.1.0
 
 ## 更新内容
