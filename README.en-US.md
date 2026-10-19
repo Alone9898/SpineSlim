@@ -4,13 +4,13 @@
 
 SpineSlim helps indie developers, 2D game artists and technical artists preview Spine JSON/SKEL animations, create sprite sheets and texture atlases, optimize textures, and process game audio locally. HTML5 and web game developers can also export audio sprites for Howler.js and Phaser. Engine-specific formats and compatibility limits are listed below.
 
-[Home](README.md) · [中文](README.zh-CN.md) · [Download / Releases](https://github.com/Alone9898/SpineSlim/releases) · [Telegram group](https://t.me/+XlcsJcxyKZtlNGYy) · [Star ⭐](https://github.com/Alone9898/SpineSlim)
+[Official Website](https://www.jyhzai.com/en/spineslim/) · [中文官网](https://www.jyhzai.com/spineslim/) · [Project Home](README.md) · [中文](README.zh-CN.md) · [Download / Releases](https://github.com/Alone9898/SpineSlim/releases) · [Telegram group](https://t.me/+XlcsJcxyKZtlNGYy) · [Star ⭐](https://github.com/Alone9898/SpineSlim)
 
-This guide covers the Tauri 2.0 development line, currently `2.0.0-alpha.1`. Check the release notes for your downloaded build: older 1.x packages do not include all new modules. Windows x64 is the primary platform; no macOS installer is available yet.
+This guide covers the Tauri 2.0 development line, currently released as `2.0.0-alpha.2`. Visit the [SpineSlim official website](https://www.jyhzai.com/en/spineslim/) for the product overview and check the release notes for your downloaded build. Older 1.x packages do not include all new modules. Windows x64 is the primary platform; no macOS installer is available yet.
 
 ## Quick start
 
-1. Choose a Windows x64 build from [Releases](https://github.com/Alone9898/SpineSlim/releases). Development builds may be marked Pre-release.
+1. Visit the [official website](https://www.jyhzai.com/en/spineslim/) for the product overview, or choose a Windows x64 build from [Releases](https://github.com/Alone9898/SpineSlim/releases). Development builds may be marked Pre-release.
 2. Run the installer or fully extract the portable archive, depending on the attachments provided. Packaged builds do not require Python, Node.js or Rust.
 3. Choose **Spine viewer / Atlas packer / Asset processing / Audio processing** and import local files or folders.
 4. Install the external tools required for your workflow. Asset processing source and output folders must not overlap.
@@ -182,6 +182,6 @@ Use Audio sprite mode to merge clips and export timing metadata for Howler.js or
 
 ## Community and license
 
-Report issues through [GitHub Issues](https://github.com/Alone9898/SpineSlim/issues) or [Telegram](https://t.me/+XlcsJcxyKZtlNGYy). Include the app/Windows version, module, options, logs and a minimal sample you can share. If useful, please [star SpineSlim ⭐](https://github.com/Alone9898/SpineSlim).
+Visit the [SpineSlim official website](https://www.jyhzai.com/en/spineslim/) for product information. Report issues through [GitHub Issues](https://github.com/Alone9898/SpineSlim/issues) or [Telegram](https://t.me/+XlcsJcxyKZtlNGYy). Include the app/Windows version, module, options, logs and a minimal sample you can share. If useful, please [star SpineSlim ⭐](https://github.com/Alone9898/SpineSlim).
 
 Original project code uses the [MIT License](LICENSE). Spine runtimes, external tools and assets retain their own terms; see [THIRD_PARTY.md](THIRD_PARTY.md). SpineSlim is independent and not affiliated with Spine. Screenshots use self-created examples in the development app; packaged builds hide Settings.

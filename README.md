@@ -4,7 +4,7 @@
 
 SpineSlim is a Windows desktop game asset toolkit for Unity, Cocos Creator, Godot, PixiJS and Phaser developers. Preview Spine JSON/SKEL animations, pack sprite sheets and texture atlases, optimize textures, and build audio sprites locally.
 
-[下载 / Releases](https://github.com/Alone9898/SpineSlim/releases) · [中文使用说明](README.zh-CN.md) · [English](README.en-US.md) · [TG 交流群](https://t.me/+XlcsJcxyKZtlNGYy) · [反馈问题](https://github.com/Alone9898/SpineSlim/issues)
+[产品官网](https://www.jyhzai.com/spineslim/) · [English Website](https://www.jyhzai.com/en/spineslim/) · [下载 / Releases](https://github.com/Alone9898/SpineSlim/releases) · [中文使用说明](README.zh-CN.md) · [English](README.en-US.md) · [TG 交流群](https://t.me/+XlcsJcxyKZtlNGYy) · [反馈问题](https://github.com/Alone9898/SpineSlim/issues)
 
 如果 SpineSlim 帮你节省了时间，欢迎点个 **[Star ⭐](https://github.com/Alone9898/SpineSlim)**。
 
@@ -21,7 +21,7 @@ SpineSlim is a Windows desktop game asset toolkit for Unity, Cocos Creator, Godo
 
 Tauri 2 + React + TypeScript + Python 后台。中文默认，支持 English；桌面使用无需另开浏览器，资源在本机处理。
 
-本文对应 **2.0 开发线**，当前源码版本为 `2.0.0-alpha.1`。下载时请核对 Release 的版本与功能说明；旧版 1.x 不包含全部新模块。当前主要支持 Windows x64，尚未提供 macOS 安装包。
+本文对应 **2.0 开发线**，当前发布版本为 `2.0.0-alpha.2`。可前往[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [GitHub Releases](https://github.com/Alone9898/SpineSlim/releases) 下载；旧版 1.x 不包含全部新模块。当前主要支持 Windows x64，尚未提供 macOS 安装包。
 
 ## Unity、Cocos、Godot、PixiJS 和 Phaser 怎么接入？
 
@@ -84,7 +84,7 @@ SpineSlim 的独立「图集打包」模块可将 PNG / JPG / WebP 打包为 PNG
 
 ## 下载与使用
 
-1. 打开 [Releases](https://github.com/Alone9898/SpineSlim/releases)，选择所需的 Windows x64 版本；测试版本可能标记为 Pre-release。
+1. 打开[产品官网](https://www.jyhzai.com/spineslim/)查看产品介绍，或前往 [Releases](https://github.com/Alone9898/SpineSlim/releases) 下载 Windows x64 版本；测试版本可能标记为 Pre-release。
 2. 安装版运行安装程序；便携版完整解压后启动。以该 Release 提供的文件类型为准。
 3. 选择模块并导入本地素材。预览与独立图集打包不需要外部处理工具；音频、视频及 GIF / MP4 导出需要 FFmpeg。
 
@@ -93,7 +93,7 @@ SpineSlim 的独立「图集打包」模块可将 PNG / JPG / WebP 打包为 PNG
 ## 文档与许可
 
 - [中文完整说明](README.zh-CN.md) / [English guide](README.en-US.md)：功能、依赖、源码运行、常见问题。
-- [2.0.0-alpha.1 更新说明草稿](docs/RELEASE_NOTES_2.0.0-alpha.1.md)：可用于 GitHub Release 正文。
+- [2.0.0-alpha.2 修复日志](docs/RELEASE_NOTES_2.0.0-alpha.2.md)：Windows 输出提交与 worker 打包修复。
 - [第三方组件说明](THIRD_PARTY.md)：Spine Runtime、FFmpeg、TexturePacker 等的许可说明。
 
 项目自有代码采用 [MIT License](LICENSE)。第三方组件、外部工具和素材遵循各自许可。SpineSlim 是独立第三方项目，与 Spine 官方无关联。

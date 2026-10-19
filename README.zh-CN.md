@@ -4,13 +4,13 @@
 
 SpineSlim 是 Windows 本地游戏资源工具，面向独立游戏开发者、2D 游戏美术、技术美术和 HTML5 / Web 游戏团队。可用于查看 Spine JSON / SKEL 动画、制作 sprite sheet / texture atlas，以及为 Howler.js / Phaser 生成 audio sprite。各引擎的导出格式和限制见下文。
 
-[首页](README.md) · [English](README.en-US.md) · [下载 Releases](https://github.com/Alone9898/SpineSlim/releases) · [TG 交流群](https://t.me/+XlcsJcxyKZtlNGYy) · [Star ⭐](https://github.com/Alone9898/SpineSlim)
+[产品官网](https://www.jyhzai.com/spineslim/) · [English Website](https://www.jyhzai.com/en/spineslim/) · [项目首页](README.md) · [English](README.en-US.md) · [下载 Releases](https://github.com/Alone9898/SpineSlim/releases) · [TG 交流群](https://t.me/+XlcsJcxyKZtlNGYy) · [Star ⭐](https://github.com/Alone9898/SpineSlim)
 
-当前文档对应 Tauri 2.0 开发线，源码版本 `2.0.0-alpha.1`。发行包功能以对应 Release 为准，旧版 1.x 不包含全部新功能。主要支持 Windows x64；macOS 安装包尚未提供。
+当前文档对应 Tauri 2.0 开发线，发布版本 `2.0.0-alpha.2`。访问 [SpineSlim 产品官网](https://www.jyhzai.com/spineslim/)可查看产品介绍，发行包功能以对应 Release 为准。旧版 1.x 不包含全部新功能。主要支持 Windows x64；macOS 安装包尚未提供。
 
 ## 快速开始
 
-1. 从 [Releases](https://github.com/Alone9898/SpineSlim/releases) 选择 Windows x64 版本，注意区分正式版和 Pre-release。
+1. 访问[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [Releases](https://github.com/Alone9898/SpineSlim/releases) 选择 Windows x64 版本，注意区分正式版和 Pre-release。
 2. 按发布附件类型安装或完整解压，启动 SpineSlim。已打包程序无需安装 Python、Node.js 或 Rust。
 3. 左侧选择 **Spine 预览 / 图集打包 / 资源处理 / 音频处理**，通过按钮或拖拽导入素材。
 4. 需要编码、压缩时，按下文准备相应工具。资源处理的源目录与目标目录不能相同或互相嵌套。
@@ -182,6 +182,6 @@ PixiJS 选择 spritesheet JSON；Phaser 3 选择 multiatlas JSON；Cocos Creator
 
 ## 反馈与许可
 
-欢迎到 [Issues](https://github.com/Alone9898/SpineSlim/issues) 或 [TG 群聊](https://t.me/+XlcsJcxyKZtlNGYy) 反馈，附版本、Windows 版本、模块、参数、日志和有权分享的最小复现素材。喜欢可以点个 [Star ⭐](https://github.com/Alone9898/SpineSlim)。
+访问 [SpineSlim 产品官网](https://www.jyhzai.com/spineslim/)获取产品信息。欢迎到 [Issues](https://github.com/Alone9898/SpineSlim/issues) 或 [TG 群聊](https://t.me/+XlcsJcxyKZtlNGYy) 反馈，附版本、Windows 版本、模块、参数、日志和有权分享的最小复现素材。喜欢可以点个 [Star ⭐](https://github.com/Alone9898/SpineSlim)。
 
 自有代码采用 [MIT](LICENSE)。Spine Runtime、外部工具和素材适用各自许可，参阅 [THIRD_PARTY.md](THIRD_PARTY.md)。本项目与 Spine 官方无关联。截图使用自制示例，开发版设置入口与正式版不同。
