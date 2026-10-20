@@ -55,6 +55,18 @@ SpineSlim 是 Windows 本地游戏资源工具，面向独立游戏开发者、2
 
 ![资源处理](assets/screenshots/processing-zh.png)
 
+### 处理前后对比：一眼看出包体变化
+
+**背景图案例：原 JPG 2,249 KB → WebP 165 KB，体积减少约 92.7%，节省约 2,084 KB。** 下图展示原图 `base_bg.jpg` 与输出 `base_bg.webp` 的文件大小：
+
+![背景图原图与输出对比：JPG 2,249 KB 转为 WebP 165 KB](assets/screenshots/background-compression.png)
+
+下面是用户提供的同一组 Spine 资源截图：PNG 贴图从 **359 KB** 降到 WebP **74 KB**，减少约 **79%**，单张节省约 **285 KB**。转换时同步更新 Atlas 的贴图引用，`.skel` 无需转换，适合 Unity、Cocos、Godot、PixiJS 和 Phaser 项目的纹理包体优化。以上为单张贴图的文件大小对比，按资源管理器显示值计算；实际压缩比例和画质取决于图片内容、质量设置和透明通道。
+
+| 处理前：PNG | 处理后：WebP |
+| --- | --- |
+| ![处理前 PNG 贴图，359 KB](assets/screenshots/processing-before.png) | ![处理后 WebP 贴图，74 KB](assets/screenshots/processing-after.png) |
+
 ### Spine 与纹理
 
 递归处理 Spine 目录、保留相对层级，自动更新 Atlas 纹理引用。Spine 与 UI 的纹理格式独立保存：

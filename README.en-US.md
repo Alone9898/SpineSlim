@@ -55,6 +55,18 @@ Rotation and duplicate-image merging are not implemented. Limits: 500 images, 32
 
 ![SpineSlim game asset processing with Spine texture compression and output format options](assets/screenshots/processing-en.png)
 
+### Before and after: see the size reduction at a glance
+
+**Background image example: JPG 2,249 KB → WebP 165 KB — about 92.7% smaller, saving approximately 2,084 KB.** The screenshot compares the original `base_bg.jpg` with the output `base_bg.webp`:
+
+![Background image file sizes: original JPG at 2,249 KB and WebP output at 165 KB](assets/screenshots/background-compression.png)
+
+In these user-provided screenshots, a PNG texture drops from **359 KB** to **74 KB** as WebP: about **79% smaller**, saving roughly **285 KB**. SpineSlim updates the Atlas texture reference; the `.skel` needs no conversion. This workflow helps optimize texture file sizes for Unity, Cocos, Godot, PixiJS and Phaser projects. Figures describe one texture and are calculated from the rounded sizes shown in Windows Explorer; compression ratios and visual quality vary with image content, quality settings and alpha data.
+
+| Before: PNG | After: WebP |
+| --- | --- |
+| ![Before processing: PNG texture at 359 KB](assets/screenshots/processing-before.png) | ![After processing: WebP texture at 74 KB](assets/screenshots/processing-after.png) |
+
 ### Spine and textures
 
 Recursively process Spine folders, preserve relative paths and update Atlas texture references. Spine and UI texture settings are saved independently.

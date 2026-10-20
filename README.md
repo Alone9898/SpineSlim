@@ -60,6 +60,18 @@ Unity / Godot / Cocos 导出已验证文件结构与坐标，实际编辑器导�
 
 保留 Spine 源目录层级，按需升级 JSON 至 4.2.11；UI 提供背景图、图集及位图字体处理；视频输出 WebM / VP9。外部工具按使用的功能准备。[完整流程与输出规则 →](README.zh-CN.md#资源处理)
 
+### 一个直观的压缩结果
+
+**背景图案例：JPG 2,249 KB → WebP 165 KB，体积减少约 92.7%，节省约 2,084 KB。** 原图 `base_bg.jpg` 与输出 `base_bg.webp` 的文件大小对比如下：
+
+![背景图压缩对比：原 JPG 2,249 KB，输出 WebP 165 KB](assets/screenshots/background-compression.png)
+
+你提供的同一组 Spine 资源截图中，贴图从 PNG **359 KB** 转为 WebP **74 KB**，体积减少约 **79%**（节省约 **285 KB**）。转换时同步更新 Atlas 的贴图引用，`.skel` 无需转换。这是单张贴图的文件大小对比，数值按资源管理器显示值计算；实际压缩比例和画质取决于素材及质量设置。
+
+| 处理前 | 处理后 |
+| --- | --- |
+| ![Spine 贴图处理前：PNG 359 KB](assets/screenshots/processing-before.png) | ![Spine 贴图处理后：WebP 74 KB](assets/screenshots/processing-after.png) |
+
 ## 游戏音频处理：音效压缩、合并与 Audio Sprite
 
 把零散音效统一转换为 MP3 / OGG / WAV，或按顺序合成一个音频。选择音频图集，还会生成每段音效的播放时间，供 Howler.js / Phaser 按名称播放。
