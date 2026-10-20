@@ -6,16 +6,18 @@ SpineSlim 是 Windows 本地游戏资源工具，面向独立游戏开发者、2
 
 [产品官网](https://www.jyhzai.com/spineslim/) · [English Website](https://www.jyhzai.com/en/spineslim/) · [项目首页](README.md) · [English](README.en-US.md) · [下载 Releases](https://github.com/Alone9898/SpineSlim/releases) · [TG 交流群](https://t.me/+XlcsJcxyKZtlNGYy) · [Star ⭐](https://github.com/Alone9898/SpineSlim)
 
-当前文档对应 Tauri 2.0 开发线，发布版本 `2.0.0-alpha.2`。访问 [SpineSlim 产品官网](https://www.jyhzai.com/spineslim/)可查看产品介绍，发行包功能以对应 Release 为准。旧版 1.x 不包含全部新功能。主要支持 Windows x64；macOS 安装包尚未提供。
+当前文档对应 Tauri 2.0 开发线，源码版本 `2.0.0-alpha.3`。访问 [SpineSlim 产品官网](https://www.jyhzai.com/spineslim/)可查看产品介绍，发行包功能以对应 Release 为准。旧版 1.x 不包含全部新功能。主要支持 Windows x64；macOS 安装包尚未提供。
 
 ## 快速开始
 
 1. 访问[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [Releases](https://github.com/Alone9898/SpineSlim/releases) 选择 Windows x64 版本，注意区分正式版和 Pre-release。
 2. 按发布附件类型安装或完整解压，启动 SpineSlim。已打包程序无需安装 Python、Node.js 或 Rust。
-3. 左侧选择 **Spine 预览 / 图集打包 / 资源处理 / 音频处理**，通过按钮或拖拽导入素材。
+3. 左侧选择 **Spine 预览 / Rive 预览 / 图集打包 / 资源处理 / 音频处理**，通过按钮或拖拽导入素材。
 4. 需要编码、压缩时，按下文准备相应工具。资源处理的源目录与目标目录不能相同或互相嵌套。
 
-默认中文，可在侧栏底部切换 English。直接在桌面窗口内使用，无需额外打开浏览器；资源在本机处理。系统需要 WebView2，安装包是否包含离线组件以 Release 为准。
+默认中文，可在“设置”中切换 English 并检查软件更新。直接在桌面窗口内使用，无需额外打开浏览器；资源在本机处理。系统需要 WebView2，安装包是否包含离线组件以 Release 为准。
+
+Rive 预览可离线打开本地 `.riv`、切换画板和状态机，并测试传统输入控件；详情见 [Rive 预览说明](docs/RIVE_VIEWER.md)。
 
 ## Spine 动画预览：JSON / SKEL 查看器
 

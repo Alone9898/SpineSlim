@@ -28,3 +28,13 @@ python scripts/build_local_full.py --tools-source "D:\tools-source" --imagemagic
 - 全新 Windows、离线安装、第三方激活和完整预览导出流程仍需换机验收。
 
 安装后请保留 `tools` 目录。可在设置中指定工具路径；有效的手动工具路径优先于包内工具，失效路径自动回退到包内工具。
+
+## 发布封装
+
+确认所含第三方组件具有相应分发权利后，可基于已验证的本地全包生成发布附件：
+
+```powershell
+python scripts/prepare_full_release.py --licenses-source "D:\SpineSlim\licenses"
+```
+
+脚本补齐本次 FFmpeg 构建信息与 GPL 许可文件，改写面向用户的包内说明，重新生成安装包、资源清单和 SHA-256 校验文件到 `output/release-<版本>/`。发布前仍需核对实际二进制对应的第三方条款；本地工具可正常运行不等于已取得再分发授权。

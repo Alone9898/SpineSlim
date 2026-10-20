@@ -2,6 +2,7 @@ import json
 import os
 import shutil
 import tempfile
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Callable
 
@@ -136,9 +137,11 @@ def prepare_spine_json(
     converter_executable: Path,
     *,
     converter_func: Callable = run_spine_converter,
+    data: dict | None = None,
 ) -> PreparedSpineFile:
     source_path = Path(source_path)
-    data = _read_json(source_path)
+    if data is None:
+        data = _read_json(source_path)
     validation = validate_spine_json(data)
     if not validation.success:
         raise ValueError(f"invalid Spine JSON: {', '.join(validation.errors)}")
@@ -153,23 +156,23 @@ def prepare_spine_json(
         if classification == "upgrade":
             converter_func(converter_executable, source_path, temporary_path)
             status = "upgraded"
+            converted = _read_json(temporary_path)
+            converted_validation = validate_spine_json(converted)
+            if not converted_validation.success:
+                raise ValueError(
+                    "invalid converted Spine JSON: "
+                    + ", ".join(converted_validation.errors)
+                )
+            output_version = str(converted["skeleton"].get("spine", ""))
+            if output_version != TARGET_SPINE_VERSION:
+                raise ValueError(
+                    f"unexpected converted Spine version: {output_version or '<missing>'}"
+                )
         else:
-            shutil.copy2(source_path, temporary_path)
+            # 已是 4.2：数据已在内存且校验过，无需 copy + 重新读取 + 重复校验
             status = "already_4_2"
-
-        converted = _read_json(temporary_path)
-        converted_validation = validate_spine_json(converted)
-        if not converted_validation.success:
-            raise ValueError(
-                "invalid converted Spine JSON: "
-                + ", ".join(converted_validation.errors)
-            )
-
-        output_version = str(converted["skeleton"].get("spine", ""))
-        if classification == "upgrade" and output_version != TARGET_SPINE_VERSION:
-            raise ValueError(
-                f"unexpected converted Spine version: {output_version or '<missing>'}"
-            )
+            converted = data
+            output_version = input_version
 
         transform = clear_setup_pose(converted)
         transformed_validation = validate_spine_json(transform.data)
@@ -233,65 +236,98 @@ def commit_prepared_files(prepared_files: list[PreparedSpineFile]) -> None:
         backup_path.unlink(missing_ok=True)
 
 
+def _process_one(
+    path: Path,
+    converter_executable: Path,
+    converter_func: Callable,
+) -> tuple[FileProcessResult, PreparedSpineFile | None]:
+    try:
+        data = _read_json(path)
+    except Exception as exc:
+        return FileProcessResult(path=path, status="failed", error=str(exc)), None
+
+    skeleton = data.get("skeleton") if isinstance(data, dict) else None
+    version = skeleton.get("spine") if isinstance(skeleton, dict) else None
+    if not isinstance(version, str) or not version:
+        return FileProcessResult(path=path, status="ignored"), None
+
+    try:
+        prepared = prepare_spine_json(
+            path,
+            converter_executable,
+            converter_func=converter_func,
+            data=data,
+        )
+        return prepared.result, prepared
+    except ValueError as exc:
+        status = "unsupported" if "unsupported Spine version" in str(exc) else "failed"
+        return (
+            FileProcessResult(
+                path=path, status=status, input_version=version, error=str(exc)
+            ),
+            None,
+        )
+    except Exception as exc:
+        return (
+            FileProcessResult(
+                path=path, status="failed", input_version=version, error=str(exc)
+            ),
+            None,
+        )
+
+
 def process_spine_directories(
     directories: list[Path],
     converter_executable: Path,
     *,
     converter_func: Callable = run_spine_converter,
     progress_func: Callable | None = None,
+    max_workers: int | None = None,
 ) -> BatchResult:
     json_paths = _collect_json_paths(directories)
+    if max_workers is None:
+        max_workers = min(8, max(2, os.cpu_count() or 2))
 
     batch = BatchResult()
     prepared_files: list[PreparedSpineFile] = []
 
-    for index, path in enumerate(json_paths):
-        if progress_func:
-            progress_func(index, len(json_paths), path)
-        try:
-            data = _read_json(path)
-        except Exception as exc:
-            batch.results.append(
-                FileProcessResult(path=path, status="failed", error=str(exc))
-            )
-            continue
-
-        skeleton = data.get("skeleton") if isinstance(data, dict) else None
-        version = skeleton.get("spine") if isinstance(skeleton, dict) else None
-        if not isinstance(version, str) or not version:
-            batch.results.append(FileProcessResult(path=path, status="ignored"))
-            continue
-
-        try:
-            prepared = prepare_spine_json(
-                path,
-                converter_executable,
-                converter_func=converter_func,
-            )
-            prepared_files.append(prepared)
-            batch.results.append(prepared.result)
-        except ValueError as exc:
-            status = "unsupported" if "unsupported Spine version" in str(exc) else "failed"
-            batch.results.append(
-                FileProcessResult(
-                    path=path,
-                    status=status,
-                    input_version=version,
-                    error=str(exc),
-                )
-            )
-        except Exception as exc:
-            batch.results.append(
-                FileProcessResult(
-                    path=path,
-                    status="failed",
-                    input_version=version,
-                    error=str(exc),
-                )
-            )
-
+    results: list[tuple[FileProcessResult, PreparedSpineFile | None] | None] = [
+        None
+    ] * len(json_paths)
     if progress_func:
-        progress_func(len(json_paths), len(json_paths), None)
+        progress_func(0, len(json_paths), None)
+    futures = {}
+    try:
+        with ThreadPoolExecutor(max_workers=max(1, min(max_workers, len(json_paths) or 1))) as executor:
+            futures = {
+                executor.submit(_process_one, path, converter_executable, converter_func): index
+                for index, path in enumerate(json_paths)
+            }
+            for completed, future in enumerate(as_completed(futures), start=1):
+                index = futures[future]
+                results[index] = future.result()
+                if progress_func:
+                    progress_func(completed, len(json_paths), json_paths[index])
+    except BaseException:
+        for future in futures:
+            if future.cancelled():
+                continue
+            try:
+                _, prepared = future.result()
+            except BaseException:
+                continue
+            if prepared is not None:
+                prepared.temporary_path.unlink(missing_ok=True)
+        raise
+
+    for outcome in results:
+        if outcome is None:
+            continue
+        result, prepared = outcome
+        batch.results.append(result)
+        if prepared is not None:
+            prepared_files.append(prepared)
+
     if batch.success:
         commit_prepared_files(prepared_files)
     else:

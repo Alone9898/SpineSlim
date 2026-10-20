@@ -6,16 +6,18 @@ SpineSlim helps indie developers, 2D game artists and technical artists preview 
 
 [Official Website](https://www.jyhzai.com/en/spineslim/) · [中文官网](https://www.jyhzai.com/spineslim/) · [Project Home](README.md) · [中文](README.zh-CN.md) · [Download / Releases](https://github.com/Alone9898/SpineSlim/releases) · [Telegram group](https://t.me/+XlcsJcxyKZtlNGYy) · [Star ⭐](https://github.com/Alone9898/SpineSlim)
 
-This guide covers the Tauri 2.0 development line, currently released as `2.0.0-alpha.2`. Visit the [SpineSlim official website](https://www.jyhzai.com/en/spineslim/) for the product overview and check the release notes for your downloaded build. Older 1.x packages do not include all new modules. Windows x64 is the primary platform; no macOS installer is available yet.
+This guide covers the Tauri 2.0 development line, with source version `2.0.0-alpha.3`. Visit the [SpineSlim official website](https://www.jyhzai.com/en/spineslim/) for the product overview and check the release notes for your downloaded build. Older 1.x packages do not include all new modules. Windows x64 is the primary platform; no macOS installer is available yet.
 
 ## Quick start
 
 1. Visit the [official website](https://www.jyhzai.com/en/spineslim/) for the product overview, or choose a Windows x64 build from [Releases](https://github.com/Alone9898/SpineSlim/releases). Development builds may be marked Pre-release.
 2. Run the installer or fully extract the portable archive, depending on the attachments provided. Packaged builds do not require Python, Node.js or Rust.
-3. Choose **Spine viewer / Atlas packer / Asset processing / Audio processing** and import local files or folders.
+3. Choose **Spine viewer / Rive viewer / Atlas packer / Asset processing / Audio processing** and import local files or folders.
 4. Install the external tools required for your workflow. Asset processing source and output folders must not overlap.
 
-Chinese is the default language; select English at the bottom of the sidebar. The app runs in its own desktop window and processes assets locally. Windows needs WebView2; check the release notes for offline runtime availability.
+Chinese is the default language; select English or check for software updates in Settings. The app runs in its own desktop window and processes assets locally. Windows needs WebView2; check the release notes for offline runtime availability.
+
+The Rive viewer opens local `.riv` files offline, switches artboards and state machines, and tests legacy inputs. See the [Rive viewer guide](docs/RIVE_VIEWER.md).
 
 ## Spine animation viewer for JSON and SKEL files
 

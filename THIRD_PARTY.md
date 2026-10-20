@@ -2,6 +2,10 @@
 
 ## 本地 Tauri 预览版 / Local Tauri viewer alpha
 
+Rive 预览模块使用 `@rive-app/canvas` 2.45.0（MIT 许可），随前端构建打包其 WebAssembly 运行时，离线加载本地 `.riv`。Rive 作品及其外部素材仍需遵循素材权利人的许可。
+
+The Rive viewer uses MIT-licensed `@rive-app/canvas` 2.45.0 and bundles its WebAssembly runtime for offline local `.riv` previews. Rive artwork and external assets retain their owners' terms.
+
 图集打包模块使用 `maxrects-packer` 3.0.0 和 `fflate` 0.8.3，均为 MIT 许可。对应声明见 `docs/licenses/MAXRECTS-PACKER.txt` 和 `docs/licenses/FFLATE.txt`。该模块在本地完成打包和 ZIP 导出，不调用 TexturePacker。参考页面仅用于功能与布局参考。
 
 The atlas packer uses MIT-licensed maxrects-packer 3.0.0 and fflate 0.8.3. Notices are bundled under docs/licenses. Packing and ZIP export run locally without TexturePacker.

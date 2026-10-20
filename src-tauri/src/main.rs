@@ -1,9 +1,11 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use serde_json::{json, Value};
+mod packer;
+mod rive;
+mod update;
 mod viewer;
 mod viewer_export;
-mod packer;
 use std::{
     fs,
     io::{BufRead, BufReader, Write},
@@ -318,6 +320,7 @@ fn main() {
     tauri::Builder::default()
         .manage(Runtime::default())
         .manage(viewer::ViewerState::default())
+        .manage(rive::RiveState::default())
         .manage(viewer_export::ExportState::default())
         .manage(packer::PackerState::default())
         .plugin(tauri_plugin_dialog::init())
@@ -333,12 +336,16 @@ fn main() {
             import_settings,
             open_output,
             app_directory,
+            update::check_update,
             packer::packer_list,
             packer::packer_read,
             packer::packer_save,
             viewer::viewer_scan,
             viewer::viewer_read,
             viewer::viewer_release,
+            rive::rive_scan,
+            rive::rive_read,
+            rive::rive_export_session,
             viewer_export::viewer_export_begin,
             viewer_export::viewer_export_frame,
             viewer_export::viewer_export_finish,

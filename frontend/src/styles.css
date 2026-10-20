@@ -3,6 +3,31 @@
   margin-top: 5px;
   padding: 8px 0;
 }
+
+.sidebar nav {
+  grid-auto-rows: 48px;
+}
+
+.sidebar nav .nav-item {
+  height: 48px;
+  padding-top: 0;
+  padding-bottom: 0;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.sidebar nav .nav-item svg:first-child {
+  flex: 0 0 19px;
+}
+
+.viewer-main > header {
+  margin-bottom: 20px;
+}
+
+.viewer-main .viewer-root,
+.viewer-main .rive-root {
+  margin-top: 0;
+}
 .progress-track {
   position: relative;
 }

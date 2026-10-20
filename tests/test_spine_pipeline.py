@@ -1,6 +1,7 @@
 import json
 import os
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -217,6 +218,69 @@ class SpinePipelineTests(unittest.TestCase):
         self.assertEqual(result.ignored, 1)
         self.assertEqual(result.already_4_2, 1)
         self.assertEqual(result.failed, 0)
+
+    def test_parallel_progress_reports_completed_files_without_reordering_results(self):
+        with tempfile.TemporaryDirectory() as temporary_dir:
+            directory = Path(temporary_dir)
+            source = {
+                "skeleton": {"spine": "3.8.99"},
+                "bones": [{"name": "root"}],
+                "slots": [],
+                "skins": [],
+                "animations": {},
+            }
+            for name in ("first.json", "second.json"):
+                (directory / name).write_text(json.dumps(source), encoding="utf-8")
+
+            def converter(_, input_path, output_path):
+                time.sleep(0.2 if input_path.name == "first.json" else 0.01)
+                converted = json.loads(input_path.read_text(encoding="utf-8"))
+                converted["skeleton"]["spine"] = "4.2.11"
+                output_path.write_text(json.dumps(converted), encoding="utf-8")
+
+            progress = []
+            result = process_spine_directories(
+                [directory],
+                Path("converter.exe"),
+                converter_func=converter,
+                progress_func=lambda completed, total, path: progress.append(
+                    (completed, total, path.name if path else None)
+                ),
+                max_workers=2,
+            )
+
+            self.assertEqual([item.path.name for item in result.results], ["first.json", "second.json"])
+            self.assertEqual(progress[0], (0, 2, None))
+            self.assertEqual(progress[1], (1, 2, "second.json"))
+            self.assertEqual(progress[-1], (2, 2, "first.json"))
+            self.assertEqual(result.upgraded, 2)
+
+    def test_parallel_progress_failure_removes_prepared_files(self):
+        with tempfile.TemporaryDirectory() as temporary_dir:
+            directory = Path(temporary_dir)
+            source = {
+                "skeleton": {"spine": "4.2.11"},
+                "bones": [{"name": "root"}],
+                "slots": [],
+                "skins": [],
+                "animations": {},
+            }
+            paths = [directory / f"asset_{index}.json" for index in range(2)]
+            for path in paths:
+                path.write_text(json.dumps(source), encoding="utf-8")
+
+            def progress(completed, total, path):
+                if completed:
+                    raise RuntimeError("progress failed")
+
+            with self.assertRaisesRegex(RuntimeError, "progress failed"):
+                process_spine_directories(
+                    [directory], Path("converter.exe"), progress_func=progress, max_workers=2
+                )
+
+            self.assertEqual(sorted(directory.iterdir()), paths)
+            for path in paths:
+                self.assertEqual(json.loads(path.read_text(encoding="utf-8")), source)
 
     def test_preflight_reports_broken_json_without_modifying_it(self):
         runtime_dir = Path.cwd() / "tests" / "runtime_tmp"
