@@ -1,6 +1,6 @@
 # SpineSlim 2.0.0-alpha.3
 
-> 发布说明草稿。Windows 完整包已在本地构建；公开发布前仍需核对第三方组件的再分发许可。
+> Windows x64 完整安装包。所含第三方工具不附带个人授权或激活信息；请阅读安装目录中的 `THIRD_PARTY.md`、`PACKAGE-README.txt` 和 `licenses`，并确认自身具备相应使用权。
 
 ## 新功能
 
@@ -28,7 +28,7 @@
 
 - 前端 `npm run build` 通过；Rust 单元测试 3 项通过；Spine / worker 测试 29 项通过、1 项因系统不允许创建符号链接而跳过。
 - 用真实交互 `.riv` 验证状态机：点击 Launch 进入仪表盘，长按加速器时 `isAccelerating` 变为 `true`。
-- 本地完整安装包已构建并完成部分处理流程冒烟测试；公开发布包尚未完成第三方许可核验。
+- 完整安装包已构建并完成部分处理流程冒烟测试；第三方组件的再分发条款尚未完成独立核验。
 
 ## Features
 
@@ -56,4 +56,4 @@
 
 - Frontend build passed; 3 Rust tests passed; 29 Spine/worker tests passed, with 1 skipped because symlink creation is unavailable on this system.
 - Verified an interactive `.riv` sample: clicking Launch opens the dashboard, and holding the accelerator sets `isAccelerating` to `true`.
-- A local full installer was built and smoke-tested for selected processing flows; third-party redistribution terms still require verification before public release.
+- The full installer was built and smoke-tested for selected processing flows; third-party redistribution terms have not been independently verified.
