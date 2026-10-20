@@ -1,8 +1,8 @@
 # SpineSlim — Spine Viewer & Game Asset Toolkit
 
-**面向 Unity、Cocos、Godot、PixiJS 和 Phaser 游戏开发者的本地资源工具箱：Spine 动画预览、精灵图集打包、纹理压缩与音频处理。**
+**面向 Unity、Cocos、Godot、PixiJS 和 Phaser 游戏开发者的本地资源工具箱：Spine / Rive 动画预览、3D 模型查看、精灵图集打包、纹理压缩与音频处理。**
 
-SpineSlim is a Windows desktop game asset toolkit for Unity, Cocos Creator, Godot, PixiJS and Phaser developers. Preview Spine JSON/SKEL animations, pack sprite sheets and texture atlases, optimize textures, and build audio sprites locally.
+SpineSlim is a Windows desktop game asset toolkit for Unity, Cocos Creator, Godot, PixiJS and Phaser developers. Preview Spine and Rive animations, inspect 3D models, pack sprite sheets and texture atlases, optimize textures, and build audio sprites locally.
 
 [产品官网](https://www.jyhzai.com/spineslim/) · [English Website](https://www.jyhzai.com/en/spineslim/) · [下载 / Releases](https://github.com/Alone9898/SpineSlim/releases) · [中文使用说明](README.zh-CN.md) · [English](README.en-US.md) · [TG 交流群](https://t.me/+XlcsJcxyKZtlNGYy) · [反馈问题](https://github.com/Alone9898/SpineSlim/issues)
 
@@ -16,13 +16,14 @@ SpineSlim is a Windows desktop game asset toolkit for Unity, Cocos Creator, Godo
 | --- | --- |
 | **Spine 预览** | 本地目录扫描，3.8 / 4.0 / 4.1 / 4.2 JSON 与 SKEL，动画与皮肤切换、缩放平移、全屏、GIF / MP4 导出 |
 | **Rive 预览** | 打开本地 `.riv` 及目录，切换画板、动画与状态机，测试输入和查看事件日志 |
+| **3D 模型查看器** | GLB / GLTF / FBX / OBJ / STL 预览、渲染模式、动画、测距和 MP4 导出 |
 | **图集打包** | 自动排列、透明裁剪、边缘扩展、多页预览，导出 Cocos / Unity / Godot / PixiJS / Phaser / Spine 格式 |
 | **资源处理** | Spine JSON 升级、纹理压缩、UI 分类处理、位图字体、WebM / VP9 视频转换 |
 | **音频处理** | 批量转换压缩、试听、裁剪、淡入淡出、短音频合并、Howler.js / Phaser 音频图集 |
 
 Tauri 2 + React + TypeScript + Python 后台。中文默认，支持 English；桌面使用无需另开浏览器，资源在本机处理。
 
-本文对应 **2.0 开发线**，当前源码版本为 `2.0.0-alpha.3`。可前往[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [GitHub Releases](https://github.com/Alone9898/SpineSlim/releases) 下载；旧版 1.x 不包含全部新模块。当前主要支持 Windows x64，尚未提供 macOS 安装包。
+本文对应 **2.0 开发线**，当前源码版本为 `2.0.0-alpha.4`。可前往[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [GitHub Releases](https://github.com/Alone9898/SpineSlim/releases) 下载；旧版 1.x 不包含全部新模块。当前主要支持 Windows x64，尚未提供 macOS 安装包。
 
 ## Unity、Cocos、Godot、PixiJS 和 Phaser 怎么接入？
 
@@ -39,11 +40,23 @@ Unity / Godot / Cocos 导出已验证文件结构与坐标，实际编辑器导�
 
 ## Spine 动画预览器：JSON / SKEL 与 GIF / MP4 导出
 
-打开包含骨骼、Atlas 和贴图的目录，即可浏览资源并切换动画。支持播放、暂停、循环、速度、时间轴、网格、透明棋盘、Alpha 模式及 GIF / MP4 导出。
+打开包含骨骼、Atlas 和贴图的目录，即可浏览资源并切换动画。选中动画后可反复一键复制名称，方便在游戏代码中使用。支持播放、暂停、循环、速度、时间轴、网格、透明棋盘、Alpha 模式及 GIF / MP4 导出。
 
 ![SpineSlim Windows Spine 动画预览器：JSON 与 SKEL、动画皮肤切换和播放控制](assets/screenshots/viewer-zh.png)
 
 预览不要求安装 Spine 编辑器，也不改写骨骼文件。GIF / MP4 导出需要 FFmpeg；Spine Runtime 的使用与分发适用其自身许可。
+
+## Rive 动画与状态机预览
+
+打开本地 `.riv` 文件或目录，切换画板、动画和状态机；可在画布上测试点击与长按交互，查看传统输入、状态时间轴和事件日志。支持播放速度、布局、全屏及会话 JSON 导出。[查看 Rive 预览说明 →](docs/RIVE_VIEWER.md)
+
+![SpineSlim Rive 预览器：画板、状态机与交互控制](assets/screenshots/rive-zh.png)
+
+## 3D 模型查看器：GLB、GLTF、FBX、OBJ、STL
+
+打开模型文件或目录，在本地检查材质、动画、尺寸、网格和骨骼。支持旋转缩放、照明、线框 / 法线模式、两点测距，以及使用 FFmpeg 导出 MP4；外部贴图和 `.bin` 文件需随模型放在同一目录。[查看格式与限制 →](docs/MODEL_VIEWER.md)
+
+![SpineSlim 3D 模型查看器：GLB 模型、渲染设置、尺寸与 MP4 导出](assets/screenshots/model-zh.png)
 
 ## 精灵图集打包：Sprite Sheet / Texture Atlas Packer
 
@@ -106,10 +119,11 @@ SpineSlim 的独立「图集打包」模块可将 PNG / JPG / WebP 打包为 PNG
 ## 文档与许可
 
 - [中文完整说明](README.zh-CN.md) / [English guide](README.en-US.md)：功能、依赖、源码运行、常见问题。
-- [2.0.0-alpha.3 发布说明草稿](docs/RELEASE_NOTES_2.0.0-alpha.3.md)：Rive 预览、软件更新检查与 Spine 转换优化。
+- [2.0.0-alpha.4 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.4.md)：3D 模型查看器、预览导入体验与动画名复制。
+- [2.0.0-alpha.3 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.3.md)：Rive 预览、软件更新检查与 Spine 转换优化。
 - [2.0.0-alpha.2 修复日志](docs/RELEASE_NOTES_2.0.0-alpha.2.md)：Windows 输出提交与 worker 打包修复。
 - [第三方组件说明](THIRD_PARTY.md)：Spine Runtime、FFmpeg、TexturePacker 等的许可说明。
 
 项目自有代码采用 [MIT License](LICENSE)。第三方组件、外部工具和素材遵循各自许可。SpineSlim 是独立第三方项目，与 Spine 官方无关联。
 
-截图使用自制几何图形和合成音频；开发版和正式打包版均可从侧栏底部打开设置。
+部分截图使用自制几何图形和合成音频；3D / Rive 截图由用户提供，示例模型和动画的权利归原作者。开发版和正式打包版均可从侧栏底部打开设置。

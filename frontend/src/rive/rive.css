@@ -4,6 +4,7 @@
 .rive-path{min-width:0;color:#65758d}
 .rive-path span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rive-actions{flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+.rive-import-actions{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
 .rive-workbench{display:grid;grid-template-columns:170px minmax(0,1fr) 330px;gap:12px}
 .rive-workbench.collapsed{grid-template-columns:38px minmax(0,1fr) 330px}
 .rive-workbench.review{grid-template-columns:minmax(0,1fr)}

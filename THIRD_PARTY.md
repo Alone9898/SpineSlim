@@ -1,6 +1,10 @@
 # 第三方组件与商用 / Third-party components and commercial use
 
-## 本地 Tauri 预览版 / Local Tauri viewer alpha
+## Tauri 预览模块 / Tauri viewer modules
+
+3D 模型查看器使用 MIT 许可的 `three`，许可文本见 `docs/licenses/THREE.txt`。FBX、GLTF、OBJ 和 STL 加载器来自同一包；模型和贴图仍受素材作者授权约束。
+
+The 3D model viewer uses MIT-licensed `three` and its FBX, GLTF, OBJ and STL loaders. See `docs/licenses/THREE.txt`. Model and texture rights remain with their owners.
 
 Rive 预览模块使用 `@rive-app/canvas` 2.45.0（MIT 许可），随前端构建打包其 WebAssembly 运行时，离线加载本地 `.riv`。Rive 作品及其外部素材仍需遵循素材权利人的许可。
 

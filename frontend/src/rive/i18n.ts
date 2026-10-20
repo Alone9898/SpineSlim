@@ -1,6 +1,8 @@
 const labels: Record<string, [string, string]> = {
   title: ['Rive 预览', 'Rive viewer'], description: ['预览本地 .riv 动画和状态机。', 'Preview local .riv animations and state machines.'],
-  folder: ['打开文件夹', 'Open folder'], file: ['打开 .riv', 'Open .riv'], search: ['搜索文件', 'Search files'], empty: ['选择 .riv 文件或文件夹开始预览', 'Choose a .riv file or folder to preview'],
+  folder: ['打开文件夹', 'Open folder'], file: ['打开 .riv', 'Open .riv'], search: ['搜索文件', 'Search files'], empty: ['把 Rive 文件或文件夹拖到这里', 'Drop a Rive file or folder here'],
+  hint: ['也可选择 .riv 文件或包含多个 .riv 的目录，无需转换。', 'Or select a .riv file or a folder containing multiple .riv files. No conversion required.'],
+  support: ['本地预览画板、动画与状态机，素材不会上传。', 'Preview artboards, animations and state machines locally. Assets are never uploaded.'],
   noFiles: ['未找到 .riv 文件', 'No .riv files found'], loading: ['正在加载 Rive 资源…', 'Loading Rive asset…'], artboard: ['画板', 'Artboard'], animation: ['动画', 'Animation'], machine: ['状态机', 'State machine'], mode: ['播放模式', 'Playback mode'],
   play: ['播放', 'Play'], pause: ['暂停', 'Pause'], reset: ['重置', 'Reset'], layout: ['画布适配', 'Fit'], align: ['对齐', 'Alignment'], contain: ['包含', 'Contain'], cover: ['覆盖', 'Cover'], fill: ['填充', 'Fill'], center: ['居中', 'Center'], topLeft: ['左上', 'Top left'],
   background: ['背景颜色', 'Background'], checker: ['透明棋盘', 'Checkerboard'], fullscreen: ['全屏', 'Fullscreen'], inputs: ['状态机输入', 'State machine inputs'], noInputs: ['此状态机没有传统输入控件', 'No legacy inputs in this state machine'],

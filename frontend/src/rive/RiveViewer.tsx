@@ -209,7 +209,7 @@ export default function RiveViewer({ language, active }: { language: 'zh' | 'en'
       </div>
     </div>
     {error && <div className="notice" role="alert">{error}</div>}
-    {!assets.length ? <div className="viewer-empty"><FolderOpen size={34} /><h2>{loading ? t('loading') : root ? t('noFiles') : t('empty')}</h2><button className="button primary" onClick={() => void choose(false)}>{t('file')}</button></div> :
+    {!assets.length ? <div className="viewer-empty rive-import-empty">{loading ? <><FolderOpen size={34} /><h2>{t('loading')}</h2></> : <><div className="viewer-empty-icon"><FolderOpen size={36} /></div><span className="eyebrow">RIVE LIBRARY</span><h2>{root ? t('noFiles') : t('empty')}</h2><p>{t('hint')}</p><div className="rive-import-actions"><button className="button primary" onClick={() => void choose(true)}><FolderOpen size={17} />{t('folder')}</button><button className="button secondary" onClick={() => void choose(false)}><File size={17} />{t('file')}</button></div><small>{t('support')}</small></>}</div> :
       <div className={'rive-workbench' + (collapsed ? ' collapsed' : '') + (review ? ' review' : '')}>
         <aside className="rive-library">
           <button className="rive-collapse" onClick={() => setCollapsed(value => !value)} aria-label={t(collapsed ? 'expandFiles' : 'collapseFiles')}>{collapsed ? '›' : '‹'}</button>

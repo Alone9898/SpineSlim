@@ -1,23 +1,23 @@
 # SpineSlim · 游戏资源工具箱中文使用说明
 
-**为 Unity、Cocos Creator、Godot、PixiJS（Pixi）和 Phaser 开发者提供 Spine 预览、精灵图集打包、纹理压缩和游戏音效处理。**
+**为 Unity、Cocos Creator、Godot、PixiJS（Pixi）和 Phaser 开发者提供 Spine / Rive 预览、3D 模型查看、精灵图集打包、纹理压缩和游戏音效处理。**
 
 SpineSlim 是 Windows 本地游戏资源工具，面向独立游戏开发者、2D 游戏美术、技术美术和 HTML5 / Web 游戏团队。可用于查看 Spine JSON / SKEL 动画、制作 sprite sheet / texture atlas，以及为 Howler.js / Phaser 生成 audio sprite。各引擎的导出格式和限制见下文。
 
 [产品官网](https://www.jyhzai.com/spineslim/) · [English Website](https://www.jyhzai.com/en/spineslim/) · [项目首页](README.md) · [English](README.en-US.md) · [下载 Releases](https://github.com/Alone9898/SpineSlim/releases) · [TG 交流群](https://t.me/+XlcsJcxyKZtlNGYy) · [Star ⭐](https://github.com/Alone9898/SpineSlim)
 
-当前文档对应 Tauri 2.0 开发线，源码版本 `2.0.0-alpha.3`。访问 [SpineSlim 产品官网](https://www.jyhzai.com/spineslim/)可查看产品介绍，发行包功能以对应 Release 为准。旧版 1.x 不包含全部新功能。主要支持 Windows x64；macOS 安装包尚未提供。
+当前文档对应 Tauri 2.0 开发线，源码版本 `2.0.0-alpha.4`。访问 [SpineSlim 产品官网](https://www.jyhzai.com/spineslim/)可查看产品介绍，发行包功能以对应 Release 为准。旧版 1.x 不包含全部新功能。主要支持 Windows x64；macOS 安装包尚未提供。
 
 ## 快速开始
 
 1. 访问[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [Releases](https://github.com/Alone9898/SpineSlim/releases) 选择 Windows x64 版本，注意区分正式版和 Pre-release。
 2. 按发布附件类型安装或完整解压，启动 SpineSlim。已打包程序无需安装 Python、Node.js 或 Rust。
-3. 左侧选择 **Spine 预览 / Rive 预览 / 图集打包 / 资源处理 / 音频处理**，通过按钮或拖拽导入素材。
+3. 左侧选择 **Spine 预览 / Rive 预览 / 3D 模型查看器 / 图集打包 / 资源处理 / 音频处理**，通过按钮或拖拽导入素材。
 4. 需要编码、压缩时，按下文准备相应工具。资源处理的源目录与目标目录不能相同或互相嵌套。
 
 默认中文，可在“设置”中切换 English 并检查软件更新。直接在桌面窗口内使用，无需额外打开浏览器；资源在本机处理。系统需要 WebView2，安装包是否包含离线组件以 Release 为准。
 
-Rive 预览可离线打开本地 `.riv`、切换画板和状态机，并测试传统输入控件；详情见 [Rive 预览说明](docs/RIVE_VIEWER.md)。
+Rive 预览可离线打开本地 `.riv`、切换画板和状态机，并测试传统输入控件；3D 模型查看器可本地查看模型、材质和动画。二者都支持文件或文件夹拖拽导入。详情见 [Rive 预览说明](docs/RIVE_VIEWER.md)与 [3D 模型查看器说明](docs/MODEL_VIEWER.md)。
 
 ## Spine 动画预览：JSON / SKEL 查看器
 
@@ -25,12 +25,24 @@ Rive 预览可离线打开本地 `.riv`、切换画板和状态机，并测试�
 
 - 扫描目录，浏览、搜索骨骼，匹配 Atlas 与贴图。
 - 加载 **3.8 / 4.0 / 4.1 / 4.2** 的 JSON / SKEL；贴图支持 PNG / JPG / WebP。
-- 动画、皮肤切换，播放 / 暂停 / 循环、速度调节和时间轴定位。
+- 动画、皮肤切换，播放 / 暂停 / 循环、速度调节和时间轴定位；选中动画后可反复复制名称，直接用于游戏代码。
 - 缩放、平移、适应画布、全屏、网格、原点、透明棋盘、背景色与骨骼调试。
 - 查看版本、运行时、纹理信息，切换 Alpha 模式、复制诊断。
 - 将当前动画、皮肤、取景和速度导出为 **GIF / MP4**，需要 FFmpeg。单次最长 30 秒；GIF 可选透明背景，MP4 使用背景色，不导出网格和调试线。
 
 预览无需安装 Spine 编辑器，不改写源骨骼。**预览支持版本与 JSON 升级支持版本不同**；3.5–3.7、4.3 和 Basis/KTX 贴图目前不在预览范围内。特殊素材仍需实测。
+
+## Rive 动画与状态机预览
+
+![Rive 预览：画板、交互状态机、时间轴与布局设置](assets/screenshots/rive-zh.png)
+
+打开单个 `.riv` 或扫描目录，切换画板、动画、状态机，测试点击和长按交互。可调播放速度、画布布局与背景，查看传统状态机输入、状态时间轴和事件日志，并将会话导出为 JSON。运行时随程序提供；外部素材不会自动联网下载。[详细说明与限制](docs/RIVE_VIEWER.md)
+
+## 3D 模型查看器
+
+![3D 模型查看器：GLB 模型预览、渲染模式、尺寸与 MP4 导出](assets/screenshots/model-zh.png)
+
+支持 GLB、GLTF、FBX、OBJ / MTL 和 STL，选择单个文件或目录后可切换模型。可查看材质、动画、尺寸和网格，切换照明 / 线框 / 法线模式，进行两点测距；MP4 导出使用 FFmpeg。GLTF 的 `.bin`、OBJ 的 MTL 及贴图需位于所选目录内。测距使用模型单位，不保证是真实米数。[详细说明与格式限制](docs/MODEL_VIEWER.md)
 
 ## 精灵图集打包：Unity / Cocos / Godot / PixiJS / Phaser
 
@@ -131,7 +143,7 @@ MP3 VBR：0 质量最好、9 最小；OGG VBR：9 质量最好、0 最小。严�
 
 | 功能 | 依赖 |
 | --- | --- |
-| Spine 预览、独立图集打包 | 无需外部资源处理程序 |
+| Spine / Rive / 3D 预览、独立图集打包 | 无需外部资源处理程序；GIF / MP4 导出另需 FFmpeg |
 | GIF / MP4 导出、音频处理、视频转换 | [FFmpeg](https://ffmpeg.org/download.html)；音频需 libmp3lame / libvorbis，MP4 需 libx264 |
 | 普通图片压缩与转换 | [ImageMagick](https://imagemagick.org/script/download.php) |
 | Basis 纹理 | [Basis Universal](https://github.com/BinomialLLC/basis_universal/releases) |

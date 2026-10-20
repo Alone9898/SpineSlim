@@ -8,6 +8,7 @@ const labels: Record<string, [string, string]> = {
   none: ['没有找到 Spine 骨架', 'No Spine skeletons found'], select: ['选择左侧资源开始预览', 'Select an asset to preview'], loading: ['正在加载资源…', 'Loading asset…'],
   atlas: ['匹配 Atlas', 'Match Atlas'], match: ['请选择 Atlas', 'Choose an Atlas'], missingAtlas: ['没有找到 Atlas，请重新选择包含 Atlas 和纹理的目录。', 'No Atlas found. Select a folder containing the Atlas and textures.'],
   animation: ['动画', 'Animation'], skin: ['皮肤', 'Skin'], setup: ['初始姿态', 'Setup pose'], speed: ['速度', 'Speed'],
+  copyAnimation: ['复制名称', 'Copy name'], copyAnimationFailed: ['复制失败，请重试。', 'Copy failed. Please try again.'],
   play: ['播放', 'Play'], pause: ['暂停', 'Pause'], start: ['回到开头', 'Restart'], loop: ['循环', 'Loop'], fit: ['适应画布', 'Fit view'],
   grid: ['网格', 'Grid'], origin: ['原点', 'Origin'], checker: ['透明棋盘', 'Checkerboard'], background: ['背景', 'Background'], bones: ['骨骼调试', 'Bone debug'],
   auto: ['自动（Atlas）', 'Auto (Atlas)'], straight: ['直通 Alpha', 'Straight alpha'], premultiplied: ['预乘 Alpha', 'Premultiplied alpha'],

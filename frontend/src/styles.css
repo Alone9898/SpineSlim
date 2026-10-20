@@ -28,6 +28,9 @@
 .viewer-main .rive-root {
   margin-top: 0;
 }
+.viewer-main .model-root {
+  margin-top: 0;
+}
 .progress-track {
   position: relative;
 }

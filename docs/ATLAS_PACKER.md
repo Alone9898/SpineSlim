@@ -55,7 +55,7 @@ Cocos 和 Godot 的裁剪偏移遵守各自坐标规则；Cocos/Godot/Phaser 的
 
 The standalone Atlas packer provides an image list, atlas preview and packing settings. Import PNG/JPEG/WebP files or directories, adjust dimensions, power-of-two sizing, scaling, alpha trimming, padding and extrusion, then export PNG pages with PixiJS JSON and/or Spine Atlas metadata in a ZIP.
 
-Packing runs locally without TexturePacker. Relative paths are preserved; duplicate export names are rejected. Export targets include PixiJS, Spine, Cocos plist, Godot 4 AtlasTexture, Unity with a bundled Editor importer, and Phaser 3 multiatlas. Unity keeps full canvases and centered pivots; install its importer once under Assets/Editor. New formats have structure and coordinate tests, but Unity/Godot/Cocos editor imports still require project testing. Rotation and duplicate texture merging are not implemented yet. This feature is available in the local development app; no new release has been published.
+Packing runs locally without TexturePacker. Relative paths are preserved; duplicate export names are rejected. Export targets include PixiJS, Spine, Cocos plist, Godot 4 AtlasTexture, Unity with a bundled Editor importer, and Phaser 3 multiatlas. Unity keeps full canvases and centered pivots; install its importer once under Assets/Editor. New formats have structure and coordinate tests, but Unity/Godot/Cocos editor imports still require project testing. Rotation and duplicate texture merging are not implemented yet. This feature is included in the 2.0 alpha releases.
 
 ## 格式参考
 

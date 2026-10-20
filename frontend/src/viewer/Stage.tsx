@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Play, Pause, RotateCcw, Maximize, Settings2, LoaderCircle, X, Expand, Shrink } from 'lucide-react';
+import { Play, Pause, RotateCcw, Maximize, Settings2, LoaderCircle, X, Expand, Shrink, Copy } from 'lucide-react';
 import ExportPanel from './ExportPanel';
 import { loadRenderer, type Asset, type Catalog, type Renderer, type View, type Loaded, type Bounds } from './model';
 import { diagnostic, label } from './i18n';
@@ -15,12 +15,15 @@ export default function Stage({ catalog, asset, atlas, language, active }: Props
   const view = useRef<View>({ width: 1, height: 1, scale: 1, x: 0, y: 0, bones: false, pma: null });
   const clock = useRef({ time: 0, animation: '', skin: '', playing: true, loop: true, speed: 1, duration: 0 });
   const seekToken = useRef(0);
+  const animationCopyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sampledBounds = useRef<Bounds | null>(null);
   const resumeAfterDrag = useRef(false);
   const [loaded, setLoaded] = useState<Loaded | null>(null);
   const [error, setError] = useState('');
   const [revision, setRevision] = useState(0);
   const [animation, setAnimation] = useState('');
+  const [animationCopied, setAnimationCopied] = useState(false);
+  const [animationCopyError, setAnimationCopyError] = useState(false);
   const [skin, setSkin] = useState('');
   const [playing, setPlaying] = useState(true);
   const [loop, setLoop] = useState(true);
@@ -79,7 +82,7 @@ export default function Stage({ catalog, asset, atlas, language, active }: Props
     const canvas = document.createElement('canvas');
     const element = host.current!;
     element.append(canvas);
-    setLoaded(null); setError(''); setTime(0); setSeeking(false); setAnimation(''); setSkin('');
+    setLoaded(null); setError(''); setTime(0); setSeeking(false); setAnimation(''); setAnimationCopied(false); setAnimationCopyError(false); setSkin('');
     const lost = (event: Event) => { event.preventDefault(); if (!controller.signal.aborted) setError('viewer.context'); };
     canvas.addEventListener('webglcontextlost', lost);
     let instance: Renderer | null = null;
@@ -123,6 +126,7 @@ export default function Stage({ catalog, asset, atlas, language, active }: Props
     document.addEventListener('fullscreenchange', change);
     return () => document.removeEventListener('fullscreenchange', change);
   }, []);
+  useEffect(() => () => { if (animationCopyTimer.current) clearTimeout(animationCopyTimer.current); }, []);
   useEffect(() => { if (!active && document.fullscreenElement === workspace.current) void document.exitFullscreen(); }, [active]);
   const toggleFullscreen = async () => {
     try { setFullscreenError(''); if (document.fullscreenElement) await document.exitFullscreen(); else await workspace.current?.requestFullscreen(); }
@@ -183,6 +187,16 @@ export default function Stage({ catalog, asset, atlas, language, active }: Props
   }, [active]);
 
   const copy = async () => { try { await navigator.clipboard.writeText(JSON.stringify({ path: asset.path, version: asset.version, runtime: loaded?.renderer.runtime, atlas: atlas.path, pages: loaded?.pages, error }, null, 2)); setCopied(true); } catch (reason) { setError(String(reason)); } };
+  const copyAnimation = async () => {
+    if (!animation) return;
+    try {
+      await navigator.clipboard.writeText(animation);
+      if (animationCopyTimer.current) clearTimeout(animationCopyTimer.current);
+      setAnimationCopied(true); setAnimationCopyError(false);
+      animationCopyTimer.current = setTimeout(() => setAnimationCopied(false), 2000);
+    }
+    catch { setAnimationCopyError(true); }
+  };
   const gridStep = 40 * scale * Math.pow(10, Math.floor(Math.log10(1 / scale)));
   const gridStyle = grid && !checker ? { backgroundSize: `${gridStep}px ${gridStep}px`, backgroundPosition: `${viewport.width / 2 - pan.x * scale}px ${viewport.height / 2 - pan.y * scale}px` } : {};
   return <div className="viewer-stage-layout" ref={workspace}>
@@ -209,7 +223,7 @@ export default function Stage({ catalog, asset, atlas, language, active }: Props
     <aside className={'viewer-properties ' + (panel ? 'is-open' : '')}>
       <div className="viewer-panel-title"><strong>{t('properties')}</strong><button className="viewer-properties-button" aria-label="Close" onClick={() => setPanel(false)}><X size={16} /></button></div>
       <fieldset disabled={!loaded || !!error}>
-        <label className="field"><span>{t('animation')}</span><select value={animation} onChange={event => { setAnimation(event.target.value); void seek(0, event.target.value); }}><option value="">{t('setup')}</option>{loaded?.renderer.animations.map(item => <option key={item.name} value={item.name}>{item.name} · {item.duration.toFixed(2)}s</option>)}</select></label>
+        <div className="field viewer-animation-field"><div className="viewer-animation-heading"><span>{t('animation')}</span><button type="button" disabled={!animation} title={t('copyAnimation')} aria-label={t('copyAnimation')} onClick={() => void copyAnimation()}><Copy size={13} />{t('copyAnimation')}</button></div><select aria-label={t('animation')} value={animation} onChange={event => { setAnimation(event.target.value); setAnimationCopied(false); setAnimationCopyError(false); void seek(0, event.target.value); }}><option value="">{t('setup')}</option>{loaded?.renderer.animations.map(item => <option key={item.name} value={item.name}>{item.name} · {item.duration.toFixed(2)}s</option>)}</select>{animationCopied && <small className="viewer-animation-copied" role="status">{t('copied')}</small>}{animationCopyError && <small role="alert">{t('copyAnimationFailed')}</small>}</div>
         <label className="field"><span>{t('skin')}</span><select value={skin} onChange={event => { setSkin(event.target.value); void seek(clock.current.time, clock.current.animation, event.target.value); }}>{loaded?.renderer.skins.map(item => <option key={item}>{item}</option>)}</select></label>
         <label className="field"><span>{t('speed')} <b>{speed.toFixed(1)}×</b></span><input type="range" min={.1} max={3} step={.1} value={speed} onChange={event => setSpeed(Number(event.target.value))} /></label>
         <label className="viewer-check"><input type="checkbox" checked={loop} onChange={event => { clock.current.loop = event.target.checked; setLoop(event.target.checked); void seek(clock.current.time); }} />{t('loop')}</label>

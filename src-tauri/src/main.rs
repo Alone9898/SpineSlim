@@ -1,6 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use serde_json::{json, Value};
+mod model3d;
 mod packer;
 mod rive;
 mod update;
@@ -321,6 +322,7 @@ fn main() {
         .manage(Runtime::default())
         .manage(viewer::ViewerState::default())
         .manage(rive::RiveState::default())
+        .manage(model3d::ModelState::default())
         .manage(viewer_export::ExportState::default())
         .manage(packer::PackerState::default())
         .plugin(tauri_plugin_dialog::init())
@@ -346,6 +348,8 @@ fn main() {
             rive::rive_scan,
             rive::rive_read,
             rive::rive_export_session,
+            model3d::model_scan,
+            model3d::model_read,
             viewer_export::viewer_export_begin,
             viewer_export::viewer_export_frame,
             viewer_export::viewer_export_finish,

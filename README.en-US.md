@@ -1,23 +1,23 @@
 # SpineSlim · Spine Viewer, Texture Atlas Packer & Game Asset Toolkit
 
-**A Windows desktop toolkit for Unity, Cocos Creator, Godot, PixiJS and Phaser game developers.**
+**A Windows desktop toolkit for Unity, Cocos Creator, Godot, PixiJS and Phaser game developers, with Spine and Rive preview, 3D model inspection, atlas packing and asset processing.**
 
 SpineSlim helps indie developers, 2D game artists and technical artists preview Spine JSON/SKEL animations, create sprite sheets and texture atlases, optimize textures, and process game audio locally. HTML5 and web game developers can also export audio sprites for Howler.js and Phaser. Engine-specific formats and compatibility limits are listed below.
 
 [Official Website](https://www.jyhzai.com/en/spineslim/) · [中文官网](https://www.jyhzai.com/spineslim/) · [Project Home](README.md) · [中文](README.zh-CN.md) · [Download / Releases](https://github.com/Alone9898/SpineSlim/releases) · [Telegram group](https://t.me/+XlcsJcxyKZtlNGYy) · [Star ⭐](https://github.com/Alone9898/SpineSlim)
 
-This guide covers the Tauri 2.0 development line, with source version `2.0.0-alpha.3`. Visit the [SpineSlim official website](https://www.jyhzai.com/en/spineslim/) for the product overview and check the release notes for your downloaded build. Older 1.x packages do not include all new modules. Windows x64 is the primary platform; no macOS installer is available yet.
+This guide covers the Tauri 2.0 development line, with source version `2.0.0-alpha.4`. Visit the [SpineSlim official website](https://www.jyhzai.com/en/spineslim/) for the product overview and check the release notes for your downloaded build. Older 1.x packages do not include all new modules. Windows x64 is the primary platform; no macOS installer is available yet.
 
 ## Quick start
 
 1. Visit the [official website](https://www.jyhzai.com/en/spineslim/) for the product overview, or choose a Windows x64 build from [Releases](https://github.com/Alone9898/SpineSlim/releases). Development builds may be marked Pre-release.
 2. Run the installer or fully extract the portable archive, depending on the attachments provided. Packaged builds do not require Python, Node.js or Rust.
-3. Choose **Spine viewer / Rive viewer / Atlas packer / Asset processing / Audio processing** and import local files or folders.
+3. Choose **Spine viewer / Rive viewer / 3D model viewer / Atlas packer / Asset processing / Audio processing** and import local files or folders.
 4. Install the external tools required for your workflow. Asset processing source and output folders must not overlap.
 
 Chinese is the default language; select English or check for software updates in Settings. The app runs in its own desktop window and processes assets locally. Windows needs WebView2; check the release notes for offline runtime availability.
 
-The Rive viewer opens local `.riv` files offline, switches artboards and state machines, and tests legacy inputs. See the [Rive viewer guide](docs/RIVE_VIEWER.md).
+The Rive viewer opens local `.riv` files offline, switches artboards and state machines, and tests legacy inputs. The 3D model viewer inspects local models, materials and animations. Both support file or folder drag and drop. See the [Rive viewer guide](docs/RIVE_VIEWER.md) and [3D model viewer guide](docs/MODEL_VIEWER.md).
 
 ## Spine animation viewer for JSON and SKEL files
 
@@ -25,12 +25,24 @@ The Rive viewer opens local `.riv` files offline, switches artboards and state m
 
 - Scan directories, browse/search skeletons, and match Atlas files and textures.
 - Load Spine **3.8 / 4.0 / 4.1 / 4.2** JSON and SKEL files with PNG / JPG / WebP textures.
-- Switch animations and skins; play, pause, loop, adjust speed and seek on the timeline.
+- Switch animations and skins; play, pause, loop, adjust speed and seek on the timeline. Copy the selected animation name repeatedly for use in game code.
 - Zoom, pan, fit, fullscreen, grid, origin, checkerboard, background color and bone debug.
 - Inspect export/runtime versions and texture information; select Alpha modes and copy diagnostics.
 - Export the current animation, skin, framing and speed as **GIF / MP4** using FFmpeg. Exports are limited to 30 seconds; GIF supports optional transparency, MP4 uses the background color. Grid/debug overlays are excluded.
 
 Preview does not need the Spine editor or modify source skeletons. **Preview support differs from JSON upgrade support.** Spine 3.5–3.7, 4.3 and Basis/KTX textures are not supported by the viewer. Test unusual assets in your project.
+
+## Rive animation and state machine viewer
+
+![Rive viewer with artboard, interactive state machine, timeline and layout controls](assets/screenshots/rive-zh.png)
+
+Open a local `.riv` file or scan a folder, switch artboards, animations and state machines, and test click or hold interactions. Adjust playback and layout, inspect traditional inputs, state timelines and event logs, and export a session JSON. The runtime is bundled; external assets are not downloaded automatically. [Features and limits](docs/RIVE_VIEWER.md)
+
+## 3D model viewer
+
+![3D model viewer showing a GLB model, render settings, dimensions and MP4 export](assets/screenshots/model-zh.png)
+
+Open a GLB, GLTF, FBX, OBJ / MTL or STL file or folder. Inspect materials, animations, dimensions and meshes; switch lighting, wireframe and normals; measure between two surface points. MP4 export uses FFmpeg. Keep external GLTF buffers, OBJ materials and textures within the selected folder. Measurements use model units, which may not be metres. [Features and format limits](docs/MODEL_VIEWER.md)
 
 ## Sprite sheet and texture atlas packer for game engines
 
@@ -131,7 +143,7 @@ MP3 VBR: 0 is best quality, 9 smallest; OGG VBR: 9 best quality, 0 smallest. For
 
 | Feature | Dependency |
 | --- | --- |
-| Spine preview and standalone atlas packing | No external asset-processing executable |
+| Spine / Rive / 3D preview and standalone atlas packing | No external asset-processing executable; GIF / MP4 export additionally requires FFmpeg |
 | GIF / MP4, audio processing and video conversion | [FFmpeg](https://ffmpeg.org/download.html); audio needs libmp3lame/libvorbis, MP4 needs libx264 |
 | Standard image optimization/conversion | [ImageMagick](https://imagemagick.org/script/download.php) |
 | Basis textures | [Basis Universal](https://github.com/BinomialLLC/basis_universal/releases) |
