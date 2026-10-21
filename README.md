@@ -23,7 +23,7 @@ SpineSlim is a Windows desktop game asset toolkit for Unity, Cocos Creator, Godo
 
 Tauri 2 + React + TypeScript + Python 后台。中文默认，支持 English；桌面使用无需另开浏览器，资源在本机处理。
 
-本文对应 **2.0 开发线**，当前源码版本为 `2.0.0-alpha.5`。可前往[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [GitHub Releases](https://github.com/Alone9898/SpineSlim/releases) 下载；旧版 1.x 不包含全部新模块。当前主要支持 Windows x64，尚未提供 macOS 安装包。
+本文对应 **2.0 开发线**，当前源码版本为 `2.0.0-alpha.6`。可前往[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [GitHub Releases](https://github.com/Alone9898/SpineSlim/releases) 下载；旧版 1.x 不包含全部新模块。当前主要支持 Windows x64，尚未提供 macOS 安装包。
 
 ## Unity、Cocos、Godot、PixiJS 和 Phaser 怎么接入？
 
@@ -119,6 +119,7 @@ SpineSlim 的独立「图集打包」模块可将 PNG / JPG / WebP 打包为 PNG
 ## 文档与许可
 
 - [匿名使用统计](docs/TELEMETRY.md)：事件枚举、隐私范围与 PostHog Cloud 配置。
+- [2.0.0-alpha.6 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.6.md)：AI 智能体检交互预览与匿名统计改进。
 - [中文完整说明](README.zh-CN.md) / [English guide](README.en-US.md)：功能、依赖、源码运行、常见问题。
 - [2.0.0-alpha.5 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.5.md)：Spine 版本升降级、JSON / SKEL 转换与独立输出。
 - [2.0.0-alpha.4 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.4.md)：3D 模型查看器、预览导入体验与动画名复制。

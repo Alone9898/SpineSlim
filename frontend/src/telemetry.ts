@@ -17,6 +17,7 @@ export enum TelemetryModule {
   AtlasPacker = 'atlas_packer',
   AssetProcessing = 'asset_processing',
   AudioProcessing = 'audio_processing',
+  AiAudit = 'ai_audit',
   Settings = 'settings',
 }
 

@@ -1,6 +1,8 @@
 import type { Language, WorkerEvent } from './types';
 
 const words: Record<string, [string, string]> = {
+  aiAuditTitle: ['AI 智能体检', 'AI Asset Audit'],
+  aiAuditDescription: ['本地分析游戏资源，发现冗余、风险与优化机会；目前可体验交互预览。', 'Inspect game assets locally for waste, risks and optimization opportunities. Interactive preview available now.'],
   audioTitle: ['音频处理', 'Audio processing'],
   audioDescription: ['转换、压缩、裁剪与拼接，为游戏制作音频图集。', 'Convert, compress, trim and merge audio. Build audio sprites for games.'],
   stageProgress: ['阶段进度', 'Stage progress'],
