@@ -6,7 +6,7 @@ SpineSlim 是 Windows 本地游戏资源工具，面向独立游戏开发者、2
 
 [产品官网](https://www.jyhzai.com/spineslim/) · [English Website](https://www.jyhzai.com/en/spineslim/) · [项目首页](README.md) · [English](README.en-US.md) · [下载 Releases](https://github.com/Alone9898/SpineSlim/releases) · [TG 交流群](https://t.me/+XlcsJcxyKZtlNGYy) · [Star ⭐](https://github.com/Alone9898/SpineSlim)
 
-当前文档对应 Tauri 2.0 开发线，源码版本 `2.0.0-alpha.4`。访问 [SpineSlim 产品官网](https://www.jyhzai.com/spineslim/)可查看产品介绍，发行包功能以对应 Release 为准。旧版 1.x 不包含全部新功能。主要支持 Windows x64；macOS 安装包尚未提供。
+当前文档对应 Tauri 2.0 开发线，源码版本 `2.0.0-alpha.5`。访问 [SpineSlim 产品官网](https://www.jyhzai.com/spineslim/)可查看产品介绍，发行包功能以对应 Release 为准。旧版 1.x 不包含全部新功能。主要支持 Windows x64；macOS 安装包尚未提供。
 
 ## 快速开始
 
@@ -94,6 +94,8 @@ Rive 预览可离线打开本地 `.riv`、切换画板和状态机，并测试�
 | Basis | 输出 `.basis`，需要游戏运行端提供对应支持 |
 
 可选将 JSON 升级至 **Spine 4.2.11**，迁移 Setup Pose attachment 并保留已有动画关键帧。预检接受 3.5 / 3.6 / 3.7 / 3.8 / 4.0 / 4.1，4.2 识别为已升级。版本在范围内不保证所有素材均可成功转换；转换依赖外部工具，需检查结果。该流程不升级 `.skel`。
+
+版本转换默认选择 **升级至 4.2.11**。在「指定目标版本（高级）」中，可输入 3.5–3.8 或 4.0–4.2 范围内的完整 `x.y.z` 版本号，并选择保留原格式、JSON 或 SKEL；该模式可处理 Spine JSON 和 SKEL，结果写入独立的 `program/spine-converted`，源目录不变。Atlas 与贴图按原处理选项复制或压缩，不参与骨骼版本转换。降级可能改变高版本曲线、约束和时间线，请在目标 Spine 运行时逐项检查。再次处理会替换已有的 `program/spine-converted` 内容。
 
 ### UI 图片、字体与视频
 

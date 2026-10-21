@@ -78,6 +78,67 @@ class WorkerTests(unittest.TestCase):
         self.assertEqual([event["completed"] for event in events], [0, 1, 2])
         self.assertEqual({event["total"] for event in events}, {2})
 
+    def test_advanced_conversion_uses_separate_output_and_preserves_source(self):
+        original = {"skeleton": {"spine": "4.2.11"}, "bones": [{"name": "root"}]}
+        (self.source / "hero.json").write_text(json.dumps(original))
+        (self.source / "notes.json").write_text('{"message": "keep"}')
+        existing = self.target / "program/spine/keep.txt"
+        existing.parent.mkdir(parents=True)
+        existing.write_text("keep")
+        service = self.service(mode="spine", spine_conversion_mode="advanced",
+                               spine_target_version="3.8.99", spine_output_format="skel")
+
+        def fake_converter(executable, input_path, output_path, **kwargs):
+            self.assertEqual(kwargs["target_version"], "3.8.99")
+            output_path.write_bytes(b"converted")
+
+        with patch("backend.service.inspect_tools", return_value={"imagemagick": sys.executable, "spine_converter": sys.executable}), \
+             patch.object(service, "inspect_required", return_value=[]), \
+             patch("backend.service.run_spine_converter", side_effect=fake_converter):
+            result = service.process()
+
+        self.assertEqual(result, self.target / "program/spine-converted")
+        self.assertEqual((result / "hero.skel").read_bytes(), b"converted")
+        self.assertFalse((result / "hero.json").exists())
+        self.assertTrue((result / "notes.json").exists())
+        self.assertEqual(existing.read_text(), "keep")
+        self.assertEqual(json.loads((self.source / "hero.json").read_text()), original)
+
+    def test_advanced_conversion_failure_preserves_previous_output(self):
+        (self.source / "hero.skel").write_bytes(b"source")
+        existing = self.target / "program/spine-converted/keep.txt"
+        existing.parent.mkdir(parents=True)
+        existing.write_text("keep")
+        service = self.service(mode="spine", spine_conversion_mode="advanced",
+                               spine_target_version="3.8.99", spine_output_format="json")
+        with patch("backend.service.inspect_tools", return_value={"imagemagick": sys.executable, "spine_converter": sys.executable}), \
+             patch.object(service, "inspect_required", return_value=[]), \
+             patch("backend.service.run_spine_converter", side_effect=RuntimeError("conversion failed")):
+            with self.assertRaisesRegex(RuntimeError, "conversion failed"):
+                service.process()
+        self.assertEqual(existing.read_text(), "keep")
+        self.assertEqual((self.source / "hero.skel").read_bytes(), b"source")
+
+    def test_advanced_conversion_rejects_colliding_output_names(self):
+        (self.source / "hero.json").write_text('{"skeleton": {"spine": "4.2.11"}}')
+        (self.source / "hero.skel").write_bytes(b"source")
+        service = self.service(mode="spine", spine_conversion_mode="advanced",
+                               spine_target_version="3.8.99", spine_output_format="json")
+        with patch("backend.service.inspect_tools", return_value={"imagemagick": sys.executable, "spine_converter": sys.executable}), \
+             patch.object(service, "inspect_required", return_value=[]):
+            with self.assertRaises(ProcessingError) as error:
+                service.process()
+        self.assertEqual(error.exception.key, "collision")
+        self.assertFalse((self.target / "program").exists())
+
+    def test_advanced_conversion_rejects_invalid_target_before_output(self):
+        (self.source / "hero.skel").write_bytes(b"source")
+        with self.assertRaises(ProcessingError) as error:
+            self.service(mode="spine", spine_conversion_mode="advanced",
+                         spine_target_version="4.3.0").process()
+        self.assertEqual(error.exception.key, "invalid_spine_version")
+        self.assertFalse((self.target / "program").exists())
+
     def test_file_collection_rejects_links(self):
         actual = self.source / "actual.txt"
         actual.write_text("data")

@@ -1,9 +1,15 @@
 import subprocess
+import re
 from pathlib import Path
 from typing import Callable
 
 
 TARGET_SPINE_VERSION = "4.2.11"
+SUPPORTED_SPINE_FAMILIES = {"3.5", "3.6", "3.7", "3.8", "4.0", "4.1", "4.2"}
+
+
+def valid_target_version(version: str) -> bool:
+    return bool(re.fullmatch(r"\d+\.\d+\.\d+", version)) and ".".join(version.split(".")[:2]) in SUPPORTED_SPINE_FAMILIES
 
 
 class SpineConversionError(RuntimeError):
@@ -49,13 +55,16 @@ def run_spine_converter(
     *,
     runner: Callable = subprocess.run,
     timeout: int = 60,
+    target_version: str = TARGET_SPINE_VERSION,
 ) -> None:
+    if not valid_target_version(target_version):
+        raise SpineConversionError(f"unsupported target Spine version: {target_version}")
     command = [
         str(executable),
         str(input_path),
         str(output_path),
         "-v",
-        TARGET_SPINE_VERSION,
+        target_version,
     ]
     result = runner(
         command,

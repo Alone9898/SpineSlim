@@ -7,6 +7,7 @@ from spine_tools.converter import (
     check_spine_converter,
     classify_spine_version,
     run_spine_converter,
+    valid_target_version,
 )
 
 
@@ -67,6 +68,23 @@ class SpineConverterTests(unittest.TestCase):
                 Path("temporary.json"),
                 runner=fake_runner,
             )
+
+    def test_accepts_supported_complete_target_versions(self):
+        self.assertTrue(valid_target_version("3.8.99"))
+        self.assertTrue(valid_target_version("4.2.11"))
+        self.assertFalse(valid_target_version("4.2"))
+        self.assertFalse(valid_target_version("4.3.0"))
+
+    def test_runs_converter_with_requested_downgrade_version(self):
+        calls = []
+
+        def fake_runner(command, **kwargs):
+            calls.append(command)
+            return type("Result", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+
+        run_spine_converter(Path("converter.exe"), Path("input.skel"), Path("output.json"),
+                            runner=fake_runner, target_version="3.8.99")
+        self.assertEqual(calls[0][-2:], ["-v", "3.8.99"])
 
     def test_preflight_calls_converter_help(self):
         calls = []

@@ -23,7 +23,7 @@ SpineSlim is a Windows desktop game asset toolkit for Unity, Cocos Creator, Godo
 
 Tauri 2 + React + TypeScript + Python 后台。中文默认，支持 English；桌面使用无需另开浏览器，资源在本机处理。
 
-本文对应 **2.0 开发线**，当前源码版本为 `2.0.0-alpha.4`。可前往[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [GitHub Releases](https://github.com/Alone9898/SpineSlim/releases) 下载；旧版 1.x 不包含全部新模块。当前主要支持 Windows x64，尚未提供 macOS 安装包。
+本文对应 **2.0 开发线**，当前源码版本为 `2.0.0-alpha.5`。可前往[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [GitHub Releases](https://github.com/Alone9898/SpineSlim/releases) 下载；旧版 1.x 不包含全部新模块。当前主要支持 Windows x64，尚未提供 macOS 安装包。
 
 ## Unity、Cocos、Godot、PixiJS 和 Phaser 怎么接入？
 
@@ -72,7 +72,7 @@ Unity / Godot / Cocos 导出已验证文件结构与坐标，实际编辑器导�
 
 ![SpineSlim 游戏资源处理：Spine 纹理压缩、输出格式与阶段进度](assets/screenshots/processing-zh.png)
 
-保留 Spine 源目录层级，按需升级 JSON 至 4.2.11；UI 提供背景图、图集及位图字体处理；视频输出 WebM / VP9。外部工具按使用的功能准备。[完整流程与输出规则 →](README.zh-CN.md#资源处理)
+保留 Spine 源目录层级，默认将 JSON 升级至 4.2.11；高级选项可指定 3.5–4.2 的完整目标版本，对 JSON / SKEL 升级或降级，并写入独立的 `spine-converted` 目录。UI 提供背景图、图集及位图字体处理；视频输出 WebM / VP9。外部工具按使用的功能准备。[完整流程与输出规则 →](README.zh-CN.md#资源处理)
 
 ### 一个直观的压缩结果
 
@@ -119,6 +119,7 @@ SpineSlim 的独立「图集打包」模块可将 PNG / JPG / WebP 打包为 PNG
 ## 文档与许可
 
 - [中文完整说明](README.zh-CN.md) / [English guide](README.en-US.md)：功能、依赖、源码运行、常见问题。
+- [2.0.0-alpha.5 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.5.md)：Spine 版本升降级、JSON / SKEL 转换与独立输出。
 - [2.0.0-alpha.4 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.4.md)：3D 模型查看器、预览导入体验与动画名复制。
 - [2.0.0-alpha.3 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.3.md)：Rive 预览、软件更新检查与 Spine 转换优化。
 - [2.0.0-alpha.2 修复日志](docs/RELEASE_NOTES_2.0.0-alpha.2.md)：Windows 输出提交与 worker 打包修复。

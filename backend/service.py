@@ -10,7 +10,7 @@ from pathlib import Path
 from PIL import Image
 from spine_tools.atlas import process_atlas_textures, _page_reference_indices
 from spine_tools.pipeline import preflight_spine_paths, process_spine_directories
-from spine_tools.converter import run_spine_converter
+from spine_tools.converter import run_spine_converter, valid_target_version
 from spine_tools.textures import PngConverter, JpegConverter
 from tool_manager import TOOL_INFO, inspect_tools
 from video_tools import VIDEO_EXTENSIONS, convert_video_pair
@@ -190,6 +190,13 @@ class Service:
 
     def process(self):
         mode = self.options.get("mode", "spine")
+        conversion_mode = self.options.get("spine_conversion_mode", "upgrade" if self.options.get("upgrade") else "off")
+        conversion_format = self.options.get("spine_output_format", "original")
+        target_version = self.options.get("spine_target_version", "4.2.11")
+        if conversion_mode not in ("off", "upgrade", "advanced") or conversion_format not in ("original", "json", "skel"):
+            raise ProcessingError("invalid_request")
+        if conversion_mode == "advanced" and (not isinstance(target_version, str) or not valid_target_version(target_version)):
+            raise ProcessingError("invalid_spine_version", detail=str(target_version))
         texture_format = self.options.get("format", "original")
         if mode not in ("spine", "ui", "video") or texture_format not in ("original", "png", "webp", "jpg", "basis"):
             raise ProcessingError("invalid_request")
@@ -213,11 +220,12 @@ class Service:
         required = set()
         if mode != "video":
             required.add("basis" if texture_format == "basis" else "imagemagick")
-        if mode == "spine" and self.options.get("upgrade"):
+        if mode == "spine" and conversion_mode != "off":
             required.add("spine_converter")
-            result = preflight_spine_paths([path for path in files if path.suffix.lower() == ".json"])
-            if not result.success:
-                raise ProcessingError("invalid_spine", detail="; ".join(str(item.error) for item in result.results if item.error))
+            if conversion_mode == "upgrade":
+                result = preflight_spine_paths([path for path in files if path.suffix.lower() == ".json"])
+                if not result.success:
+                    raise ProcessingError("invalid_spine", detail="; ".join(str(item.error) for item in result.results if item.error))
         if mode == "ui" and not self.options.get("force_bg"):
             required.add("texturepacker")
         if mode == "video" or (mode == "ui" and any(path.suffix.lower() in VIDEO_EXTENSIONS for path in files)):
@@ -237,8 +245,9 @@ class Service:
         with tempfile.TemporaryDirectory(prefix=".spineslim-", dir=target) as temporary:
             staging = Path(temporary) / "program"
             staging.mkdir()
+            output_name = "spine-converted" if mode == "spine" and conversion_mode == "advanced" else mode
             if mode == "spine":
-                self.spine(source, files, staging / "spine")
+                self.spine(source, files, staging / output_name)
             elif mode == "ui":
                 self.ui(files, staging)
             else:
@@ -250,9 +259,9 @@ class Service:
                 self.videos(files, staging / "video")
             self.check_cancel()
             self.emit("stage", "committing", completed=0, total=1)
-            self.commit(staging, program, mode, Path(temporary) / "backup")
+            self.commit(staging, program, output_name, Path(temporary) / "backup")
             self.emit("progress", "committing", completed=1, total=1)
-        return program / mode if mode in ("spine", "video") else program
+        return program / output_name if mode in ("spine", "video") else program
 
     def inspect_required(self, required):
         flags = {"imagemagick": "-version", "basis": "-version", "texturepacker": "--version",
@@ -265,7 +274,7 @@ class Service:
     def commit(staging, program, mode, backup):
         program.mkdir(exist_ok=True)
         backup.mkdir()
-        if mode == "spine":
+        if mode in ("spine", "spine-converted"):
             Service.commit_directory_contents(staging / mode, program / mode, backup / mode)
             return
         names = {mode} if mode in ("spine", "video") else {path.name for path in program.iterdir() if path.name.lower() != "spine"} | {path.name for path in staging.iterdir()}
@@ -330,13 +339,55 @@ class Service:
                 ) from failed_move
             raise failed_move
 
+    def convert_spine_versions(self, destination):
+        version = self.options["spine_target_version"]
+        output_format = self.options.get("spine_output_format", "original")
+        candidates = sorted(path for path in destination.rglob("*") if path.is_file() and path.suffix.lower() in (".json", ".skel"))
+        skeletons = []
+        for path in candidates:
+            if path.suffix.lower() == ".json":
+                try:
+                    data = json.loads(path.read_text(encoding="utf-8-sig"))
+                except (UnicodeError, ValueError) as error:
+                    raise ProcessingError("invalid_spine", detail=f"{path.name}: {error}") from error
+                if not isinstance(data, dict) or not isinstance(data.get("skeleton"), dict):
+                    continue
+            skeletons.append(path)
+        if not skeletons:
+            raise ProcessingError("no_spine_skeletons")
+        destinations = [path.with_suffix("." + (output_format if output_format != "original" else path.suffix[1:].lower())) for path in skeletons]
+        if len(set(destinations)) != len(destinations) or any(target.exists() and target not in skeletons for target in destinations):
+            raise ProcessingError("collision")
+        self.emit("stage", "convertingSpine", completed=0, total=len(skeletons))
+        for index, (path, target) in enumerate(zip(skeletons, destinations)):
+            self.check_cancel()
+            self.emit("progress", "convertingSpine", completed=index, total=len(skeletons), file=path.name)
+            temporary = target.with_name(f".{target.stem}.spineslim-version{target.suffix}")
+            try:
+                run_spine_converter(Path(self.tools["spine_converter"]), path, temporary, runner=self.run, target_version=version)
+                if not temporary.is_file() or temporary.stat().st_size == 0:
+                    raise ProcessingError("empty_output", path=str(target))
+                if target.suffix.lower() == ".json":
+                    converted = json.loads(temporary.read_text(encoding="utf-8-sig"))
+                    if converted.get("skeleton", {}).get("spine") != version:
+                        raise ProcessingError("invalid_spine", detail=f"{path.name}: unexpected output version")
+                if target != path:
+                    path.unlink()
+                os.replace(temporary, target)
+            finally:
+                temporary.unlink(missing_ok=True)
+            self.emit("progress", "convertingSpine", completed=index + 1, total=len(skeletons), file=path.name)
+
     def spine(self, source, files, destination):
         destination.mkdir()
         for path in self.stage("copying", files):
             output = destination / path.relative_to(source)
             output.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(path, output)
-        if self.options.get("upgrade"):
+        conversion_mode = self.options.get("spine_conversion_mode", "upgrade" if self.options.get("upgrade") else "off")
+        if conversion_mode == "advanced":
+            self.convert_spine_versions(destination)
+        elif conversion_mode == "upgrade":
             self.emit("stage", "upgrading", completed=0, total=0)
             def upgrade_progress(completed, total, path):
                 self.emit("progress", "upgrading", completed=completed, total=total, file=path.name if path else "")

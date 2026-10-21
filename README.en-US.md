@@ -6,7 +6,7 @@ SpineSlim helps indie developers, 2D game artists and technical artists preview 
 
 [Official Website](https://www.jyhzai.com/en/spineslim/) · [中文官网](https://www.jyhzai.com/spineslim/) · [Project Home](README.md) · [中文](README.zh-CN.md) · [Download / Releases](https://github.com/Alone9898/SpineSlim/releases) · [Telegram group](https://t.me/+XlcsJcxyKZtlNGYy) · [Star ⭐](https://github.com/Alone9898/SpineSlim)
 
-This guide covers the Tauri 2.0 development line, with source version `2.0.0-alpha.4`. Visit the [SpineSlim official website](https://www.jyhzai.com/en/spineslim/) for the product overview and check the release notes for your downloaded build. Older 1.x packages do not include all new modules. Windows x64 is the primary platform; no macOS installer is available yet.
+This guide covers the Tauri 2.0 development line, with source version `2.0.0-alpha.5`. Visit the [SpineSlim official website](https://www.jyhzai.com/en/spineslim/) for the product overview and check the release notes for your downloaded build. Older 1.x packages do not include all new modules. Windows x64 is the primary platform; no macOS installer is available yet.
 
 ## Quick start
 
@@ -94,6 +94,8 @@ Recursively process Spine folders, preserve relative paths and update Atlas text
 | Basis | Export `.basis`; requires support in your game runtime |
 
 Optionally upgrade JSON to **Spine 4.2.11**, migrate setup-pose attachments and preserve existing animation keys. Preflight accepts 3.5 / 3.6 / 3.7 / 3.8 / 4.0 / 4.1 and recognizes 4.2 as already upgraded. An accepted version does not guarantee conversion of every asset. The upgrade uses an external converter and does not upgrade binary `.skel` files.
+
+Version conversion now defaults to the **4.2.11 upgrade**. Choose “Target version (advanced)” to enter a complete `x.y.z` version in the supported 3.5–3.8 or 4.0–4.2 range, and keep the source skeleton format or output JSON / SKEL. This mode handles both Spine JSON and SKEL and writes to a separate `program/spine-converted` folder; the source remains unchanged. Atlas files and textures follow the selected asset-processing options. Downgrades may alter newer curves, constraints and timelines, so verify in the target Spine runtime. A later run replaces existing `program/spine-converted` contents.
 
 ### UI images, fonts and video
 
