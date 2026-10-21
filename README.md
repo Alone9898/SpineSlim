@@ -1,6 +1,6 @@
-# SpineSlim — Spine Viewer & Game Asset Toolkit
+# SpineSlim：面向 Unity、Cocos、Godot、PixiJS 和 Phaser 开发者的本地游戏资源工具箱
 
-**面向 Unity、Cocos、Godot、PixiJS 和 Phaser 游戏开发者的本地资源工具箱：Spine / Rive 动画预览、3D 模型查看、精灵图集打包、纹理压缩与音频处理。**
+**Spine / Rive 动画预览、3D 模型查看、精灵图集打包、纹理压缩与音频处理，全部在本机完成。**
 
 SpineSlim is a Windows desktop game asset toolkit for Unity, Cocos Creator, Godot, PixiJS and Phaser developers. Preview Spine and Rive animations, inspect 3D models, pack sprite sheets and texture atlases, optimize textures, and build audio sprites locally.
 
