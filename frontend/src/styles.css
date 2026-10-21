@@ -102,3 +102,6 @@ main.processing-main {
 .spine-conversion-options .option-row .field{flex:1;min-width:0}
 .spine-conversion-options .field>input{width:100%;height:40px;padding:9px 11px;border:1px solid #dce4ef;border-radius:7px;background:#fff;color:#52637d}
 .spine-conversion-options .hint{line-height:1.6}
+.telemetry-preferences{margin-top:22px}
+.telemetry-preferences h2{font-size:14px}
+.telemetry-preferences .toggle-row{margin-top:15px}

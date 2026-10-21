@@ -54,6 +54,8 @@ const words: Record<string, [string, string]> = {
   closeBody: ['退出会停止当前任务，未完成的临时结果可能保留。确定退出？', 'Exiting stops this task and may leave incomplete temporary files. Exit now?'],
   import: ['导入旧版配置', 'Import legacy settings'], imported: ['已导入配置，原文件未修改。', 'Settings imported. The original file was not modified.'],
   preferences: ['偏好设置', 'Preferences'], language: ['界面语言', 'Language'], version: ['开发测试版', 'Development preview'],
+  anonymousTelemetry: ['匿名使用统计', 'Anonymous usage statistics'],
+  anonymousTelemetryHint: ['帮助我们了解常用功能和处理问题，持续改进 SpineSlim。每次启动默认开启，仅统计功能使用、处理结果、大致耗时及系统语言地区；不上传文件名、路径或素材。本次运行可随时关闭。', 'Help us improve SpineSlim by understanding popular features and processing issues. On by default at every launch; collects feature usage, outcomes, approximate durations and system locale region. Never uploads filenames, paths or assets. You can turn it off for this session.'],
   checking: ['检查输入与依赖', 'Checking inputs and tools'], copying: ['复制资源', 'Copying assets'], upgrading: ['升级 Spine 数据', 'Upgrading Spine data'],
   textures: ['处理纹理', 'Processing textures'], videos: ['转换视频', 'Converting videos'], classifying: ['分类资源', 'Classifying assets'],
   packing: ['生成图集', 'Packing atlases'], fonts: ['生成艺术字', 'Building bitmap fonts'], committing: ['保存输出', 'Saving output'],

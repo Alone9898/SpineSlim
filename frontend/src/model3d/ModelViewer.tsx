@@ -4,6 +4,7 @@ import { open, save } from '@tauri-apps/plugin-dialog';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { Box, File, FolderOpen, LoaderCircle, Pause, Play, Video, X } from 'lucide-react';
 import { loadModel, type ModelFile } from './load';
+import { TelemetryAction, TelemetryErrorCode, TelemetryModule, trackAppError, trackFeature } from '../telemetry';
 import { ModelStage, type Lighting, type ModelInfo, type RenderMode } from './stage';
 import { label } from './i18n';
 import './model.css';
@@ -45,9 +46,10 @@ export default function ModelViewer({ language, active }: { language: 'zh' | 'en
       if (token !== scanSequence.current) return;
       const models = catalog.filter(file => file.model);
       setFiles(catalog);
+      trackFeature(TelemetryModule.ModelViewer, TelemetryAction.ScanAssets, models.length);
       const name = path.replaceAll('\\', '/').split('/').pop()?.toLowerCase();
       setSelected(models.find(file => file.path.toLowerCase() === name) ?? models[0] ?? null);
-    } catch (reason) { if (token === scanSequence.current) setError(t(String(reason))); }
+    } catch (reason) { if (token === scanSequence.current) { setError(t(String(reason))); trackAppError(TelemetryModule.ModelViewer, TelemetryAction.ScanAssets, TelemetryErrorCode.ScanFailed); } }
     finally { if (token === scanSequence.current) setLoading(false); }
   };
 
@@ -116,8 +118,12 @@ export default function ModelViewer({ language, active }: { language: 'zh' | 'en
       exportingRef.current = true; setExporting(true); setProgress(0); setError(''); setSaved('');
       const result = await stage.current.exportMp4(target, seconds, fps, controller.signal, (done, total) => setProgress(Math.round(done / total * 100)));
       setSaved(result);
+      trackFeature(TelemetryModule.ModelViewer, TelemetryAction.ExportMp4);
     } catch (reason) {
-      if ((reason as Error)?.name !== 'AbortError') setError(t(String((reason as Error)?.message ?? reason).split('|')[0]));
+      if ((reason as Error)?.name !== 'AbortError') {
+        setError(t(String((reason as Error)?.message ?? reason).split('|')[0]));
+        trackAppError(TelemetryModule.ModelViewer, TelemetryAction.ExportMp4, TelemetryErrorCode.ExportFailed);
+      }
     } finally { exportController.current = null; exportingRef.current = false; setExporting(false); }
   };
 

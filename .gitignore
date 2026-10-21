@@ -5,7 +5,7 @@ __pycache__/
 .pytest_cache/
 .env
 .env.*
-!.env.example
+!.env.production
 .agents/
 .codexignore
 config.json

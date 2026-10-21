@@ -5,6 +5,7 @@ import { registerCloseGuard } from '../close';
 import { Download, LoaderCircle, X } from 'lucide-react';
 import { exportAnimation, type ExportOptions } from './export';
 import { diagnostic, label } from './i18n';
+import { TelemetryAction, TelemetryErrorCode, TelemetryModule, trackAppError, trackFeature } from '../telemetry';
 
 type Props = { language: 'zh' | 'en'; enabled: boolean; options: () => Omit<ExportOptions, 'format' | 'fps' | 'size' | 'target' | 'transparent'>; assetKey: string };
 export default function ExportPanel({ language, enabled, options, assetKey }: Props) {
@@ -49,9 +50,14 @@ export default function ExportPanel({ language, enabled, options, assetKey }: Pr
         if (token === operation.current) { setStatus(phase); setCount({ done, total }); }
       });
       const result = await pending.current;
-      if (token === operation.current) { setStatus('export.success'); setOutput(result); }
+      if (token === operation.current) {
+        setStatus('export.success'); setOutput(result);
+        trackFeature(TelemetryModule.SpineViewer, format === 'gif' ? TelemetryAction.ExportGif : TelemetryAction.ExportMp4);
+      }
     } catch (reason) {
       if (token === operation.current) setStatus(controller.signal.aborted ? 'export.cancelled' : String(reason).replace(/^Error: /, ''));
+      if (token === operation.current && !controller.signal.aborted)
+        trackAppError(TelemetryModule.SpineViewer, format === 'gif' ? TelemetryAction.ExportGif : TelemetryAction.ExportMp4, TelemetryErrorCode.ExportFailed);
     } finally { if (token === operation.current) { setRunning(false); control.current = null; pending.current = null; } }
   };
   return <section className="viewer-export"><div className="divider" /><strong>{t('export.title')}</strong><p className="hint">{t('export.hint')}</p><fieldset disabled={!enabled || running}>

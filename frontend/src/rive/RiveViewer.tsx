@@ -7,6 +7,7 @@ import riveWasmUrl from '@rive-app/canvas/rive.wasm?url';
 import { FolderOpen, File, Search, Play, Pause, RotateCcw, Maximize2, Copy, Trash2, ChevronRight, Download, PanelRightClose, PanelRightOpen } from 'lucide-react';
 import { label } from './i18n';
 import './rive.css';
+import { TelemetryAction, TelemetryErrorCode, TelemetryModule, trackAppError, trackFeature } from '../telemetry';
 
 RuntimeLoader.setWasmUrl(riveWasmUrl);
 RuntimeLoader.setWasmFallbackUrl(null);
@@ -81,8 +82,9 @@ export default function RiveViewer({ language, active }: { language: 'zh' | 'en'
       const result = await invoke<Asset[]>('rive_scan', { path });
       if (token !== sequence.current) return;
       setAssets(result);
+      trackFeature(TelemetryModule.RiveViewer, TelemetryAction.ScanAssets, result.length);
       if (result.length) await select(result[0], token);
-    } catch (reason) { if (token === sequence.current) setError(t(String(reason))); }
+    } catch (reason) { if (token === sequence.current) { setError(t(String(reason))); trackAppError(TelemetryModule.RiveViewer, TelemetryAction.ScanAssets, TelemetryErrorCode.ScanFailed); } }
     finally { if (token === sequence.current) setLoading(false); }
   };
   const select = async (asset: Asset, scanToken?: number) => {
@@ -194,7 +196,8 @@ export default function RiveViewer({ language, active }: { language: 'zh' | 'en'
         path,
         content: JSON.stringify({ file: selected?.path, artboard: board, mode, animation, stateMachine: machine, layout: { fit, alignment, scale, background }, speed, events }, null, 2),
       });
-    } catch (reason) { setError(t(String(reason))); }
+      trackFeature(TelemetryModule.RiveViewer, TelemetryAction.ExportSession);
+    } catch (reason) { setError(t(String(reason))); trackAppError(TelemetryModule.RiveViewer, TelemetryAction.ExportSession, TelemetryErrorCode.ExportFailed); }
   };
   const visible = assets.filter(asset => asset.path.toLowerCase().includes(search.toLowerCase()));
   const stateEvents = events.filter(entry => entry.type === 'state');

@@ -5,7 +5,8 @@ export type Settings = {
   schema_version: number; language: Language; source: string; target: string; mode: Mode;
   spine_format: Format; ui_format: Format; quality: number; crf: number;
   upgrade: boolean; spine_conversion_mode: 'off' | 'upgrade' | 'advanced'; spine_target_version: string;
-  spine_output_format: 'original' | 'json' | 'skel'; force_bg: boolean; alpha: boolean; tools: Record<string, string>;
+  spine_output_format: 'original' | 'json' | 'skel'; force_bg: boolean; alpha: boolean;
+  anonymous_telemetry: boolean; tools: Record<string, string>;
 };
 export type WorkerEvent = {
   protocol_version: number; task_id: string; sequence?: number; type: string;
@@ -15,7 +16,7 @@ export type Tool = { key: string; name: string; path: string; available: boolean
 export const defaults: Settings = { schema_version: 1, language: 'zh', source: '', target: '', mode: 'spine',
   spine_format: 'original', ui_format: 'original', quality: 50, crf: 36,
   upgrade: true, spine_conversion_mode: 'upgrade', spine_target_version: '4.2.11', spine_output_format: 'original',
-  force_bg: false, alpha: true, tools: {} };
+  force_bg: false, alpha: true, anonymous_telemetry: true, tools: {} };
 
 export function hydrate(input: unknown): Settings {
   const data = input && typeof input === 'object' ? input as Record<string, unknown> : {};
@@ -35,6 +36,7 @@ export function hydrate(input: unknown): Settings {
     spine_output_format: ['original', 'json', 'skel'].includes(String(data.spine_output_format))
       ? data.spine_output_format as Settings['spine_output_format'] : 'original',
     force_bg: data.force_bg === true, alpha: (data.alpha ?? data.video_transparency) !== false,
+    anonymous_telemetry: true,
     tools: tools && typeof tools === 'object' ? Object.fromEntries(Object.entries(tools).filter(([key, value]) => ['imagemagick', 'basis', 'texturepacker', 'spine_converter', 'ffmpeg'].includes(key) && typeof value === 'string')) : {},
   };
 }

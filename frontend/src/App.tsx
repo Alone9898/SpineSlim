@@ -16,6 +16,7 @@ import ModelViewer from './model3d/ModelViewer';
 import Packer from './packer/Packer';
 import Audio from './audio/Audio';
 import SpineConversionOptions from './SpineConversionOptions';
+import { beginOperation, configureTelemetry, finishOperation, TelemetryAction, TelemetryErrorCode, TelemetryEvent, TelemetryModule, track, trackAppError, trackFeature, updateOperation } from './telemetry';
 import { label as packerLabel } from './packer/i18n';
 import { label as viewerLabel } from './viewer/i18n';
 import { label as riveLabel } from './rive/i18n';
@@ -27,6 +28,11 @@ const icons = { spine: Sparkles, ui: FileImage, video: Film };
 const toolNames = ['ImageMagick', 'Basis Universal', 'TexturePacker', 'Spine converter', 'FFmpeg'];
 const toolKeys = ['imagemagick', 'basis', 'texturepacker', 'spine_converter', 'ffmpeg'];
 const urls = ['https://imagemagick.org/script/download.php', 'https://github.com/BinomialLLC/basis_universal/releases', 'https://www.codeandweb.com/texturepacker/download', 'https://github.com/wang606/SpineSkeletonDataConverter/releases', 'https://ffmpeg.org/download.html'];
+const telemetryModules = { viewer: TelemetryModule.SpineViewer, rive: TelemetryModule.RiveViewer,
+  model: TelemetryModule.ModelViewer, packer: TelemetryModule.AtlasPacker,
+  processing: TelemetryModule.AssetProcessing, audio: TelemetryModule.AudioProcessing,
+  settings: TelemetryModule.Settings };
+let appOpenTracked = false;
 
 export default function App() {
   const [settings, setSettings] = useState<Settings>(defaults);
@@ -50,6 +56,7 @@ export default function App() {
   const [stats, setStats] = useState<{ sizes: Record<string, number>; total: number } | null>(null);
   const [dropTarget, setDropTarget] = useState<'source' | 'target'>('source');
   const task = useRef('');
+  const trackedPage = useRef('');
   const current = useRef(settings);
   const statusRef = useRef(status);
   const appDirectory = useRef('');
@@ -77,9 +84,27 @@ export default function App() {
 
   useEffect(() => {
     if (!desktop || !loaded) return;
-    const timer = setTimeout(() => { invoke('save_settings', { settings }).catch(error); }, 400);
+    const timer = setTimeout(() => { invoke('save_settings', { settings: { ...settings, anonymous_telemetry: true } }).catch(error); }, 400);
     return () => clearTimeout(timer);
   }, [settings, loaded]);
+
+  useEffect(() => {
+    if (!loaded || !desktop) return;
+    configureTelemetry(settings.anonymous_telemetry, appVersion);
+    if (!settings.anonymous_telemetry) {
+      trackedPage.current = '';
+      return;
+    }
+    if (!appVersion) return;
+    if (!appOpenTracked) {
+      track(TelemetryEvent.AppOpened, { module: TelemetryModule.App, action: TelemetryAction.Open });
+      appOpenTracked = true;
+    }
+    if (trackedPage.current !== page) {
+      track(TelemetryEvent.ModuleOpened, { module: telemetryModules[page], action: TelemetryAction.Open });
+      trackedPage.current = page;
+    }
+  }, [loaded, settings.anonymous_telemetry, appVersion, page]);
 
   useEffect(() => {
     if (!desktop) return;
@@ -102,14 +127,20 @@ export default function App() {
     if (!desktop) return;
     const subscription = listen<WorkerEvent>('worker-event', ({ payload }) => {
       if (payload.task_id !== task.current) return;
+      if (payload.type === 'error') updateOperation(payload.task_id, undefined, undefined, payload.message_key);
       if (['stage', 'progress'].includes(payload.type)) {
         setStage(payload);
+        updateOperation(payload.task_id, payload.message_key,
+          payload.message_key === 'copying' ? Number(payload.params.total) : undefined);
         if (statusRef.current !== 'cancelling') setStatus('running');
       }
       if (payload.type !== 'progress') setLogs(previous => [...previous.slice(-299), payload]);
       if (payload.type === 'finished') {
         setStatus(String(payload.params.status));
         if (payload.params.output) setOutput(String(payload.params.output));
+        if (payload.message_key === 'worker_exit') updateOperation(payload.task_id, undefined, undefined, 'worker_exit');
+        finishOperation(payload.task_id, payload.params.status === 'success' ? 'success'
+          : payload.params.status === 'cancelled' ? 'cancel' : 'error');
       }
     });
     const removeCloseGuard = registerCloseGuard(async () => {
@@ -142,8 +173,8 @@ export default function App() {
   const scan = async () => {
     if (!desktop) { setNotice(t('preview')); return; }
     setScanning(true);
-    try { setTools(await invoke<Tool[]>('inspect_tools', { options: { tools: settings.tools, application_dir: appDirectory.current } })); }
-    catch (reason) { error(reason); }
+    try { setTools(await invoke<Tool[]>('inspect_tools', { options: { tools: settings.tools, application_dir: appDirectory.current } })); trackFeature(TelemetryModule.Settings, TelemetryAction.CheckTools); }
+    catch (reason) { error(reason); trackAppError(TelemetryModule.Settings, TelemetryAction.CheckTools, TelemetryErrorCode.CheckFailed); }
     finally { setScanning(false); }
   };
   const browse = async (key: 'source' | 'target') => {
@@ -174,9 +205,15 @@ export default function App() {
       const scope = settings.mode === 'ui' ? `${destination}\n${t('uiScope')}` : destination;
       if (!await confirm(`${t('confirmBody')}\n${scope}`, { title: t('confirm'), kind: 'warning' })) return;
       task.current = crypto.randomUUID();
+      beginOperation(task.current, TelemetryModule.AssetProcessing,
+        settings.mode === 'spine' ? TelemetryAction.Spine : settings.mode === 'ui' ? TelemetryAction.Ui : TelemetryAction.Video);
       setLogs([]); setStage(null); setOutput(''); setElapsed(0); setNotice(''); setStatus('checking');
       await invoke('start_task', { taskId: task.current, options: { ...settings, format, application_dir: appDirectory.current } });
-    } catch (reason) { setStatus('failed'); error(reason); }
+    } catch (reason) {
+      updateOperation(task.current, undefined, undefined, TelemetryErrorCode.StartFailed);
+      finishOperation(task.current, 'error');
+      setStatus('failed'); error(reason);
+    }
   };
   const cancel = async () => {
     setStatus('cancelling');
@@ -185,7 +222,8 @@ export default function App() {
   const measure = async () => {
     if (stats) { setStats(null); return; }
     if (!desktop) { setNotice(t('preview')); return; }
-    try { setStats(await invoke('package_stats', { options: { target: settings.target } })); } catch (reason) { error(reason); }
+    try { setStats(await invoke('package_stats', { options: { target: settings.target } })); trackFeature(TelemetryModule.AssetProcessing, TelemetryAction.PackageStats); }
+    catch (reason) { error(reason); trackAppError(TelemetryModule.AssetProcessing, TelemetryAction.PackageStats, TelemetryErrorCode.CheckFailed); }
   };
   const visit = async (url: string) => {
     try { if (desktop) await openUrl(url); else window.open(url, '_blank', 'noopener,noreferrer'); } catch (reason) { error(reason); }
@@ -200,9 +238,11 @@ export default function App() {
       const release = await invoke<{ tag: string; url: string } | null>('check_update', { current: version });
       setUpdate(release);
       setUpdateResult(release ? 'available' : 'latest');
+      trackFeature(TelemetryModule.Settings, TelemetryAction.CheckUpdate);
     } catch (reason) {
       setUpdateResult('error');
       error(reason);
+      trackAppError(TelemetryModule.Settings, TelemetryAction.CheckUpdate, TelemetryErrorCode.CheckFailed);
     } finally {
       setCheckingUpdate(false);
     }
@@ -221,6 +261,14 @@ export default function App() {
   const total = Number(stage?.params.total ?? 0);
   const percentage = total ? Math.min(100, count / total * 100) : 0;
   const modeIcon = icons[settings.mode];
+  const setTelemetryEnabled = (consent: boolean) => {
+    if (consent) {
+      appOpenTracked = true;
+      trackedPage.current = page;
+    }
+    configureTelemetry(consent, appVersion);
+    patch({ anonymous_telemetry: consent });
+  };
 
   return <div className="app-shell">
     <aside className="sidebar">
@@ -258,6 +306,7 @@ export default function App() {
           {output && <button className="button secondary full output-button" onClick={() => invoke('open_output', { path: output }).catch(error)}><FolderOpen size={16} />{t('output')}</button>}<p className="footnote"><ShieldCheck size={13} />{t('commitHint')}</p></section><div className="workspace-note"><span>LOCAL FIRST</span><p>{t('tagline')}</p></div></aside></div>
         <details className="card activity" open={status === 'failed'}><summary><span><span className="activity-dot" />{t('log')}<b>{logs.length}</b></span><ChevronRight size={16} /></summary><div className="log-toolbar"><button onClick={async () => { try { await navigator.clipboard.writeText(logs.map(event => eventText(settings.language, event)).join('\n')); setCopied(true); setTimeout(() => setCopied(false), 1500); } catch (reason) { error(reason); } }}>{copied ? <Check size={14} /> : <Copy size={14} />}{t(copied ? 'copied' : 'copyLog')}</button><button disabled={busy} onClick={() => setLogs([])}>{t('clear')}</button></div><div className="log-lines" role="log">{logs.length ? logs.map((event, index) => <div key={`${event.sequence}-${index}`} className={event.type === 'error' ? 'log-error' : ''}><span>{String(index + 1).padStart(2, '0')}</span><pre>{eventText(settings.language, event)}</pre></div>) : <p>{t('emptyLog')}</p>}</div></details>
       </> : page === 'settings' ? <div className="settings-grid"><section className="card"><div className="section-heading"><h2>{t('tools')}</h2><button className="button secondary" disabled={scanning || busy} onClick={() => void scan()}>{scanning ? <LoaderCircle className="spin" size={16} /> : <ShieldCheck size={16} />}{t(scanning ? 'checkingTools' : 'check')}</button></div><p className="hint">{t('toolsHint')}</p><div className="tools-list">{tools.map(tool => <div className="tool-item" key={tool.key}><div className="tool-title"><strong>{tool.name}</strong><span className={'tool-badge ' + (tool.available ? 'available' : '')}>{tool.available ? <Check size={12} /> : <span className="small-dot" />}{t(tool.available ? 'ready' : 'missing')}</span></div><p title={tool.path}>{settings.tools[tool.key] || tool.path || '—'}</p><div className="tool-actions"><button disabled={busy || scanning} className="button secondary" onClick={() => void chooseTool(tool.key)}><FolderOpen size={14} />{t('chooseTool')}</button><button className="text-button" onClick={() => void visit(tool.url)}>{t('download')}<ArrowUpRight size={14} /></button></div></div>)}</div></section><section className="card preferences"><h2>{t('preferences')}</h2><label className="field"><span>{t('language')}</span><select value={settings.language} onChange={event => patch({ language: event.target.value as 'zh' | 'en' })}><option value="zh">中文 / Chinese</option><option value="en">English</option></select></label><button disabled={busy} className="button secondary full" onClick={() => void importLegacy()}>{t('import')}</button><div className="divider" /><h2>{t('softwareUpdate')}</h2><p className="hint">{t('currentVersion')}: v{appVersion || '2.0.0-alpha.5'}</p><button disabled={!desktop || checkingUpdate} className="button secondary full" onClick={() => void checkUpdate()}>{checkingUpdate ? <LoaderCircle className="spin" size={16} /> : <Sparkles size={16} />}{t(checkingUpdate ? 'checkingUpdate' : 'checkUpdate')}</button>{updateResult && <p className="hint" role="status">{t(updateResult === 'available' ? 'updateAvailable' : updateResult === 'latest' ? 'updateLatest' : 'updateFailed')}{updateResult === 'available' && update ? `: ${update.tag}` : ''}</p>}{update && <button className="text-button" onClick={() => void visit(update.url)}>{t('updateGet')}<ArrowUpRight size={14} /></button>}<div className="divider" /><span className="eyebrow">SPINESLIM 2.0</span><p className="hint">Tauri 2 · React · Python</p><p className="hint">{t('version')}</p></section></div> : null}
+      {page === 'settings' && <section className="card telemetry-preferences"><h2>{t('anonymousTelemetry')}</h2><label className="toggle-row"><input type="checkbox" checked={settings.anonymous_telemetry} onChange={event => setTelemetryEnabled(event.target.checked)} /><span><strong>{t('anonymousTelemetry')}</strong><small>{t('anonymousTelemetryHint')}</small></span></label></section>}
       <footer>SpineSlim <span>© {new Date().getFullYear()} · MIT License</span></footer>
     </main>
   </div>;

@@ -9,6 +9,7 @@ import { diagnostic, label } from './i18n';
 import Stage from './Stage';
 import ResourceTree from './ResourceTree';
 import './viewer.css';
+import { TelemetryAction, TelemetryErrorCode, TelemetryModule, trackAppError, trackFeature } from '../telemetry';
 
 export default function Viewer({ language, active }: { language: 'zh' | 'en'; active: boolean }) {
   const [catalog, setCatalog] = useState<Catalog | null>(null);
@@ -32,9 +33,10 @@ export default function Viewer({ language, active }: { language: 'zh' | 'en'; ac
       const result = await invoke<Catalog>('viewer_scan', { paths: next });
       if (token !== request.current) return;
       setCatalog(result);
+      trackFeature(TelemetryModule.SpineViewer, TelemetryAction.ScanAssets, result.assets.filter(asset => asset.kind === 'skeleton').length);
       const first = result.assets.find(asset => asset.kind === 'skeleton');
       if (first) select(first, result);
-    } catch (reason) { if (token === request.current) setError(String(reason)); }
+    } catch (reason) { if (token === request.current) { setError(String(reason)); trackAppError(TelemetryModule.SpineViewer, TelemetryAction.ScanAssets, TelemetryErrorCode.ScanFailed); } }
     finally { if (token === request.current) setScanning(false); }
   };
   const choose = async (directory: boolean) => {

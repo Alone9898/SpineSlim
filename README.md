@@ -118,6 +118,7 @@ SpineSlim 的独立「图集打包」模块可将 PNG / JPG / WebP 打包为 PNG
 
 ## 文档与许可
 
+- [匿名使用统计](docs/TELEMETRY.md)：事件枚举、隐私范围与 PostHog Cloud 配置。
 - [中文完整说明](README.zh-CN.md) / [English guide](README.en-US.md)：功能、依赖、源码运行、常见问题。
 - [2.0.0-alpha.5 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.5.md)：Spine 版本升降级、JSON / SKEL 转换与独立输出。
 - [2.0.0-alpha.4 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.4.md)：3D 模型查看器、预览导入体验与动画名复制。

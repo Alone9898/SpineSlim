@@ -7,6 +7,7 @@ import { archive, decode, defaults, pack, release, type Options, type Sheet, typ
 import { diagnostic, label } from './i18n';
 import { exportFormats, packingOptions, type ExportFormat } from './exporters';
 import './packer.css';
+import { TelemetryAction, TelemetryErrorCode, TelemetryModule, trackAppError, trackFeature } from '../telemetry';
 
 type Props = { language: 'zh' | 'en'; active: boolean };
 type NativeCatalog = { session: number; files: { id: number; name: string; bytes: number }[] };
@@ -139,7 +140,8 @@ export default function Packer({ language, active }: Props) {
         const link = document.createElement('a'); link.href = url; link.download = `${name}.zip`; link.click();
         setTimeout(() => URL.revokeObjectURL(url), 10000); setSaved('download');
       }
-    } catch (reason) { setError(String(reason)); }
+      trackFeature(TelemetryModule.AtlasPacker, TelemetryAction.ExportAtlas, sources.length);
+    } catch (reason) { setError(String(reason)); trackAppError(TelemetryModule.AtlasPacker, TelemetryAction.ExportAtlas, TelemetryErrorCode.ExportFailed); }
     finally { lock.current = false; setBusy(''); }
   };
   const update = (values: Partial<Options>) => { setOptions(previous => ({ ...previous, ...values })); };

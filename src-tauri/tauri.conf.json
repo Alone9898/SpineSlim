@@ -12,7 +12,7 @@
   "app": {
     "windows": [{ "title": "SpineSlim", "width": 1200, "height": 860, "minWidth": 960, "minHeight": 720 }],
     "security": {
-      "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; img-src 'self' asset: http://asset.localhost data: blob:; media-src 'self' blob:; style-src 'self' 'unsafe-inline'; connect-src 'self' ipc: http://ipc.localhost blob:"
+      "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; img-src 'self' asset: http://asset.localhost data: blob:; media-src 'self' blob:; style-src 'self' 'unsafe-inline'; connect-src 'self' ipc: http://ipc.localhost blob: https://us.i.posthog.com https://eu.i.posthog.com"
     }
   },
   "bundle": {

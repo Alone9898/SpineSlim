@@ -6,6 +6,7 @@ import { open } from '@tauri-apps/plugin-dialog';
 import { ArrowDown, ArrowUp, FolderOpen, Music2, Plus, X } from 'lucide-react';
 import type { Language, WorkerEvent } from '../types';
 import { eventText } from '../i18n';
+import { beginOperation, finishOperation, TelemetryAction, TelemetryErrorCode, TelemetryModule, trackAppError, trackFeature, updateOperation } from '../telemetry';
 import './audio.css';
 
 type Clip = { path: string; name: string; duration: number; bytes: number; codec: string; rate: number; channels: string; start: number; end: number; fade_in: number; fade_out: number };
@@ -82,6 +83,8 @@ export default function Audio({ language, active, tools, blocked, onBusy }: Prop
     if (!isTauri()) return;
     const subscription = listen<WorkerEvent>('worker-event', ({ payload }) => {
       if (payload.task_id !== task.current) return;
+      if (payload.type === 'error') updateOperation(payload.task_id, undefined, undefined, payload.message_key);
+      if (['stage', 'progress'].includes(payload.type)) updateOperation(payload.task_id, payload.message_key);
       if (payload.message_key === 'committing') committing.current = true;
       if (['stage', 'progress'].includes(payload.type)) {
         if (payload.params.total) setProgress(Number(payload.params.completed) / Number(payload.params.total) * 100);
@@ -90,6 +93,9 @@ export default function Audio({ language, active, tools, blocked, onBusy }: Prop
       if (payload.type === 'error') setError(words[payload.message_key]?.[current.current.language === 'en' ? 1 : 0] ?? eventText(current.current.language, payload));
       if (payload.message_key === 'audio.report') setReport(`${size(Number(payload.params.input_bytes))} → ${size(Number(payload.params.output_bytes))}`);
       if (payload.type === 'finished') {
+        if (payload.message_key === 'worker_exit') updateOperation(payload.task_id, undefined, undefined, 'worker_exit');
+        finishOperation(payload.task_id, payload.params.status === 'success' ? 'success'
+          : payload.params.status === 'cancelled' ? 'cancel' : 'error');
         setStatus(String(payload.params.status)); setBusy(false); onBusy(false); locked.current = false; committing.current = false;
         if (payload.params.output) { setOutput(String(payload.params.output)); setProgress(100); }
       }
@@ -132,7 +138,8 @@ export default function Audio({ language, active, tools, blocked, onBusy }: Prop
       const result = await invoke<{ data: string }>('audio_query', { action: 'preview', options: { ...await options(), path: clip.path } });
       const bytes = Uint8Array.from(atob(result.data), character => character.charCodeAt(0));
       previewUrl.current = URL.createObjectURL(new Blob([bytes], { type: 'audio/mpeg' })); setPreview(previewUrl.current);
-    } catch (reason) { setError(t(String(reason))); }
+      trackFeature(TelemetryModule.AudioProcessing, TelemetryAction.PreviewAudio);
+    } catch (reason) { setError(t(String(reason))); trackAppError(TelemetryModule.AudioProcessing, TelemetryAction.PreviewAudio, TelemetryErrorCode.CheckFailed); }
     finally { locked.current = false; setLoading(false); }
   };
   const edit = (value: Partial<Clip>) => setClips(previous => previous.map(item => item.path === selected ? { ...item, ...value } : item));
@@ -141,9 +148,12 @@ export default function Audio({ language, active, tools, blocked, onBusy }: Prop
     if (locked.current || blocked) return;
     locked.current = true; setBusy(true); onBusy(true); setStatus('working'); setProgress(0); setCurrentFile(''); setError(''); setOutput(''); setReport(''); committing.current = false;
     task.current = crypto.randomUUID();
+    beginOperation(task.current, TelemetryModule.AudioProcessing,
+      operation === 'merge' ? TelemetryAction.AudioMerge : operation === 'sprite' ? TelemetryAction.AudioSprite : TelemetryAction.AudioBatch,
+      clips.length);
     try {
       await invoke('start_task', { taskId: task.current, options: { ...await options(), clips, operation, audio_format: format, encoding, quality, bitrate, rate, channels, gap, target } });
-    } catch (reason) { locked.current = false; setBusy(false); onBusy(false); setStatus('failed'); setError(t(String(reason))); }
+    } catch (reason) { updateOperation(task.current, undefined, undefined, TelemetryErrorCode.StartFailed); finishOperation(task.current, 'error'); locked.current = false; setBusy(false); onBusy(false); setStatus('failed'); setError(t(String(reason))); }
   };
   if (!isTauri()) return <section className="card">{t('desktop')}</section>;
   return <div className="audio-workspace">
