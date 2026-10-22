@@ -8,6 +8,8 @@ if __package__ in (None, ""):
 
 from backend.service import Cancelled, ProcessingError, Service
 from backend.audio import AudioService
+from backend.audit import run_audit
+from backend.providers import build_model_config, list_presets
 
 
 def main():
@@ -38,13 +40,24 @@ def main():
             audio = AudioService(options, emit, cancelled)
             emit('result', action, **(audio.scan() if action == 'audio_scan' else audio.preview()))
             return
+        if action == "providers":
+            emit("result", "providers", providers=list_presets())
+            return
+        if action == "validate_model":
+            try:
+                emit("result", "validate_model", model=build_model_config(
+                    options.get("provider", ""), options.get("model", ""),
+                    base_url=options.get("base_url"), protocol=options.get("protocol")))
+            except ValueError as error:
+                raise ProcessingError(str(error))
+            return
         if action == "inspect":
             emit("result", "tools", tools=service.inspect())
             return
         if action == "stats":
             emit("result", "stats", **service.statistics())
             return
-        if action != "start":
+        if action not in ("start", "audit"):
             raise ProcessingError("invalid_request")
 
         def read_control():
@@ -57,6 +70,11 @@ def main():
                     continue
 
         threading.Thread(target=read_control, daemon=True).start()
+        if action == "audit":
+            emit("started", "audit_scanning")
+            emit("result", "audit", report=run_audit(options, emit, cancelled))
+            emit("finished", "success", status="success")
+            return
         emit("started", "checking")
         output = service.process()
         emit("finished", "success", status="success", output=str(output))

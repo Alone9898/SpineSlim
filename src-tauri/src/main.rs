@@ -3,7 +3,9 @@
 use serde_json::{json, Value};
 mod model3d;
 mod packer;
+mod model_list;
 mod rive;
+mod secrets;
 mod update;
 mod viewer;
 mod viewer_export;
@@ -119,13 +121,18 @@ fn start_task(
     runtime: State<Runtime>,
     task_id: String,
     options: Value,
+    action: Option<String>,
 ) -> Result<(), String> {
+    let action = action.unwrap_or_else(|| "start".into());
+    if !matches!(action.as_str(), "start" | "audit") {
+        return Err("invalid_request".into());
+    }
     let mut guard = runtime.active.lock().map_err(|error| error.to_string())?;
     if guard.is_some() {
         return Err("A task is already running".into());
     }
     let request =
-        json!({"protocol_version": 1, "task_id": task_id, "action": "start", "options": options});
+        json!({"protocol_version": 1, "task_id": task_id, "action": action, "options": options});
     let (mut child, mut input) = spawn_worker()?;
     #[cfg(windows)]
     let job = match ProcessJob::attach(&child) {
@@ -231,6 +238,15 @@ async fn audio_query(action: String, options: Value) -> Result<Value, String> {
     }
 }
 
+#[tauri::command]
+async fn model_query(action: String, options: Value) -> Result<Value, String> {
+    match action.as_str() {
+        "providers" => query_worker("providers", options).await,
+        "validate" => query_worker("validate_model", options).await,
+        _ => Err("invalid_request".into()),
+    }
+}
+
 async fn query_worker(action: &'static str, options: Value) -> Result<Value, String> {
     tauri::async_runtime::spawn_blocking(move || {
         let request = json!({"protocol_version": 1, "task_id": "query", "action": action, "options": options});
@@ -333,6 +349,11 @@ fn main() {
             inspect_tools,
             package_stats,
             audio_query,
+            model_query,
+            secrets::model_key_status,
+            secrets::save_model_key,
+            secrets::delete_model_key,
+            model_list::fetch_model_list,
             load_settings,
             save_settings,
             import_settings,
