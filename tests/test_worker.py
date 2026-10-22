@@ -272,5 +272,45 @@ class WorkerTests(unittest.TestCase):
         self.assertEqual(events[-1]["task_id"], "test")
 
 
+    def run_worker_action(self, action, options=None):
+        request = {"protocol_version": 1, "task_id": "test", "action": action, "options": options or {}}
+        result = subprocess.run([sys.executable, "-m", "backend.worker"], input=json.dumps(request) + "\n",
+                                capture_output=True, text=True, encoding="utf-8", timeout=10)
+        return [json.loads(line) for line in result.stdout.splitlines()]
+
+    def test_providers_action_lists_presets_without_keys(self):
+        events = self.run_worker_action("providers")
+
+        self.assertEqual(events[-1]["type"], "result")
+        providers = events[-1]["params"]["providers"]
+        self.assertEqual(len(providers), 8)
+        self.assertFalse(any("key" in name.lower() for provider in providers for name in provider))
+
+    def test_validate_model_action_returns_config(self):
+        events = self.run_worker_action("validate_model", {"provider": "groq", "model": "llama", "base_url": "", "protocol": ""})
+
+        self.assertEqual(events[-1]["params"]["model"]["base_url"], "https://api.groq.com/openai/v1")
+
+    def test_validate_model_action_reports_invalid_base_url(self):
+        events = self.run_worker_action("validate_model", {"provider": "custom", "model": "m", "base_url": "http://x", "protocol": "openai_compatible"})
+
+        self.assertEqual([event["type"] for event in events], ["error", "finished"])
+        self.assertEqual(events[0]["message_key"], "invalid_base_url")
+
+
+    def test_audit_action_streams_started_progress_result_then_finished(self):
+        with tempfile.TemporaryDirectory() as folder:
+            (Path(folder) / "a.txt").write_text("x", encoding="utf-8")
+
+            events = self.run_worker_action("audit", {"source": folder})
+
+        self.assertEqual(events[0]["type"], "started")
+        self.assertIn("result", [event["type"] for event in events])
+        self.assertEqual(events[-1]["type"], "finished")
+        self.assertEqual(events[-1]["params"]["status"], "success")
+        report = next(event for event in events if event["type"] == "result")["params"]["report"]
+        self.assertEqual(report["totalFiles"], 1)
+
+
 if __name__ == "__main__":
     unittest.main()
