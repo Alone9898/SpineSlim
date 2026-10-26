@@ -290,7 +290,7 @@ export default function App() {
       <div hidden={page !== 'model'}><ModelViewer language={settings.language} active={page === 'model'} /></div>
       <div hidden={page !== 'packer'}><Packer language={settings.language} active={page === 'packer'} /></div>
       <div hidden={page !== 'audio'}><Audio language={settings.language} active={page === 'audio'} tools={settings.tools} blocked={busy} onBusy={setAudioBusy} /></div>
-      <div hidden={page !== 'ai'}><AiAudit language={settings.language} /></div>
+      <div hidden={page !== 'ai'}><AiAudit language={settings.language} active={page === 'ai'} profile={settings.models.find(profile => profile.id === settings.active_model)} onOpenSettings={() => setPage('settings')} /></div>
       {page === 'viewer' || page === 'rive' || page === 'model' || page === 'packer' || page === 'audio' || page === 'ai' ? null : page === 'processing' ? <>
         <div className="mode-tabs" role="tablist">{modes.map(mode => { const Icon = icons[mode]; return <button role="tab" aria-selected={settings.mode === mode} key={mode} disabled={busy} className={settings.mode === mode ? 'selected' : ''} onClick={() => patch({ mode })}><Icon size={18} />{t(mode)}</button>; })}</div>
         <div className="workspace-grid"><div className="form-column">

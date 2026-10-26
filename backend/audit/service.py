@@ -21,8 +21,10 @@ class AuditService:
         started = time.monotonic()
         root = self._resolve_root()
         self.emit("progress", "audit_scanning", processed=0)
-        entries = scan_files(root, self.cancelled, lambda count: self.emit("progress", "audit_scanning", processed=count))
-        context = RuleContext(root=root, entries=entries, options=self.options, cancelled=self.cancelled)
+        skipped = []
+        entries = scan_files(root, self.cancelled, lambda count: self.emit("progress", "audit_scanning", processed=count),
+                             lambda relative, reason: skipped.append((relative, reason)))
+        context = RuleContext(root=root, entries=entries, options=self.options, cancelled=self.cancelled, unchecked=skipped)
 
         issues = []
         rule_status = []
@@ -33,9 +35,8 @@ class AuditService:
             except Cancelled:
                 raise
             except Exception as error:
-                # Rule errors are isolated: the rule is reported as unchecked and the scan continues.
                 rule_status.append({"ruleId": audit_rule.rule_id, "version": audit_rule.version,
-                                    "status": "error", "coverage": audit_rule.coverage, "detail": str(error)})
+                                    "status": "error", "coverage": audit_rule.coverage, "detail": type(error).__name__})
                 continue
             issues.extend(found)
             rule_status.append({"ruleId": audit_rule.rule_id, "version": audit_rule.version,

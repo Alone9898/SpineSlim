@@ -20,7 +20,7 @@ class ProviderPreset:
 # Base URLs and model IDs are suggestions; users can edit both.
 # Verify against each vendor's current documentation before release.
 PRESETS = (
-    ProviderPreset("deepseek", "DeepSeek", "https://api.deepseek.com/v1", PROTOCOL_OPENAI, "deepseek-chat"),
+    ProviderPreset("deepseek", "DeepSeek", "https://api.deepseek.com", PROTOCOL_OPENAI, "deepseek-chat"),
     ProviderPreset("openai", "OpenAI", "https://api.openai.com/v1", PROTOCOL_OPENAI, "gpt-4o-mini"),
     ProviderPreset("anthropic", "Anthropic (Claude)", "https://api.anthropic.com/v1", PROTOCOL_ANTHROPIC, "claude-sonnet-5-5"),
     ProviderPreset("gemini", "Google (Gemini)", "https://generativelanguage.googleapis.com/v1beta", PROTOCOL_GEMINI, "gemini-2.5-flash"),

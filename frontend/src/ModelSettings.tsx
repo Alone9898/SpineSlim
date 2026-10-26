@@ -9,6 +9,16 @@ const CUSTOM = 'custom';
 const protocolKeys = ['protocolOpenAI', 'protocolAnthropic', 'protocolGemini'];
 const protocolValues = ['openai_compatible', 'anthropic', 'gemini'];
 
+function validBaseUrl(value: string) {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' && Boolean(url.hostname) && !url.username && !url.password
+      && !url.search && !url.hash && !/\s/.test(value);
+  } catch {
+    return false;
+  }
+}
+
 type Check = { state: 'idle' } | { state: 'checking' } | { state: 'ok' } | { state: 'error'; key: string };
 type KeyStatus = { saved: boolean; hint: string };
 
@@ -208,7 +218,7 @@ export default function ModelSettings({ language, settings, patch, busy, desktop
           </div>
           <input value={selected.base_url} placeholder={preset?.base_url ?? 'https://'} onChange={event => update({ base_url: event.target.value })} />
         </div>
-        <p className="mf-hint">{t('baseUrlHint')}</p>
+        {!validBaseUrl(selected.base_url) && <p className="mf-hint">{t('baseUrlHint')}</p>}
 
         <div className="mf-actions">
           <button type="button" className="mf-small" disabled={selected.id === settings.active_model} onClick={() => writeProfiles(profiles, selected.id)}>{t('setActive')}</button>

@@ -1,6 +1,7 @@
 import hashlib
 import json
 import re
+import xml.etree.ElementTree as ET
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -121,11 +122,11 @@ def missing_atlas_pages(context):
         text = entry.path.read_text(encoding="utf-8", errors="replace")
         folder = Path(entry.relative).parent
         for page in parse_atlas_pages(text):
-            target = (folder / page).as_posix() if folder.as_posix() != "." else page
+            target = (folder / page.replace("\\", "/")).as_posix() if folder.as_posix() != "." else page.replace("\\", "/")
             if target not in known:
                 issues.append(Issue(
                     rule_id="R04",
-                code="atlas_missing_page",
+                    code="atlas_missing_page",
                     severity="critical",
                     title="Atlas references missing texture",
                     description="The atlas page image is not present in the scanned directory.",
@@ -133,6 +134,64 @@ def missing_atlas_pages(context):
                     evidence=[f"missing page: {page}"],
                     suggestion="Restore the texture or re-export the atlas.",
                 ))
+    return issues
+
+
+@rule("R10", "1", "BMFont XML/text page images (.fnt)")
+def missing_bmfont_pages(context):
+    known = {entry.relative for entry in context.entries}
+    issues = []
+    for entry in context.entries:
+        if entry.extension != ".fnt":
+            continue
+        context.check_cancelled()
+        try:
+            content = entry.path.read_text(encoding="utf-8-sig")
+            if content.lstrip().startswith("<"):
+                pages = [node.attrib["file"] for node in ET.fromstring(content).iter("page") if "file" in node.attrib]
+            else:
+                pages = re.findall(r'^page\s+[^\r\n]*?\bfile="([^"]+)"', content, re.MULTILINE)
+        except (OSError, ValueError, ET.ParseError):
+            context.unchecked.append((entry.relative, "fnt_unreadable"))
+            continue
+        folder = Path(entry.relative).parent
+        for page in pages:
+            target = (folder / page.replace("\\", "/")).as_posix()
+            if target not in known:
+                issues.append(Issue("R10", "bmfont_missing_page", "critical", "BMFont page is missing",
+                                    "The font references an unavailable page image.", [entry.relative],
+                                    [f"missing page: {page}"], "Restore the page image or re-export the font."))
+    return issues
+
+
+@rule("R11", "1", "External GLTF buffers and images (.gltf)")
+def missing_gltf_dependencies(context):
+    known = {entry.relative for entry in context.entries}
+    issues = []
+    for entry in context.entries:
+        if entry.extension != ".gltf":
+            continue
+        context.check_cancelled()
+        try:
+            data = json.loads(entry.path.read_text(encoding="utf-8-sig"))
+            references = [item.get("uri") for kind in ("buffers", "images") for item in data.get(kind, [])]
+        except (OSError, ValueError, TypeError, AttributeError):
+            context.unchecked.append((entry.relative, "gltf_unreadable"))
+            continue
+        folder = Path(entry.relative).parent
+        for uri in references:
+            if not isinstance(uri, str) or uri.startswith("data:"):
+                continue
+            if "://" in uri or uri.startswith("/"):
+                context.unchecked.append((entry.relative, "gltf_external_uri"))
+                continue
+            from urllib.parse import unquote, urlsplit
+            path = unquote(urlsplit(uri).path).replace("\\", "/")
+            target = (folder / path).as_posix()
+            if target not in known:
+                issues.append(Issue("R11", "gltf_missing_dependency", "critical", "GLTF dependency is missing",
+                                    "The model references an unavailable buffer or texture.", [entry.relative],
+                                    [f"missing dependency: {path}"], "Restore the file beside the model or update its URI."))
     return issues
 
 
@@ -161,6 +220,36 @@ def oversized_images(context):
                 evidence=[f"{width}x{height}, limit {limit}"],
                 suggestion="Check whether the display size needs this resolution.",
             ))
+    return issues
+
+
+@rule("R06", "1", "Excess transparent padding (PNG, WebP with alpha)")
+def transparent_padding(context):
+    threshold = float(context.options.get("max_transparent_fraction", 0.75))
+    issues = []
+    for entry in context.entries:
+        if entry.extension not in (".png", ".webp"):
+            continue
+        context.check_cancelled()
+        try:
+            with Image.open(entry.path) as image:
+                if "A" not in image.getbands() and "transparency" not in image.info:
+                    continue
+                width, height = image.size
+                if width * height > 4096 * 4096:
+                    context.unchecked.append((entry.relative, "alpha_analysis_too_large"))
+                    continue
+                bounds = image.convert("RGBA").getchannel("A").getbbox()
+        except (OSError, ValueError):
+            continue
+        if bounds is None:
+            continue
+        fraction = 1 - (bounds[2] - bounds[0]) * (bounds[3] - bounds[1]) / (width * height)
+        if fraction > threshold:
+            issues.append(Issue("R06", "transparent_padding", "suggestion", "Large transparent padding",
+                                "Most pixels lie outside the visible alpha bounds.", [entry.relative],
+                                [f"transparent area outside bounds: {fraction:.0%}, threshold {threshold:.0%}"],
+                                "Check whether trimming is appropriate; Spine atlas coordinates may depend on the canvas size."))
     return issues
 
 
@@ -242,4 +331,34 @@ def spine_json(context):
                 evidence=list(result.errors),
                 suggestion="Re-export the skeleton from Spine.",
             ))
+    return issues
+
+
+@rule("R13", "1", "File signatures for PNG, JPEG, WebP, WAV, OGG and GLB")
+def file_signatures(context):
+    supported = {".png", ".jpg", ".jpeg", ".webp", ".wav", ".ogg", ".glb"}
+    issues = []
+    for entry in context.entries:
+        if entry.extension not in supported:
+            continue
+        context.check_cancelled()
+        try:
+            with entry.path.open("rb") as handle:
+                header = handle.read(16)
+        except OSError:
+            context.unchecked.append((entry.relative, "signature_unreadable"))
+            continue
+        matches = {
+            ".png": header.startswith(b"\x89PNG\r\n\x1a\n"),
+            ".jpg": header.startswith(b"\xff\xd8\xff"),
+            ".jpeg": header.startswith(b"\xff\xd8\xff"),
+            ".webp": header.startswith(b"RIFF") and header[8:12] == b"WEBP",
+            ".wav": header.startswith(b"RIFF") and header[8:12] == b"WAVE",
+            ".ogg": header.startswith(b"OggS"),
+            ".glb": header.startswith(b"glTF"),
+        }
+        if not matches[entry.extension]:
+            issues.append(Issue("R13", "format_mismatch", "warning", "File signature does not match its extension",
+                                "The file header is not recognized as the expected format.", [entry.relative],
+                                [f"extension: {entry.extension}"], "Verify the file and re-export or rename it after checking its actual format."))
     return issues

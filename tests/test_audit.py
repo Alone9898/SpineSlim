@@ -52,6 +52,10 @@ class AtlasParsingTests(unittest.TestCase):
     def test_returns_only_page_names(self):
         self.assertEqual(parse_atlas_pages(ATLAS), ["hero.png", "hero_missing.png"])
 
+    def test_page_without_size_line(self):
+        atlas = "texture.webp\nfilter: Linear,Linear\nrepeat: none\nregion\n  rotate: false\n"
+        self.assertEqual(parse_atlas_pages(atlas), ["texture.webp"])
+
 
 class AuditRuleTests(unittest.TestCase):
     def setUp(self):
@@ -102,6 +106,16 @@ class AuditRuleTests(unittest.TestCase):
 
         self.assertEqual(issues_for(report, "R04"), [])
 
+    def test_bmfont_and_gltf_missing_dependencies(self):
+        (self.root / "font.fnt").write_text('page id=0 file="font.png"\n', encoding="utf-8")
+        (self.root / "model.gltf").write_text(json.dumps({"buffers": [{"uri": "mesh.bin"}],
+                                                          "images": [{"uri": "data:image/png;base64,AAAA"}]}), encoding="utf-8")
+
+        report, _ = run(self.root)
+
+        self.assertEqual(issues_for(report, "R10")[0]["evidence"], ["missing page: font.png"])
+        self.assertEqual(issues_for(report, "R11")[0]["evidence"], ["missing dependency: mesh.bin"])
+
     def test_oversized_image_is_suggestion_with_threshold(self):
         Image.new("RGBA", (5000, 10)).save(self.root / "wide.png")
 
@@ -110,6 +124,22 @@ class AuditRuleTests(unittest.TestCase):
         issues = issues_for(report, "R05")
         self.assertEqual(issues[0]["severity"], "suggestion")
         self.assertEqual(issues[0]["evidence"], ["5000x10, limit 4096"])
+
+    def test_transparent_padding_is_suggestion(self):
+        image = Image.new("RGBA", (100, 100), (0, 0, 0, 0))
+        image.paste((255, 0, 0, 255), (45, 45, 55, 55))
+        image.save(self.root / "padded.png")
+
+        report, _ = run(self.root)
+
+        self.assertEqual(issues_for(report, "R06")[0]["files"], ["padded.png"])
+
+    def test_signature_mismatch_is_warning(self):
+        (self.root / "fake.glb").write_bytes(b"not-a-glb")
+
+        report, _ = run(self.root)
+
+        self.assertEqual(issues_for(report, "R13")[0]["severity"], "warning")
 
     def test_unreadable_image_is_unchecked_not_passed(self):
         (self.root / "broken.png").write_bytes(b"not a png")
@@ -181,7 +211,7 @@ class AuditServiceTests(unittest.TestCase):
 
         report, _ = run(self.root)
 
-        self.assertEqual({item["ruleId"] for item in report["rules"]}, {"R01", "R04", "R05", "R07", "R08", "R09"})
+        self.assertEqual({item["ruleId"] for item in report["rules"]}, {"R01", "R04", "R05", "R06", "R07", "R08", "R09", "R10", "R11", "R13"})
 
     def test_progress_events_are_emitted_from_real_work(self):
         (self.root / "a.txt").write_text("x", encoding="utf-8")
@@ -189,7 +219,7 @@ class AuditServiceTests(unittest.TestCase):
         _, events = run(self.root)
 
         self.assertIn(("progress", "audit_scanning", {"processed": 1}), events)
-        self.assertIn(("progress", "audit_rule", {"rule_id": "R01", "index": 1, "total": 6}), events)
+        self.assertIn(("progress", "audit_rule", {"rule_id": "R01", "index": 1, "total": 10}), events)
 
     def test_cancel_before_start_raises_cancelled(self):
         cancelled = threading.Event()

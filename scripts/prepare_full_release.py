@@ -33,6 +33,8 @@ def main():
     if payload.exists():
         shutil.rmtree(payload)
     shutil.copytree(local_payload, payload)
+    shutil.copy2(root / "LICENSE", payload / "LICENSE")
+    shutil.copy2(root / "THIRD_PARTY.md", payload / "THIRD_PARTY.md")
     (payload / "LOCAL-TEST-README.txt").unlink(missing_ok=True)
     for name in EXTRA_LICENSES:
         shutil.copy2(license_source / name, payload / "licenses" / name)

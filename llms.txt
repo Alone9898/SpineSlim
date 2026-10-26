@@ -1,6 +1,6 @@
 # SpineSlim
 
-> SpineSlim is a free, local Windows desktop toolkit for game developers. It previews Spine JSON/SKEL and Rive animations, inspects 3D models (GLB, GLTF, FBX, OBJ, STL), packs sprite sheets and texture atlases for Unity, Cocos Creator, Godot, PixiJS and Phaser, compresses textures, and builds audio sprites for Howler.js and Phaser. Files are processed on the user's machine. Current source version: 2.0.0-alpha.6 (Tauri 2 + React + TypeScript, Python backend). License: MIT.
+> SpineSlim is a free, local Windows desktop toolkit for game developers. It previews Spine JSON/SKEL and Rive animations, inspects 3D models (GLB, GLTF, FBX, OBJ, STL), packs sprite sheets and texture atlases for Unity, Cocos Creator, Godot, PixiJS and Phaser, compresses textures, builds audio sprites, and audits game assets locally. Current source version: 2.0.0-alpha.7 (Tauri 2 + React + TypeScript, Python backend). License: MIT.
 
 SpineSlim is aimed at indie game developers, 2D game artists, technical artists, and HTML5/Web game developers. It is a desktop application, not a hosted service, and it does not require the Spine editor.
 
@@ -13,6 +13,7 @@ SpineSlim is aimed at indie game developers, 2D game artists, technical artists,
 - Atlas packer: MaxRects packing, transparent trimming, edge extrusion, multi-page output. Exports Cocos (plist), Unity (PNG + slice manifest + Editor script), Godot (AtlasTexture `.tres`), PixiJS (spritesheet JSON), Phaser 3 (multiatlas JSON) and Spine Atlas formats.
 - Asset processing: Spine JSON upgrade, texture compression, UI category processing, bitmap fonts, WebM/VP9 video conversion.
 - Audio: batch conversion and compression, preview, trimming, fades, short-clip merging, Howler.js and Phaser audio sprite JSON.
+- AI Asset Audit: local checks for exact duplicates, missing dependencies, image dimensions and padding, large files, naming and format issues; export JSON or HTML reports. Optional model chat sends a summary only after the user presses Send. The audit does not modify or automatically clean files.
 - Localization: Chinese by default, English supported.
 - Unity, Godot and Cocos exports have been checked for file structure and coordinates. Final import into each editor should still be tested in the target project.
 
@@ -25,7 +26,7 @@ SpineSlim is aimed at indie game developers, 2D game artists, technical artists,
 - [3D model viewer guide](https://github.com/Alone9898/SpineSlim/blob/main/docs/MODEL_VIEWER.md)
 - [Atlas packer guide](https://github.com/Alone9898/SpineSlim/blob/main/docs/ATLAS_PACKER.md)
 - [Audio processing guide](https://github.com/Alone9898/SpineSlim/blob/main/docs/AUDIO_PROCESSING.md)
-- [Release notes (2.0.0-alpha.6)](https://github.com/Alone9898/SpineSlim/blob/main/docs/RELEASE_NOTES_2.0.0-alpha.6.md)
+- [Release notes (2.0.0-alpha.7)](https://github.com/Alone9898/SpineSlim/blob/main/docs/RELEASE_NOTES_2.0.0-alpha.7.md)
 - [Third-party licenses](https://github.com/Alone9898/SpineSlim/blob/main/THIRD_PARTY.md)
 
 ## Links

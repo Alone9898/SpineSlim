@@ -6,7 +6,7 @@ SpineSlim 是 Windows 本地游戏资源工具，面向独立游戏开发者、2
 
 [产品官网](https://www.jyhzai.com/spineslim/) · [English Website](https://www.jyhzai.com/en/spineslim/) · [项目首页](README.md) · [English](README.en-US.md) · [下载 Releases](https://github.com/Alone9898/SpineSlim/releases) · [TG 交流群](https://t.me/+XlcsJcxyKZtlNGYy) · [Star ⭐](https://github.com/Alone9898/SpineSlim)
 
-当前文档对应 Tauri 2.0 开发线，源码版本 `2.0.0-alpha.6`。访问 [SpineSlim 产品官网](https://www.jyhzai.com/spineslim/)可查看产品介绍，发行包功能以对应 Release 为准。旧版 1.x 不包含全部新功能。主要支持 Windows x64；macOS 安装包尚未提供。
+当前文档对应 Tauri 2.0 开发线，源码版本 `2.0.0-alpha.7`。访问 [SpineSlim 产品官网](https://www.jyhzai.com/spineslim/)可查看产品介绍，发行包功能以对应 Release 为准。旧版 1.x 不包含全部新功能。主要支持 Windows x64；macOS 安装包尚未提供。
 
 ## 快速开始
 
@@ -18,6 +18,14 @@ SpineSlim 是 Windows 本地游戏资源工具，面向独立游戏开发者、2
 默认中文，可在“设置”中切换 English 并检查软件更新。直接在桌面窗口内使用，无需额外打开浏览器；资源在本机处理。系统需要 WebView2，安装包是否包含离线组件以 Release 为准。
 
 Rive 预览可离线打开本地 `.riv`、切换画板和状态机，并测试传统输入控件；3D 模型查看器可本地查看模型、材质和动画。二者都支持文件或文件夹拖拽导入。详情见 [Rive 预览说明](docs/RIVE_VIEWER.md)与 [3D 模型查看器说明](docs/MODEL_VIEWER.md)。
+
+## AI 智能体检：本地规则与可选 AI 对话
+
+选择或拖入游戏资源目录，本地检查精确重复、缺失依赖、图片尺寸、透明边距、文件体积、命名和格式问题。体检结果按严重程度筛选，支持搜索、定位问题文件、查看规则覆盖范围，并导出 JSON / HTML 报告。扫描不会修改原文件；未覆盖的内容不会被当作通过。
+
+扫描完成后可选择自己的 DeepSeek、OpenAI 等兼容模型或 Anthropic / Gemini 服务，手动发送体检摘要并提问。默认摘要只有统计数量与问题类型；勾选后才附带有限的相对文件名和证据。只有点击发送才联网，模型费用由用户自己的服务账号承担；AI 建议需核对，软件不会自动删除素材。
+
+![SpineSlim AI 智能体检：扫描结果与 AI 对话](assets/screenshots/ai-audit-en.png)
 
 ## Spine 动画预览：JSON / SKEL 查看器
 

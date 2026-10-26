@@ -2,6 +2,7 @@
 
 use serde_json::{json, Value};
 mod model3d;
+mod audit_chat;
 mod packer;
 mod model_list;
 mod rive;
@@ -189,6 +190,16 @@ fn start_task(
 }
 
 #[tauri::command]
+fn save_audit_report(target: String, content: String) -> Result<(), String> {
+    let path = PathBuf::from(target);
+    let extension = path.extension().and_then(|value| value.to_str()).unwrap_or("");
+    if !path.is_absolute() || !matches!(extension.to_ascii_lowercase().as_str(), "json" | "html") || content.len() > 16 * 1024 * 1024 {
+        return Err("invalid_report_path".into());
+    }
+    fs::write(path, content).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
 fn cancel_task(runtime: State<Runtime>) -> Result<(), String> {
     let mut guard = runtime.active.lock().map_err(|error| error.to_string())?;
     if let Some(task) = guard.as_mut() {
@@ -345,11 +356,13 @@ fn main() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             start_task,
+            save_audit_report,
             cancel_task,
             inspect_tools,
             package_stats,
             audio_query,
             model_query,
+            audit_chat::audit_chat,
             secrets::model_key_status,
             secrets::save_model_key,
             secrets::delete_model_key,

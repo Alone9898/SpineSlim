@@ -39,11 +39,14 @@ export const defaults: Settings = { schema_version: 1, language: 'zh', source: '
 
 function hydrateProfile(input: unknown): ModelProfile {
   const data = input && typeof input === 'object' ? input as Record<string, unknown> : {};
+  const provider = text(data.provider) || 'deepseek';
+  const savedBaseUrl = text(data.base_url);
   return {
     id: idPattern.test(text(data.id)) ? text(data.id) : newProfileId(),
     name: text(data.name),
-    provider: text(data.provider) || 'deepseek',
-    base_url: text(data.base_url),
+    provider,
+    base_url: provider === 'deepseek' && /^https:\/\/api\.deepseek\.com\/v1\/?$/.test(savedBaseUrl)
+      ? 'https://api.deepseek.com' : savedBaseUrl,
     protocol: protocols.includes(String(data.protocol)) ? String(data.protocol) : 'openai_compatible',
     model: text(data.model),
   };

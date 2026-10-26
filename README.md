@@ -20,10 +20,11 @@ SpineSlim is a Windows desktop game asset toolkit for Unity, Cocos Creator, Godo
 | **图集打包** | 自动排列、透明裁剪、边缘扩展、多页预览，导出 Cocos / Unity / Godot / PixiJS / Phaser / Spine 格式 |
 | **资源处理** | Spine JSON 升级、纹理压缩、UI 分类处理、位图字体、WebM / VP9 视频转换 |
 | **音频处理** | 批量转换压缩、试听、裁剪、淡入淡出、短音频合并、Howler.js / Phaser 音频图集 |
+| **AI 智能体检** | 本地扫描重复资源、缺失依赖、图片尺寸、命名与格式问题；按风险筛选并导出报告，可选择模型讨论结果 |
 
 Tauri 2 + React + TypeScript + Python 后台。中文默认，支持 English；桌面使用无需另开浏览器，资源在本机处理。
 
-本文对应 **2.0 开发线**，当前源码版本为 `2.0.0-alpha.6`。可前往[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [GitHub Releases](https://github.com/Alone9898/SpineSlim/releases) 下载；旧版 1.x 不包含全部新模块。当前主要支持 Windows x64，尚未提供 macOS 安装包。
+本文对应 **2.0 开发线**，当前源码版本为 `2.0.0-alpha.7`。可前往[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [GitHub Releases](https://github.com/Alone9898/SpineSlim/releases) 下载；旧版 1.x 不包含全部新模块。当前主要支持 Windows x64，尚未提供 macOS 安装包。
 
 ## Unity、Cocos、Godot、PixiJS 和 Phaser 怎么接入？
 
@@ -37,6 +38,12 @@ Tauri 2 + React + TypeScript + Python 后台。中文默认，支持 English；�
 | **Spine / Howler.js** | 分别导出 Spine Atlas 和 Howler.js 音效时间配置 |
 
 Unity / Godot / Cocos 导出已验证文件结构与坐标，实际编辑器导入仍需在目标项目测试。图片图集和音频图集是两种独立输出，具体格式见各模块说明。
+
+## AI 智能体检：本地扫描与可选模型对话
+
+选择或拖入游戏资源目录后，本地规则会检查精确重复、缺失依赖、图片尺寸与透明边距、文件体积、命名和格式异常。结果按风险筛选，可定位文件并导出 JSON / HTML 报告；检测不会修改原文件。完成后可选择自己的模型服务，手动发送体检摘要并讨论修复顺序。默认摘要不包含文件名和路径；只有主动勾选才附带有限的相对文件名与证据。AI 建议需人工核对，当前不提供自动清理。[查看功能设计与范围 →](docs/SpineSlim_AI智能体检_功能设计文档.md)
+
+![SpineSlim AI 智能体检：本地资源扫描、风险列表与可选 AI 对话](assets/screenshots/ai-audit-en.png)
 
 ## Spine 动画预览器：JSON / SKEL 与 GIF / MP4 导出
 
@@ -118,6 +125,7 @@ SpineSlim 的独立「图集打包」模块可将 PNG / JPG / WebP 打包为 PNG
 
 ## 文档与许可
 
+- [2.0.0-alpha.7 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.7.md)：真实本地体检、报告导出和可选 AI 对话。
 - [匿名使用统计](docs/TELEMETRY.md)：事件枚举、隐私范围与 PostHog Cloud 配置。
 - [2.0.0-alpha.6 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.6.md)：AI 智能体检交互预览与匿名统计改进。
 - [中文完整说明](README.zh-CN.md) / [English guide](README.en-US.md)：功能、依赖、源码运行、常见问题。

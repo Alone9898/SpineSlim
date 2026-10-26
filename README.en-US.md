@@ -6,7 +6,7 @@ SpineSlim helps indie developers, 2D game artists and technical artists preview 
 
 [Official Website](https://www.jyhzai.com/en/spineslim/) · [中文官网](https://www.jyhzai.com/spineslim/) · [Project Home](README.md) · [中文](README.zh-CN.md) · [Download / Releases](https://github.com/Alone9898/SpineSlim/releases) · [Telegram group](https://t.me/+XlcsJcxyKZtlNGYy) · [Star ⭐](https://github.com/Alone9898/SpineSlim)
 
-This guide covers the Tauri 2.0 development line, with source version `2.0.0-alpha.6`. Visit the [SpineSlim official website](https://www.jyhzai.com/en/spineslim/) for the product overview and check the release notes for your downloaded build. Older 1.x packages do not include all new modules. Windows x64 is the primary platform; no macOS installer is available yet.
+This guide covers the Tauri 2.0 development line, with source version `2.0.0-alpha.7`. Visit the [SpineSlim official website](https://www.jyhzai.com/en/spineslim/) for the product overview and check the release notes for your downloaded build. Older 1.x packages do not include all new modules. Windows x64 is the primary platform; no macOS installer is available yet.
 
 ## Quick start
 
@@ -18,6 +18,14 @@ This guide covers the Tauri 2.0 development line, with source version `2.0.0-alp
 Chinese is the default language; select English or check for software updates in Settings. The app runs in its own desktop window and processes assets locally. Windows needs WebView2; check the release notes for offline runtime availability.
 
 The Rive viewer opens local `.riv` files offline, switches artboards and state machines, and tests legacy inputs. The 3D model viewer inspects local models, materials and animations. Both support file or folder drag and drop. See the [Rive viewer guide](docs/RIVE_VIEWER.md) and [3D model viewer guide](docs/MODEL_VIEWER.md).
+
+## AI Asset Audit: local checks and optional model chat
+
+Choose or drop an asset directory to run local checks for exact duplicates, missing dependencies, image dimensions and padding, large files, naming and format issues. Filter and search findings, locate affected files, inspect rule coverage, and export JSON or HTML reports. The audit does not change original files; uncovered assets are not treated as verified.
+
+After scanning, optionally choose your own DeepSeek, OpenAI-compatible, Anthropic or Gemini model and ask about the audit. The default summary contains counts and issue types only. Relative file names and evidence are included only when explicitly selected. A network request is made only when you press Send; provider charges may apply. AI suggestions require review, and SpineSlim does not automatically delete assets.
+
+![SpineSlim AI Asset Audit with local findings and optional chat](assets/screenshots/ai-audit-en.png)
 
 ## Spine animation viewer for JSON and SKEL files
 

@@ -14,6 +14,10 @@ The Rive viewer uses MIT-licensed `@rive-app/canvas` 2.45.0 and bundles its WebA
 
 The atlas packer uses MIT-licensed maxrects-packer 3.0.0 and fflate 0.8.3. Notices are bundled under docs/licenses. Packing and ZIP export run locally without TexturePacker.
 
+AI 对话使用 MIT 许可的 `react-markdown` 10.1.0 排版模型回复；其依赖版本见 `package-lock.json`。模型服务由用户自行选择，只有主动发送时才会联网。
+
+AI chat renders model replies with MIT-licensed `react-markdown` 10.1.0. Dependency versions are recorded in `package-lock.json`. The selected model service is contacted only after the user sends a message.
+
 新增预览模块使用 `pixi.js` 7.4.3、`@pixi-spine/base` 与 3.8/4.0/4.1 适配器 4.0.6，以及 `@esotericsoftware/spine-webgl` 4.2.120。精确依赖树见 `package-lock.json`。Spine Runtime 不属于项目 MIT 许可范围，其使用与再分发适用对应的 Spine Runtimes License Agreement。当前仅本地测试，不代表已完成商业分发许可审计。
 
 The local viewer alpha adds PixiJS 7.4.3, pixi-spine 4.0.6 adapters and spine-webgl 4.2.120. Spine runtime code is subject to its own license, not the project's MIT license. Distribution eligibility has not been established by local testing.

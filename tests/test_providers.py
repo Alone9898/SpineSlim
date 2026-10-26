@@ -37,7 +37,7 @@ class ModelConfigTests(unittest.TestCase):
 
         self.assertEqual(config, {
             "provider": "deepseek",
-            "base_url": "https://api.deepseek.com/v1",
+            "base_url": "https://api.deepseek.com",
             "protocol": PROTOCOL_OPENAI,
             "model": "deepseek-chat",
         })

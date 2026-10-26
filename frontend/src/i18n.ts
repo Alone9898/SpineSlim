@@ -2,7 +2,7 @@ import type { Language, WorkerEvent } from './types';
 
 const words: Record<string, [string, string]> = {
   aiAuditTitle: ['AI 智能体检', 'AI Asset Audit'],
-  aiAuditDescription: ['本地分析游戏资源，发现冗余、风险与优化机会；目前可体验交互预览。', 'Inspect game assets locally for waste, risks and optimization opportunities. Interactive preview available now.'],
+  aiAuditDescription: ['本地扫描游戏资源，发现缺失依赖、重复文件和优化机会；体检后可与 AI 讨论结果。', 'Scan game assets locally for missing dependencies, duplicates and optimization opportunities, then discuss the results with AI.'],
   audioTitle: ['音频处理', 'Audio processing'],
   audioDescription: ['转换、压缩、裁剪与拼接，为游戏制作音频图集。', 'Convert, compress, trim and merge audio. Build audio sprites for games.'],
   stageProgress: ['阶段进度', 'Stage progress'],
@@ -16,7 +16,7 @@ const words: Record<string, [string, string]> = {
   modelProvider: ['厂商', 'Provider'], customProvider: ['自定义', 'Custom'],
   modelBaseUrl: ['Base URL', 'Base URL'], modelProtocol: ['协议类型', 'Protocol'], modelName: ['模型 ID', 'Model ID'],
   protocolOpenAI: ['OpenAI 兼容', 'OpenAI-compatible'], protocolAnthropic: ['Anthropic 原生', 'Anthropic native'], protocolGemini: ['Gemini 原生', 'Gemini native'],
-  validateModel: ['检查配置', 'Check configuration'],
+  validateModel: ['检查格式', 'Check format'],
   modelValid: ['配置格式有效；尚未发起网络请求。', 'Configuration is valid; no network request was made.'],
   apiKey: ['API Key', 'API Key'], apiKeyPending: ['暂不保存，待系统凭据存储接入', 'Not saved yet; system credential storage is pending'],
   baseUrlHint: ['填写兼容所选协议的服务端点地址，必须以 https:// 开头。', 'Enter an endpoint compatible with the selected protocol. It must start with https://.'],
