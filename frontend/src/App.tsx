@@ -6,7 +6,7 @@ import { getVersion } from '@tauri-apps/api/app';
 import { open, confirm } from '@tauri-apps/plugin-dialog';
 import { openUrl } from '@tauri-apps/plugin-opener';
 import { installCloseHandler, registerCloseGuard } from './close';
-import { ArrowUpRight, Box, Boxes, Check, ChevronRight, CircleCheck, Clock3, Copy, FileImage, Film, FolderOpen, Github, LoaderCircle, MessageCircle, Music2, Play, Settings2, ShieldCheck, Sparkles, Square, TriangleAlert, WandSparkles, X } from 'lucide-react';
+import { ArrowUpRight, Box, Boxes, Check, ChevronRight, CircleCheck, Clock3, Copy, FileImage, Film, FolderOpen, Github, LoaderCircle, MessageCircle, Music2, Play, Type, Settings2, ShieldCheck, Sparkles, Square, TriangleAlert, WandSparkles, X } from 'lucide-react';
 import logo from '../../assets/app-icon.png';
 import { defaults, hydrate, type Settings, type Tool, type WorkerEvent, type Mode, type Format } from './types';
 import { eventText, translate } from './i18n';
@@ -15,6 +15,7 @@ import RiveViewer from './rive/RiveViewer';
 import ModelViewer from './model3d/ModelViewer';
 import Packer from './packer/Packer';
 import Audio from './audio/Audio';
+import FontSubset from './fonts/FontSubset';
 import AiAudit from './ai/AiAudit';
 import SpineConversionOptions from './SpineConversionOptions';
 import ModelSettings from './ModelSettings';
@@ -30,9 +31,9 @@ const icons = { spine: Sparkles, ui: FileImage, video: Film };
 const toolNames = ['ImageMagick', 'Basis Universal', 'TexturePacker', 'Spine converter', 'FFmpeg'];
 const toolKeys = ['imagemagick', 'basis', 'texturepacker', 'spine_converter', 'ffmpeg'];
 const urls = ['https://imagemagick.org/script/download.php', 'https://github.com/BinomialLLC/basis_universal/releases', 'https://www.codeandweb.com/texturepacker/download', 'https://github.com/wang606/SpineSkeletonDataConverter/releases', 'https://ffmpeg.org/download.html'];
-const telemetryModules = { viewer: TelemetryModule.SpineViewer, rive: TelemetryModule.RiveViewer,
+const telemetryModules: Partial<Record<string, TelemetryModule>> = { viewer: TelemetryModule.SpineViewer, rive: TelemetryModule.RiveViewer,
   model: TelemetryModule.ModelViewer, packer: TelemetryModule.AtlasPacker,
-  processing: TelemetryModule.AssetProcessing, audio: TelemetryModule.AudioProcessing,
+  spine: TelemetryModule.AssetProcessing, ui: TelemetryModule.AssetProcessing, video: TelemetryModule.AssetProcessing, audio: TelemetryModule.AudioProcessing,
   ai: TelemetryModule.AiAudit,
   settings: TelemetryModule.Settings };
 let appOpenTracked = false;
@@ -40,7 +41,7 @@ let appOpenTracked = false;
 export default function App() {
   const [settings, setSettings] = useState<Settings>(defaults);
   const [loaded, setLoaded] = useState(false);
-  const [page, setPage] = useState<'processing' | 'settings' | 'viewer' | 'rive' | 'model' | 'packer' | 'audio' | 'ai'>('viewer');
+  const [page, setPage] = useState<Mode | 'settings' | 'viewer' | 'rive' | 'model' | 'packer' | 'audio' | 'fonts' | 'ai'>('viewer');
   const [tools, setTools] = useState<Tool[]>(toolKeys.map((key, index) => ({ key, name: toolNames[index], path: '', available: false, detail: '', url: urls[index] })));
   const [audioBusy, setAudioBusy] = useState(false);
   const audioBusyRef = useRef(false); audioBusyRef.current = audioBusy;
@@ -68,6 +69,12 @@ export default function App() {
   current.current = settings;
   statusRef.current = status;
   const patch = (value: Partial<Settings>) => setSettings(previous => ({ ...previous, ...value }));
+  // Spine, UI and video each have their own page; the page id is also the processing mode.
+  const isProcessing = (value: string): value is Mode => (modes as string[]).includes(value);
+  const openPage = (next: typeof page) => {
+    if (isProcessing(next)) patch({ mode: next });
+    setPage(next);
+  };
   const error = (reason: unknown) => setNotice(`${translate(current.current.language, 'error')}: ${translate(current.current.language, String(reason))}`);
 
   useEffect(() => {
@@ -104,7 +111,9 @@ export default function App() {
       appOpenTracked = true;
     }
     if (trackedPage.current !== page) {
-      track(TelemetryEvent.ModuleOpened, { module: telemetryModules[page], action: TelemetryAction.Open });
+      // Font subsetting has no telemetry module yet, so its page open is not tracked.
+      const module = telemetryModules[page];
+      if (module) track(TelemetryEvent.ModuleOpened, { module, action: TelemetryAction.Open });
       trackedPage.current = page;
     }
   }, [loaded, settings.anonymous_telemetry, appVersion, page]);
@@ -160,7 +169,7 @@ export default function App() {
   useEffect(() => {
     if (!desktop) return;
     const subscription = getCurrentWindow().onDragDropEvent(event => {
-      if (page === 'processing' && event.payload.type === 'drop' && !['checking', 'running', 'cancelling'].includes(statusRef.current)) {
+      if (isProcessing(page) && event.payload.type === 'drop' && !['checking', 'running', 'cancelling'].includes(statusRef.current)) {
         patch({ [dropTarget]: event.payload.paths[0] });
       }
     });
@@ -276,12 +285,11 @@ export default function App() {
   return <div className="app-shell">
     <aside className="sidebar">
       <a className="brand" href="https://github.com/Alone9898/SpineSlim" onClick={event => { event.preventDefault(); void visit(event.currentTarget.href); }}><img src={logo} alt="" /><span>SpineSlim<small>ASSET TOOLKIT</small></span></a>
-      <div className="nav-caption">{t('workspace')}</div>
-      <nav><button className={page === 'viewer' ? 'nav-item active' : 'nav-item'} onClick={() => setPage('viewer')}><Sparkles size={19} />{viewerLabel(settings.language, 'title')}</button><button className={page === 'rive' ? 'nav-item active' : 'nav-item'} onClick={() => setPage('rive')}><Play size={19} />{riveLabel(settings.language, 'title')}</button><button className={page === 'model' ? 'nav-item active' : 'nav-item'} onClick={() => setPage('model')}><Box size={19} />{modelLabel(settings.language, 'title')}</button><button className={page === 'packer' ? 'nav-item active' : 'nav-item'} onClick={() => setPage('packer')}><FileImage size={19} />{packerLabel(settings.language, 'title')}</button><button className={page === 'processing' ? 'nav-item active' : 'nav-item'} onClick={() => setPage('processing')}><Boxes size={19} />{t('processing')}<ChevronRight size={15} /></button><button className={page === 'audio' ? 'nav-item active' : 'nav-item'} onClick={() => setPage('audio')}><Music2 size={19} />{t('audioTitle')}</button><button className={page === 'ai' ? 'nav-item active' : 'nav-item'} onClick={() => setPage('ai')}><WandSparkles size={19} />{t('aiAuditTitle')}</button></nav>
+      <nav><div className="nav-group">{t('navPreview')}</div><button className={page === 'viewer' ? 'nav-item active' : 'nav-item'} onClick={() => setPage('viewer')}><Sparkles size={19} />{viewerLabel(settings.language, 'title')}</button><button className={page === 'rive' ? 'nav-item active' : 'nav-item'} onClick={() => setPage('rive')}><Play size={19} />{riveLabel(settings.language, 'title')}</button><button className={page === 'model' ? 'nav-item active' : 'nav-item'} onClick={() => setPage('model')}><Box size={19} />{modelLabel(settings.language, 'title')}</button><div className="nav-group">{t('navMake')}</div><button className={page === 'packer' ? 'nav-item active' : 'nav-item'} onClick={() => setPage('packer')}><FileImage size={19} />{packerLabel(settings.language, 'title')}</button><button className={page === 'spine' ? 'nav-item active' : 'nav-item'} onClick={() => openPage('spine')}><Sparkles size={19} />{t('spine')}</button><button className={page === 'ui' ? 'nav-item active' : 'nav-item'} onClick={() => openPage('ui')}><FileImage size={19} />{t('ui')}</button><button className={page === 'video' ? 'nav-item active' : 'nav-item'} onClick={() => openPage('video')}><Film size={19} />{t('video')}</button><button className={page === 'audio' ? 'nav-item active' : 'nav-item'} onClick={() => setPage('audio')}><Music2 size={19} />{t('audioTitle')}</button><button className={page === 'fonts' ? 'nav-item active' : 'nav-item'} onClick={() => setPage('fonts')}><Type size={19} />{t('fontsTitle')}</button><div className="nav-group">{t('navTools')}</div><button className={page === 'ai' ? 'nav-item active' : 'nav-item'} onClick={() => setPage('ai')}><WandSparkles size={19} />{t('aiAuditTitle')}</button></nav>
       <div className="sidebar-bottom"><button className="github" title={t('githubStarHint')} onClick={() => void visit('https://github.com/Alone9898/SpineSlim')}><Github size={17} /><span className="github-label">{t('githubStar')}</span><ArrowUpRight size={15} /></button><button className="github" title={t('telegramHint')} onClick={() => void visit('https://t.me/+XlcsJcxyKZtlNGYy')}><MessageCircle size={17} /><span className="github-label">{t('telegram')}</span><ArrowUpRight size={15} /></button><button className={page === 'settings' ? 'nav-item active' : 'nav-item'} onClick={() => setPage('settings')}><Settings2 size={19} />{t('settings')}</button><div className="version">v{appVersion || '2.0.0-alpha.6'} <span>{t('version')}</span></div></div>
     </aside>
-    <main className={page === 'packer' ? 'packer-main' : page === 'viewer' || page === 'rive' || page === 'model' ? 'viewer-main' : page === 'processing' ? 'processing-main' : page === 'settings' ? 'settings-main' : ''}>
-      <header><div><div className="eyebrow">SPINESLIM / {page === 'ai' ? 'AI AUDIT' : page === 'audio' ? 'AUDIO' : page === 'packer' ? 'ATLAS' : page === 'viewer' ? 'LIBRARY' : page === 'rive' ? 'RIVE' : page === 'model' ? '3D' : page === 'processing' ? 'WORKSPACE' : 'PREFERENCES'}</div><h1>{page === 'ai' ? t('aiAuditTitle') : page === 'audio' ? t('audioTitle') : page === 'packer' ? packerLabel(settings.language, 'title') : page === 'viewer' ? viewerLabel(settings.language, 'title') : page === 'rive' ? riveLabel(settings.language, 'title') : page === 'model' ? modelLabel(settings.language, 'title') : t(page === 'processing' ? 'processingTitle' : 'settings')}</h1><p>{page === 'ai' ? t('aiAuditDescription') : page === 'audio' ? t('audioDescription') : page === 'packer' ? packerLabel(settings.language, 'description') : page === 'viewer' ? viewerLabel(settings.language, 'description') : page === 'rive' ? riveLabel(settings.language, 'description') : page === 'model' ? modelLabel(settings.language, 'description') : t(page === 'processing' ? 'processingDescription' : 'settingsDescription')}</p></div><div className="platform"><span /> WINDOWS DESKTOP</div></header>
+    <main className={page === 'packer' ? 'packer-main' : page === 'viewer' || page === 'rive' || page === 'model' ? 'viewer-main' : isProcessing(page) ? 'processing-main' : page === 'settings' ? 'settings-main' : ''}>
+      <header><div><div className="eyebrow">SPINESLIM / {page === 'ai' ? 'AI AUDIT' : page === 'audio' ? 'AUDIO' : page === 'fonts' ? 'FONTS' : page === 'packer' ? 'ATLAS' : page === 'viewer' ? 'LIBRARY' : page === 'rive' ? 'RIVE' : page === 'model' ? '3D' : isProcessing(page) ? 'WORKSPACE' : 'PREFERENCES'}</div><h1>{page === 'ai' ? t('aiAuditTitle') : page === 'audio' ? t('audioTitle') : page === 'fonts' ? t('fontsTitle') : page === 'packer' ? packerLabel(settings.language, 'title') : page === 'viewer' ? viewerLabel(settings.language, 'title') : page === 'rive' ? riveLabel(settings.language, 'title') : page === 'model' ? modelLabel(settings.language, 'title') : t(isProcessing(page) ? page : 'settings')}</h1><p>{page === 'ai' ? t('aiAuditDescription') : page === 'audio' ? t('audioDescription') : page === 'fonts' ? t('fontsDescription') : page === 'packer' ? packerLabel(settings.language, 'description') : page === 'viewer' ? viewerLabel(settings.language, 'description') : page === 'rive' ? riveLabel(settings.language, 'description') : page === 'model' ? modelLabel(settings.language, 'description') : t(isProcessing(page) ? 'processingDescription' : 'settingsDescription')}</p></div><div className="platform"><span /> WINDOWS DESKTOP</div></header>
       {!desktop && page !== 'packer' && page !== 'ai' && <div className="notice"><TriangleAlert size={17} />{t('preview')}</div>}
       {update && <div className="notice" role="status"><Sparkles size={17} /><span>{t('updateAvailable')}: {update.tag}</span><button className="text-button" onClick={() => void visit(update.url)}>{t('updateGet')}<ArrowUpRight size={13} /></button><button aria-label="Close" onClick={() => setUpdate(null)}><X size={16} /></button></div>}
       {notice && <div className="notice" role="alert"><TriangleAlert size={17} /><span>{notice}</span><button aria-label="Close" onClick={() => setNotice('')}><X size={16} /></button></div>}
@@ -289,10 +297,10 @@ export default function App() {
       <div hidden={page !== 'rive'}><RiveViewer language={settings.language} active={page === 'rive'} /></div>
       <div hidden={page !== 'model'}><ModelViewer language={settings.language} active={page === 'model'} /></div>
       <div hidden={page !== 'packer'}><Packer language={settings.language} active={page === 'packer'} /></div>
+      <div hidden={page !== 'fonts'}><FontSubset language={settings.language} /></div>
       <div hidden={page !== 'audio'}><Audio language={settings.language} active={page === 'audio'} tools={settings.tools} blocked={busy} onBusy={setAudioBusy} /></div>
       <div hidden={page !== 'ai'}><AiAudit language={settings.language} active={page === 'ai'} profile={settings.models.find(profile => profile.id === settings.active_model)} onOpenSettings={() => setPage('settings')} /></div>
-      {page === 'viewer' || page === 'rive' || page === 'model' || page === 'packer' || page === 'audio' || page === 'ai' ? null : page === 'processing' ? <>
-        <div className="mode-tabs" role="tablist">{modes.map(mode => { const Icon = icons[mode]; return <button role="tab" aria-selected={settings.mode === mode} key={mode} disabled={busy} className={settings.mode === mode ? 'selected' : ''} onClick={() => patch({ mode })}><Icon size={18} />{t(mode)}</button>; })}</div>
+      {page === 'viewer' || page === 'rive' || page === 'model' || page === 'packer' || page === 'audio' || page === 'fonts' || page === 'ai' ? null : isProcessing(page) ? <>
         <div className="workspace-grid"><div className="form-column">
           <section className="card"><div className="section-heading"><span className="step">01</span><h2>{t('paths')}</h2><FolderOpen size={18} /></div><fieldset disabled={busy}>{(['source', 'target'] as const).map(key => <label className="field" key={key} onMouseEnter={() => setDropTarget(key)}><span>{t(key)}</span><div className="path-input"><FolderOpen size={17} /><input value={settings[key]} placeholder={t(key + 'Placeholder')} onFocus={() => setDropTarget(key)} onChange={event => patch({ [key]: event.target.value })} /><button onClick={() => void browse(key)}>{t('browse')}</button></div></label>)}</fieldset></section>
           <section className="card"><div className="section-heading"><span className="step">02</span><h2>{t('options')}</h2><Settings2 size={18} /></div><fieldset disabled={busy}>

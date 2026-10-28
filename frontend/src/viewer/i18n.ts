@@ -1,5 +1,5 @@
 const labels: Record<string, [string, string]> = {
-  title: ['Spine 预览', 'Spine viewer'], description: ['打开目录，查看动画。素材始终留在本机。', 'Explore animations from a folder. Your assets stay on this device.'],
+  title: ['Spine 预览器', 'Spine previewer'], description: ['打开目录，查看动画。素材始终留在本机。', 'Explore animations from a folder. Your assets stay on this device.'],
   folder: ['选择文件夹', 'Choose folder'], files: ['选择文件', 'Choose files'], refresh: ['刷新', 'Refresh'], cancel: ['取消扫描', 'Cancel scan'],
   empty: ['把 Spine 目录拖到这里', 'Drop a Spine folder here'], hint: ['也可选择 JSON / SKEL、Atlas 和纹理文件。无需先转换或升级。', 'Or select JSON / SKEL, Atlas and texture files. No conversion required.'],
   support: ['当前接入 3.8 / 4.0 / 4.1 / 4.2 · 本地测试版', 'Adapters: 3.8 / 4.0 / 4.1 / 4.2 · Local alpha'],

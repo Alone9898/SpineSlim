@@ -1,5 +1,5 @@
 const messages: Record<string, [string, string]> = {
-  title: ['3D 模型查看器', '3D Model Viewer'],
+  title: ['3D 模型预览器', '3D Model Previewer'],
   description: ['本地查看模型、材质、动画与尺寸。', 'Inspect local models, materials, animations and dimensions.'],
   empty: ['把 3D 模型或文件夹拖到这里', 'Drop a 3D model or folder here'],
   hint: ['也可选择 GLB / GLTF、FBX、OBJ、STL 文件；贴图和配套资源请放在同一目录。无需先转换。', 'Or select a GLB / GLTF, FBX, OBJ or STL file. Keep textures and related assets in the same folder. No conversion required.'],

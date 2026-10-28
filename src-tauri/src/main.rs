@@ -250,6 +250,63 @@ async fn audio_query(action: String, options: Value) -> Result<Value, String> {
 }
 
 #[tauri::command]
+async fn font_subset(mut options: Value) -> Result<Value, String> {
+    // Results stay in a staging folder until the user saves them with save_font_subset.
+    let staging = font_staging_dir()?;
+    options["output_dir"] = json!(staging.to_string_lossy());
+    query_worker("font_subset", options).await
+}
+
+fn font_staging_dir() -> Result<PathBuf, String> {
+    let directory = std::env::temp_dir().join("spineslim-font-subset");
+    fs::create_dir_all(&directory).map_err(|error| error.to_string())?;
+    Ok(directory)
+}
+
+#[tauri::command]
+fn save_font_subset(source: String, target: String) -> Result<(), String> {
+    let staging = font_staging_dir()?.canonicalize().map_err(|error| error.to_string())?;
+    let source = PathBuf::from(source).canonicalize().map_err(|error| error.to_string())?;
+    let target = PathBuf::from(target);
+    let extension = target.extension().and_then(|value| value.to_str()).unwrap_or("").to_ascii_lowercase();
+    if !source.starts_with(&staging) || !source.is_file() || !target.is_absolute() || !matches!(extension.as_str(), "ttf" | "otf" | "woff") {
+        return Err("invalid_font_output".into());
+    }
+    fs::copy(source, target).map(|_| ()).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+async fn font_info(options: Value) -> Result<Value, String> {
+    query_worker("font_info", options).await
+}
+
+#[tauri::command]
+async fn font_data(options: Value) -> Result<Value, String> {
+    query_worker("font_data", options).await
+}
+
+#[tauri::command]
+async fn font_glyphs(options: Value) -> Result<Value, String> {
+    query_worker("font_glyphs", options).await
+}
+
+#[tauri::command]
+async fn font_metrics(options: Value) -> Result<Value, String> {
+    query_worker("font_metrics", options).await
+}
+
+#[tauri::command]
+async fn font_names(options: Value) -> Result<Value, String> {
+    query_worker("font_names", options).await
+}
+
+#[tauri::command]
+async fn font_names_save(mut options: Value) -> Result<Value, String> {
+    options["output_dir"] = json!(font_staging_dir()?.to_string_lossy());
+    query_worker("font_names_save", options).await
+}
+
+#[tauri::command]
 async fn model_query(action: String, options: Value) -> Result<Value, String> {
     match action.as_str() {
         "providers" => query_worker("providers", options).await,
@@ -361,6 +418,14 @@ fn main() {
             inspect_tools,
             package_stats,
             audio_query,
+            font_subset,
+            font_info,
+            save_font_subset,
+            font_data,
+            font_glyphs,
+            font_names,
+            font_metrics,
+            font_names_save,
             model_query,
             audit_chat::audit_chat,
             secrets::model_key_status,

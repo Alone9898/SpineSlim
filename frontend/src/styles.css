@@ -5,7 +5,7 @@
 }
 
 .sidebar nav {
-  grid-auto-rows: 48px;
+  grid-auto-rows: auto;
 }
 
 .sidebar nav .nav-item {
@@ -214,3 +214,15 @@ main.processing-main {
 .mf-small.danger{color:#b5625b}
 .mf-actions{display:flex;justify-content:flex-end;gap:8px}
 .mf-error{color:#b5625b;font-size:11px;margin-top:8px}
+
+.nav-group{font-size:10px;letter-spacing:1.5px;color:#9aa5b6;margin:22px 14px 6px}
+.nav-group:first-child{margin-top:44px}
+.sidebar nav{flex-shrink:0}
+.sidebar{overflow-y:auto}
+/* Sidebar scrollbar: thin and light, shown only when the expanded menu overflows. */
+.sidebar{scrollbar-width:thin;scrollbar-color:#d5dce8 transparent}
+.sidebar::-webkit-scrollbar{width:6px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:#d5dce8;border-radius:3px}
+.sidebar::-webkit-scrollbar-thumb:hover{background:#b9c3d4}
+.sidebar::-webkit-scrollbar-button{display:none}

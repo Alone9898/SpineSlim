@@ -1,5 +1,5 @@
 const labels: Record<string, [string, string]> = {
-  title: ['Rive 预览', 'Rive viewer'], description: ['预览本地 .riv 动画和状态机。', 'Preview local .riv animations and state machines.'],
+  title: ['Rive 预览器', 'Rive previewer'], description: ['预览本地 .riv 动画和状态机。', 'Preview local .riv animations and state machines.'],
   folder: ['打开文件夹', 'Open folder'], file: ['打开 .riv', 'Open .riv'], search: ['搜索文件', 'Search files'], empty: ['把 Rive 文件或文件夹拖到这里', 'Drop a Rive file or folder here'],
   hint: ['也可选择 .riv 文件或包含多个 .riv 的目录，无需转换。', 'Or select a .riv file or a folder containing multiple .riv files. No conversion required.'],
   support: ['本地预览画板、动画与状态机，素材不会上传。', 'Preview artboards, animations and state machines locally. Assets are never uploaded.'],

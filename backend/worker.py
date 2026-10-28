@@ -9,6 +9,8 @@ if __package__ in (None, ""):
 from backend.service import Cancelled, ProcessingError, Service
 from backend.audio import AudioService
 from backend.audit import run_audit
+from backend.font_subset import font_info, subset_font
+from backend.font_tools import font_data, glyphs, metrics, names, save_names
 from backend.providers import build_model_config, list_presets
 
 
@@ -39,6 +41,36 @@ def main():
         if action in ('audio_scan', 'audio_preview'):
             audio = AudioService(options, emit, cancelled)
             emit('result', action, **(audio.scan() if action == 'audio_scan' else audio.preview()))
+            return
+        if action == "font_subset":
+            source = Path(options.get("path", ""))
+            if not options.get("output_dir"):
+                raise ProcessingError("font.output")
+            woff = options.get("format") == "woff"
+            target = Path(options["output_dir"]) / f"{source.stem}-subset{'.woff' if woff else source.suffix}"
+            emit("result", "font_subset", **subset_font(source, target, options.get("text", ""), "woff" if woff else None))
+            return
+        if action == "font_info":
+            emit("result", "font_info", **font_info(options.get("path", "")))
+            return
+        if action == "font_data":
+            emit("result", "font_data", **font_data(options.get("path", "")))
+            return
+        if action == "font_glyphs":
+            emit("result", "font_glyphs", **glyphs(options.get("path", "")))
+            return
+        if action == "font_metrics":
+            emit("result", "font_metrics", **metrics(options.get("path", "")))
+            return
+        if action == "font_names":
+            emit("result", "font_names", **names(options.get("path", "")))
+            return
+        if action == "font_names_save":
+            source = Path(options.get("path", ""))
+            if not options.get("output_dir"):
+                raise ProcessingError("font.output")
+            target = Path(options["output_dir"]) / f"{source.stem}-edited{source.suffix.lower()}"
+            emit("result", "font_names_save", **save_names(source, target, options.get("fields", {})))
             return
         if action == "providers":
             emit("result", "providers", providers=list_presets())
