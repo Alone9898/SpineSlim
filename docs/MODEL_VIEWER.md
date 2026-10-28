@@ -1,4 +1,4 @@
-# 3D 模型查看器 / 3D Model Viewer
+# 3D 模型预览器 / 3D Model Previewer
 
 此模块从 `2.0.0-alpha.4` 起包含在 Windows 安装包中。打开单个模型或目录后，可在左侧切换模型。支持 GLB、GLTF、FBX、OBJ/MTL、STL；GLTF 的 `.bin`、贴图及 OBJ 的 MTL 和贴图应放在所选文件夹内。模型、动画与贴图不会上传；不自动获取网络资源。
 

@@ -27,9 +27,9 @@ After scanning, optionally choose your own DeepSeek, OpenAI-compatible, Anthropi
 
 ![SpineSlim AI Asset Audit with local findings and optional chat](assets/screenshots/ai-audit-en.png)
 
-## Spine animation viewer for JSON and SKEL files
+## Spine previewer for JSON and SKEL files
 
-![SpineSlim Windows Spine viewer with JSON and SKEL animation playback and skin controls](assets/screenshots/viewer-en.png)
+![SpineSlim Windows Spine previewer with JSON and SKEL animation playback and skin controls](assets/screenshots/viewer-en.png)
 
 - Scan directories, browse/search skeletons, and match Atlas files and textures.
 - Load Spine **3.8 / 4.0 / 4.1 / 4.2** JSON and SKEL files with PNG / JPG / WebP textures.
@@ -40,15 +40,15 @@ After scanning, optionally choose your own DeepSeek, OpenAI-compatible, Anthropi
 
 Preview does not need the Spine editor or modify source skeletons. **Preview support differs from JSON upgrade support.** Spine 3.5–3.7, 4.3 and Basis/KTX textures are not supported by the viewer. Test unusual assets in your project.
 
-## Rive animation and state machine viewer
+## Rive previewer: animations and state machines
 
-![Rive viewer with artboard, interactive state machine, timeline and layout controls](assets/screenshots/rive-zh.png)
+![Rive previewer with artboard, interactive state machine, timeline and layout controls](assets/screenshots/rive-zh.png)
 
 Open a local `.riv` file or scan a folder, switch artboards, animations and state machines, and test click or hold interactions. Adjust playback and layout, inspect traditional inputs, state timelines and event logs, and export a session JSON. The runtime is bundled; external assets are not downloaded automatically. [Features and limits](docs/RIVE_VIEWER.md)
 
-## 3D model viewer
+## 3D model previewer
 
-![3D model viewer showing a GLB model, render settings, dimensions and MP4 export](assets/screenshots/model-zh.png)
+![3D model previewer showing a GLB model, render settings, dimensions and MP4 export](assets/screenshots/model-zh.png)
 
 Open a GLB, GLTF, FBX, OBJ / MTL or STL file or folder. Inspect materials, animations, dimensions and meshes; switch lighting, wireframe and normals; measure between two surface points. MP4 export uses FFmpeg. Keep external GLTF buffers, OBJ materials and textures within the selected folder. Measurements use model units, which may not be metres. [Features and format limits](docs/MODEL_VIEWER.md)
 
@@ -148,6 +148,16 @@ Each export creates a unique `SpineSlim-audio-*` folder and preserves sources. B
 MP3 VBR: 0 is best quality, 9 smallest; OGG VBR: 9 best quality, 0 smallest. For strict timing or gapless playback, use WAV and validate in your game runtime.
 
 [Audio workflow and game integration](docs/AUDIO_PROCESSING.md)
+
+## Font subsetting: trim TTF / OTF to the characters you use
+
+![SpineSlim font subsetting page with quick presets, kept characters, output format and result](assets/screenshots/fonts-zh.png)
+
+- Choose a TTF or OTF font, paste the text your game displays, or use a quick preset: common 3,000 Chinese characters, digits and English, Chinese punctuation, or full-width digits.
+- The output keeps the original format, or can be WOFF for the web. After subsetting, the size change is shown and the result is saved through a save dialog.
+- Glyph view lists every glyph in the font, including unmapped ones, with search by character, `U+` code point or glyph name.
+- Metadata editing changes family, style, version, copyright and other name fields, and exports a new file. The original font is not modified.
+- Hinting is removed to reduce size. Small text may look different on some renderers, so verify in your target engine.
 
 ## External tools
 

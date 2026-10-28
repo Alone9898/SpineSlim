@@ -14,11 +14,12 @@ SpineSlim is a Windows desktop game asset toolkit for Unity, Cocos Creator, Godo
 
 | 模块 | 主要功能 |
 | --- | --- |
-| **Spine 预览** | 本地目录扫描，3.8 / 4.0 / 4.1 / 4.2 JSON 与 SKEL，动画与皮肤切换、缩放平移、全屏、GIF / MP4 导出 |
-| **Rive 预览** | 打开本地 `.riv` 及目录，切换画板、动画与状态机，测试输入和查看事件日志 |
-| **3D 模型查看器** | GLB / GLTF / FBX / OBJ / STL 预览、渲染模式、动画、测距和 MP4 导出 |
+| **Spine 预览器** | 本地目录扫描，3.8 / 4.0 / 4.1 / 4.2 JSON 与 SKEL，动画与皮肤切换、缩放平移、全屏、GIF / MP4 导出 |
+| **Rive 预览器** | 打开本地 `.riv` 及目录，切换画板、动画与状态机，测试输入和查看事件日志 |
+| **3D 模型预览器** | GLB / GLTF / FBX / OBJ / STL 预览、渲染模式、动画、测距和 MP4 导出 |
 | **图集打包** | 自动排列、透明裁剪、边缘扩展、多页预览，导出 Cocos / Unity / Godot / PixiJS / Phaser / Spine 格式 |
-| **资源处理** | Spine JSON 升级、纹理压缩、UI 分类处理、位图字体、WebM / VP9 视频转换 |
+| **Spine 动画 / UI 图片 / 视频转换** | Spine JSON 升级、纹理压缩、UI 分类处理、位图字体、WebM / VP9 视频转换 |
+| **字体裁剪** | 按字符集裁剪 TTF / OTF，快速预设、WOFF 输出、字形查看与元信息编辑 |
 | **音频处理** | 批量转换压缩、试听、裁剪、淡入淡出、短音频合并、Howler.js / Phaser 音频图集 |
 | **AI 智能体检** | 本地扫描重复资源、缺失依赖、图片尺寸、命名与格式问题；按风险筛选并导出报告，可选择模型讨论结果 |
 
@@ -45,7 +46,7 @@ Unity / Godot / Cocos 导出已验证文件结构与坐标，实际编辑器导�
 
 ![SpineSlim AI 智能体检：本地资源扫描、风险列表与可选 AI 对话](assets/screenshots/ai-audit-en.png)
 
-## Spine 动画预览器：JSON / SKEL 与 GIF / MP4 导出
+## Spine 预览器：JSON / SKEL 与 GIF / MP4 导出
 
 打开包含骨骼、Atlas 和贴图的目录，即可浏览资源并切换动画。选中动画后可反复一键复制名称，方便在游戏代码中使用。支持播放、暂停、循环、速度、时间轴、网格、透明棋盘、Alpha 模式及 GIF / MP4 导出。
 
@@ -53,17 +54,17 @@ Unity / Godot / Cocos 导出已验证文件结构与坐标，实际编辑器导�
 
 预览不要求安装 Spine 编辑器，也不改写骨骼文件。GIF / MP4 导出需要 FFmpeg；Spine Runtime 的使用与分发适用其自身许可。
 
-## Rive 动画与状态机预览
+## Rive 预览器：动画与状态机
 
 打开本地 `.riv` 文件或目录，切换画板、动画和状态机；可在画布上测试点击与长按交互，查看传统输入、状态时间轴和事件日志。支持播放速度、布局、全屏及会话 JSON 导出。[查看 Rive 预览说明 →](docs/RIVE_VIEWER.md)
 
 ![SpineSlim Rive 预览器：画板、状态机与交互控制](assets/screenshots/rive-zh.png)
 
-## 3D 模型查看器：GLB、GLTF、FBX、OBJ、STL
+## 3D 模型预览器：GLB、GLTF、FBX、OBJ、STL
 
 打开模型文件或目录，在本地检查材质、动画、尺寸、网格和骨骼。支持旋转缩放、照明、线框 / 法线模式、两点测距，以及使用 FFmpeg 导出 MP4；外部贴图和 `.bin` 文件需随模型放在同一目录。[查看格式与限制 →](docs/MODEL_VIEWER.md)
 
-![SpineSlim 3D 模型查看器：GLB 模型、渲染设置、尺寸与 MP4 导出](assets/screenshots/model-zh.png)
+![SpineSlim 3D 模型预览器：GLB 模型、渲染设置、尺寸与 MP4 导出](assets/screenshots/model-zh.png)
 
 ## 精灵图集打包：Sprite Sheet / Texture Atlas Packer
 
@@ -100,6 +101,16 @@ Unity / Godot / Cocos 导出已验证文件结构与坐标，实际编辑器导�
 ![SpineSlim 游戏音效处理：裁剪淡化、音频合并与 Howler.js Phaser 音频图集](assets/screenshots/audio-zh.png)
 
 支持目录导入、排序、原音频试听、裁剪、淡入淡出、采样率与声道设置、VBR / 目标码率、进度与取消。每次导出写入独立结果目录，不覆盖源文件。[音频使用说明 →](docs/AUDIO_PROCESSING.md)
+
+## 字体裁剪：按字符集精简 TTF / OTF
+
+![SpineSlim 字体裁剪页面：快速预设、保留字符、输出格式与裁剪结果](assets/screenshots/fonts-zh.png)
+
+- 选择 TTF 或 OTF 字体，粘贴游戏中会用到的文字，或使用快速预设：常用 3000 字、数字 + 英文、中文标点、全角数字。
+- 输出保持原格式，也可选择 WOFF（Web 字体封装）。裁剪完成后显示体积变化，结果通过保存对话框下载。
+- 字形查看：列出字体中的全部字形（包括未映射的字形），支持按字符、`U+` 码位或字形名搜索。
+- 元信息编辑：修改字体家族、样式、版本、版权等字段，导出为新文件，原字体不会被改动。
+- 裁剪时会去掉 hinting 以减小体积；小字号在部分渲染环境下可能不如原字体清晰，请在目标引擎中验证。
 
 ## 开发者常见问题
 

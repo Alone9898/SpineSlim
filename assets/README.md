@@ -2,7 +2,7 @@
 
 ## 文档截图 / Documentation screenshots
 
-`screenshots/` 包含当前 Tauri 开发版的中英文截图：Spine 预览、图集打包、资源处理、视频和音频。截图中的图形与声音为本项目文档自制示例，不包含商业游戏素材。旧 `ui-zh.png` / `ui-en.png` 为旧版界面，当前 README 不再引用。
+`screenshots/` 包含当前 Tauri 开发版的中英文截图：Spine 预览器、图集打包、资源处理、视频转换、音频处理和字体裁剪（`fonts-zh.png`）。截图中的图形与声音为本项目文档自制示例，不包含商业游戏素材。旧 `ui-zh.png` / `ui-en.png` 为旧版界面，当前 README 不再引用。
 
 `screenshots/` contains Chinese/English captures of the Tauri development app. Graphics and audio are self-created documentation examples, not commercial game assets. The older `ui-zh.png` / `ui-en.png` images show the legacy app and are no longer used in the current README.
 

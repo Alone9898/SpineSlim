@@ -12,12 +12,12 @@ SpineSlim 是 Windows 本地游戏资源工具，面向独立游戏开发者、2
 
 1. 访问[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [Releases](https://github.com/Alone9898/SpineSlim/releases) 选择 Windows x64 版本，注意区分正式版和 Pre-release。
 2. 按发布附件类型安装或完整解压，启动 SpineSlim。已打包程序无需安装 Python、Node.js 或 Rust。
-3. 左侧选择 **Spine 预览 / Rive 预览 / 3D 模型查看器 / 图集打包 / 资源处理 / 音频处理**，通过按钮或拖拽导入素材。
+3. 左侧选择 **Spine 预览器 / Rive 预览器 / 3D 模型预览器**（预览），或 **图集打包 / Spine 动画 / UI 图片 / 视频转换 / 音频处理 / 字体裁剪**（资源制作），通过按钮或拖拽导入素材。
 4. 需要编码、压缩时，按下文准备相应工具。资源处理的源目录与目标目录不能相同或互相嵌套。
 
 默认中文，可在“设置”中切换 English 并检查软件更新。直接在桌面窗口内使用，无需额外打开浏览器；资源在本机处理。系统需要 WebView2，安装包是否包含离线组件以 Release 为准。
 
-Rive 预览可离线打开本地 `.riv`、切换画板和状态机，并测试传统输入控件；3D 模型查看器可本地查看模型、材质和动画。二者都支持文件或文件夹拖拽导入。详情见 [Rive 预览说明](docs/RIVE_VIEWER.md)与 [3D 模型查看器说明](docs/MODEL_VIEWER.md)。
+Rive 预览器可离线打开本地 `.riv`、切换画板和状态机，并测试传统输入控件；3D 模型预览器可本地查看模型、材质和动画。二者都支持文件或文件夹拖拽导入。详情见 [Rive 预览说明](docs/RIVE_VIEWER.md)与 [3D 模型查看器说明](docs/MODEL_VIEWER.md)。
 
 ## AI 智能体检：本地规则与可选 AI 对话
 
@@ -27,9 +27,9 @@ Rive 预览可离线打开本地 `.riv`、切换画板和状态机，并测试�
 
 ![SpineSlim AI 智能体检：扫描结果与 AI 对话](assets/screenshots/ai-audit-en.png)
 
-## Spine 动画预览：JSON / SKEL 查看器
+## Spine 动画预览器：JSON / SKEL
 
-![Windows Spine JSON SKEL 动画预览、皮肤切换与播放控制](assets/screenshots/viewer-zh.png)
+![Windows Spine JSON SKEL 动画预览器、皮肤切换与播放控制](assets/screenshots/viewer-zh.png)
 
 - 扫描目录，浏览、搜索骨骼，匹配 Atlas 与贴图。
 - 加载 **3.8 / 4.0 / 4.1 / 4.2** 的 JSON / SKEL；贴图支持 PNG / JPG / WebP。
@@ -40,15 +40,15 @@ Rive 预览可离线打开本地 `.riv`、切换画板和状态机，并测试�
 
 预览无需安装 Spine 编辑器，不改写源骨骼。**预览支持版本与 JSON 升级支持版本不同**；3.5–3.7、4.3 和 Basis/KTX 贴图目前不在预览范围内。特殊素材仍需实测。
 
-## Rive 动画与状态机预览
+## Rive 预览器：动画与状态机
 
-![Rive 预览：画板、交互状态机、时间轴与布局设置](assets/screenshots/rive-zh.png)
+![Rive 预览器：画板、交互状态机、时间轴与布局设置](assets/screenshots/rive-zh.png)
 
 打开单个 `.riv` 或扫描目录，切换画板、动画、状态机，测试点击和长按交互。可调播放速度、画布布局与背景，查看传统状态机输入、状态时间轴和事件日志，并将会话导出为 JSON。运行时随程序提供；外部素材不会自动联网下载。[详细说明与限制](docs/RIVE_VIEWER.md)
 
-## 3D 模型查看器
+## 3D 模型预览器
 
-![3D 模型查看器：GLB 模型预览、渲染模式、尺寸与 MP4 导出](assets/screenshots/model-zh.png)
+![3D 模型预览器：GLB 模型预览、渲染模式、尺寸与 MP4 导出](assets/screenshots/model-zh.png)
 
 支持 GLB、GLTF、FBX、OBJ / MTL 和 STL，选择单个文件或目录后可切换模型。可查看材质、动画、尺寸和网格，切换照明 / 线框 / 法线模式，进行两点测距；MP4 导出使用 FFmpeg。GLTF 的 `.bin`、OBJ 的 MTL 及贴图需位于所选目录内。测距使用模型单位，不保证是真实米数。[详细说明与格式限制](docs/MODEL_VIEWER.md)
 
@@ -148,6 +148,16 @@ Rive 预览可离线打开本地 `.riv`、切换画板和状态机，并测试�
 MP3 VBR：0 质量最好、9 最小；OGG VBR：9 质量最好、0 最小。严格无缝或精确定位场景建议输出 WAV，并在游戏运行端验证。
 
 [音频说明与游戏接入](docs/AUDIO_PROCESSING.md)
+
+## 字体裁剪：按字符集精简 TTF / OTF
+
+![字体裁剪页面：快速预设、保留字符、输出格式与裁剪结果](assets/screenshots/fonts-zh.png)
+
+- 选择 TTF 或 OTF 字体，粘贴游戏中会用到的文字，或使用快速预设：常用 3000 字、数字 + 英文、中文标点、全角数字。
+- 输出保持原格式，也可选择 WOFF（Web 字体封装）。裁剪完成后显示体积变化，结果通过保存对话框下载。
+- 字形查看：列出字体中的全部字形（包括未映射的字形），支持按字符、`U+` 码位或字形名搜索。
+- 元信息编辑：修改字体家族、样式、版本、版权等字段，导出为新文件，原字体不会被改动。
+- 裁剪时会去掉 hinting 以减小体积；小字号在部分渲染环境下可能不如原字体清晰，请在目标引擎中验证。
 
 ## 外部工具
 
