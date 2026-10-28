@@ -35,6 +35,7 @@ def main():
     shutil.copytree(local_payload, payload)
     shutil.copy2(root / "LICENSE", payload / "LICENSE")
     shutil.copy2(root / "THIRD_PARTY.md", payload / "THIRD_PARTY.md")
+    shutil.copy2(root / "docs/licenses/FONTTOOLS.txt", payload / "licenses/FONTTOOLS.txt")
     (payload / "LOCAL-TEST-README.txt").unlink(missing_ok=True)
     for name in EXTRA_LICENSES:
         shutil.copy2(license_source / name, payload / "licenses" / name)
