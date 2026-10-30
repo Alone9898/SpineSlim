@@ -52,7 +52,7 @@ Rive 预览器可离线打开本地 `.riv`、切换画板和状态机，并测�
 
 支持 GLB、GLTF、FBX、OBJ / MTL 和 STL，选择单个文件或目录后可切换模型。可查看材质、动画、尺寸和网格，切换照明 / 线框 / 法线模式，进行两点测距；MP4 导出使用 FFmpeg。GLTF 的 `.bin`、OBJ 的 MTL 及贴图需位于所选目录内。测距使用模型单位，不保证是真实米数。[详细说明与格式限制](docs/MODEL_VIEWER.md)
 
-## 精灵图集打包：Unity / Cocos / Godot / PixiJS / Phaser
+## 图集工具：Unity / Cocos / Godot / PixiJS / Phaser
 
 ![游戏精灵图集打包器：Sprite Sheet 布局、透明裁剪和多页导出](assets/screenshots/atlas-zh.png)
 
@@ -75,7 +75,7 @@ Rive 预览器可离线打开本地 `.riv`、切换画板和状态机，并测�
 
 ## 资源处理
 
-![资源处理](assets/screenshots/processing-zh.png)
+![图集工具：打包与解析切换、拖入或选择图集文件](assets/screenshots/atlas-zh.png)
 
 ### 处理前后对比：一眼看出包体变化
 

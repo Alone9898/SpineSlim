@@ -1,4 +1,4 @@
-# SpineSlim · Spine Viewer, Texture Atlas Packer & Game Asset Toolkit
+# SpineSlim · Spine Viewer, Texture Atlas Tools & Game Asset Toolkit
 
 **A Windows desktop toolkit for Unity, Cocos Creator, Godot, PixiJS and Phaser game developers, with Spine and Rive preview, 3D model inspection, atlas packing and asset processing.**
 
@@ -75,7 +75,7 @@ Rotation and duplicate-image merging are not implemented. Limits: 500 images, 32
 
 ## Game asset processing and texture optimization
 
-![SpineSlim game asset processing with Spine texture compression and output format options](assets/screenshots/processing-en.png)
+![SpineSlim atlas tools: pack and unpack modes, drop or choose atlas files](assets/screenshots/atlas-en.png)
 
 ### Before and after: see the size reduction at a glance
 

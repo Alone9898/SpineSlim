@@ -66,7 +66,7 @@ Unity / Godot / Cocos 导出已验证文件结构与坐标，实际编辑器导�
 
 ![SpineSlim 3D 模型预览器：GLB 模型、渲染设置、尺寸与 MP4 导出](assets/screenshots/model-zh.png)
 
-## 精灵图集打包：Sprite Sheet / Texture Atlas Packer
+## 图集工具：Sprite Sheet / Texture Atlas Tools
 
 拖入 PNG / JPG / WebP，自动预览打包布局。可调整尺寸、缩放、间距、边缘扩展、透明裁剪与多页设置，导出 PNG 和引擎元数据 ZIP。**独立图集模块无需 TexturePacker。**
 
@@ -78,7 +78,7 @@ Unity / Godot / Cocos 导出已验证文件结构与坐标，实际编辑器导�
 
 批量整理 Spine、UI 图片与视频。纹理可选择原格式、WebP、PNG、JPG 或 Basis，处理过程显示当前文件、阶段进度和日志。
 
-![SpineSlim 游戏资源处理：Spine 纹理压缩、输出格式与阶段进度](assets/screenshots/processing-zh.png)
+![SpineSlim 图集工具：打包与解析切换、拖入或选择图集文件](assets/screenshots/atlas-zh.png)
 
 保留 Spine 源目录层级，默认将 JSON 升级至 4.2.11；高级选项可指定 3.5–4.2 的完整目标版本，对 JSON / SKEL 升级或降级，并写入独立的 `spine-converted` 目录。UI 提供背景图、图集及位图字体处理；视频输出 WebM / VP9。外部工具按使用的功能准备。[完整流程与输出规则 →](README.zh-CN.md#资源处理)
 
