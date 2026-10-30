@@ -12,7 +12,7 @@ SpineSlim 是 Windows 本地游戏资源工具，面向独立游戏开发者、2
 
 1. 访问[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [Releases](https://github.com/Alone9898/SpineSlim/releases) 选择 Windows x64 版本，注意区分正式版和 Pre-release。
 2. 按发布附件类型安装或完整解压，启动 SpineSlim。已打包程序无需安装 Python、Node.js 或 Rust。
-3. 左侧选择 **Spine 预览器 / Rive 预览器 / 3D 模型预览器**（预览），或 **图集打包 / Spine 动画 / UI 图片 / 视频转换 / 音频处理 / 字体裁剪**（资源制作），通过按钮或拖拽导入素材。
+3. 左侧选择 **Spine 预览器 / Rive 预览器 / 3D 模型预览器**（预览），或 **图集工具 / Spine 动画 / UI 图片 / 视频转换 / 音频处理 / 字体裁剪**（资源制作），通过按钮或拖拽导入素材。
 4. 需要编码、压缩时，按下文准备相应工具。资源处理的源目录与目标目录不能相同或互相嵌套。
 
 默认中文，可在“设置”中切换 English 并检查软件更新。直接在桌面窗口内使用，无需额外打开浏览器；资源在本机处理。系统需要 WebView2，安装包是否包含离线组件以 Release 为准。
@@ -108,7 +108,7 @@ Rive 预览器可离线打开本地 `.riv`、切换画板和状态机，并测�
 ### UI 图片、字体与视频
 
 - UI 可分类生成背景、图集、字体，也可选择「全部图片按背景图处理」。
-- 普通 UI 图集流程使用 TexturePacker，与独立「图集打包」模块不同；全部背景图模式不要求 TexturePacker。
+- 普通 UI 图集流程使用 TexturePacker，与独立「图集工具」模块不同；全部背景图模式不要求 TexturePacker。
 - 文件名含 `guide` 的图片跳过；按 `_` 分隔后第三段为 `pce` 的进入图集，为 `pack` 的作背景。无标记时 JPG/JPEG 作背景；宽小于 2048 且高小于 1024 的 PNG 作碎图，其余作背景。
 - `winnum` 开头的资源走艺术字流程，使用 Pillow 生成位图字体，无需 BMFont；还可整理 TTF / OTF 和 `part` 目录中的 JSON。
 - MOV / MP4 / M4V / WebM / MKV / AVI 转为 WebM / VP9，有音轨时编码为 Opus。CRF 为 0–63，越大通常越小；保留透明度要求源视频和运行端支持 Alpha。
@@ -163,7 +163,7 @@ MP3 VBR：0 质量最好、9 最小；OGG VBR：9 质量最好、0 最小。严�
 
 | 功能 | 依赖 |
 | --- | --- |
-| Spine / Rive / 3D 预览、独立图集打包 | 无需外部资源处理程序；GIF / MP4 导出另需 FFmpeg |
+| Spine / Rive / 3D 预览、独立图集工具（打包与解析） | 无需外部资源处理程序；GIF / MP4 导出另需 FFmpeg |
 | GIF / MP4 导出、音频处理、视频转换 | [FFmpeg](https://ffmpeg.org/download.html)；音频需 libmp3lame / libvorbis，MP4 需 libx264 |
 | 普通图片压缩与转换 | [ImageMagick](https://imagemagick.org/script/download.php) |
 | Basis 纹理 | [Basis Universal](https://github.com/BinomialLLC/basis_universal/releases) |

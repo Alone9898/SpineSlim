@@ -17,7 +17,7 @@ SpineSlim is a Windows desktop game asset toolkit for Unity, Cocos Creator, Godo
 | **Spine 预览器** | 本地目录扫描，3.8 / 4.0 / 4.1 / 4.2 JSON 与 SKEL，动画与皮肤切换、缩放平移、全屏、GIF / MP4 导出 |
 | **Rive 预览器** | 打开本地 `.riv` 及目录，切换画板、动画与状态机，测试输入和查看事件日志 |
 | **3D 模型预览器** | GLB / GLTF / FBX / OBJ / STL 预览、渲染模式、动画、测距和 MP4 导出 |
-| **图集打包** | 自动排列、透明裁剪、边缘扩展、多页预览，导出 Cocos / Unity / Godot / PixiJS / Phaser / Spine 格式 |
+| **图集工具** | 自动排列、透明裁剪、边缘扩展、多页预览，导出 Cocos / Unity / Godot / PixiJS / Phaser / Spine 格式 |
 | **Spine 动画 / UI 图片 / 视频转换** | Spine JSON 升级、纹理压缩、UI 分类处理、位图字体、WebM / VP9 视频转换 |
 | **字体裁剪** | 按字符集裁剪 TTF / OTF，快速预设、WOFF 输出、字形查看与元信息编辑 |
 | **音频处理** | 批量转换压缩、试听、裁剪、淡入淡出、短音频合并、Howler.js / Phaser 音频图集 |
@@ -130,7 +130,7 @@ SpineSlim 的独立「图集打包」模块可将 PNG / JPG / WebP 打包为 PNG
 
 1. 打开[产品官网](https://www.jyhzai.com/spineslim/)查看产品介绍，或前往 [Releases](https://github.com/Alone9898/SpineSlim/releases) 下载 Windows x64 版本；测试版本可能标记为 Pre-release。
 2. 安装版运行安装程序；便携版完整解压后启动。以该 Release 提供的文件类型为准。
-3. 选择模块并导入本地素材。预览与独立图集打包不需要外部处理工具；音频、视频及 GIF / MP4 导出需要 FFmpeg。
+3. 选择模块并导入本地素材。预览与独立图集工具不需要外部处理工具；音频、视频及 GIF / MP4 导出需要 FFmpeg。
 
 运行已打包程序无需自行安装 Python、Node.js 或 Rust。WebView2 和外部工具是否随包提供，以对应 Release 说明为准。
 

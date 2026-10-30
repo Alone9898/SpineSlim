@@ -12,7 +12,7 @@ This guide covers the Tauri 2.0 development line, with source version `2.0.0-alp
 
 1. Visit the [official website](https://www.jyhzai.com/en/spineslim/) for the product overview, or choose a Windows x64 build from [Releases](https://github.com/Alone9898/SpineSlim/releases). Development builds may be marked Pre-release.
 2. Run the installer or fully extract the portable archive, depending on the attachments provided. Packaged builds do not require Python, Node.js or Rust.
-3. Choose **Spine viewer / Rive viewer / 3D model viewer / Atlas packer / Asset processing / Audio processing** and import local files or folders.
+3. Choose **Spine viewer / Rive viewer / 3D model viewer / Atlas tools / Asset processing / Audio processing** and import local files or folders.
 4. Install the external tools required for your workflow. Asset processing source and output folders must not overlap.
 
 Chinese is the default language; select English or check for software updates in Settings. The app runs in its own desktop window and processes assets locally. Windows needs WebView2; check the release notes for offline runtime availability.
