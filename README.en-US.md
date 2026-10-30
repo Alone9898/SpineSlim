@@ -75,7 +75,7 @@ Rotation and duplicate-image merging are not implemented. Limits: 500 images, 32
 
 ## Game asset processing and texture optimization
 
-![SpineSlim atlas tools: pack and unpack modes, drop or choose atlas files](assets/screenshots/atlas-en.png)
+![SpineSlim asset processing: texture format, quality, Spine version conversion and output settings](assets/screenshots/processing-en.png)
 
 ### Before and after: see the size reduction at a glance
 

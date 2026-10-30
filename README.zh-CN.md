@@ -75,7 +75,7 @@ Rive 预览器可离线打开本地 `.riv`、切换画板和状态机，并测�
 
 ## 资源处理
 
-![图集工具：打包与解析切换、拖入或选择图集文件](assets/screenshots/atlas-zh.png)
+![资源处理：Spine 动画的纹理格式、质量、版本转换与输出设置](assets/screenshots/processing-zh.png)
 
 ### 处理前后对比：一眼看出包体变化
 
