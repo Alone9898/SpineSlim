@@ -440,6 +440,7 @@ fn main() {
             update::check_update,
             packer::packer_list,
             packer::packer_read,
+            packer::packer_read_file,
             packer::packer_save,
             viewer::viewer_scan,
             viewer::viewer_read,

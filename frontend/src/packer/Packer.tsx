@@ -6,6 +6,7 @@ import { FileImage, FolderOpen, Grid2X2, Download, LoaderCircle, X, Maximize, Pl
 import { archive, decode, defaults, pack, release, type Options, type Sheet, type Source } from './engine';
 import { diagnostic, label } from './i18n';
 import { exportFormats, packingOptions, type ExportFormat } from './exporters';
+import Unpacker from './Unpacker';
 import './packer.css';
 import { TelemetryAction, TelemetryErrorCode, TelemetryModule, trackAppError, trackFeature } from '../telemetry';
 
@@ -27,13 +28,14 @@ export default function Packer({ language, active }: Props) {
   const [borders, setBorders] = useState(true);
   const [name, setName] = useState('atlas');
   const [format, setFormat] = useState<ExportFormat>('both');
+  const [mode, setMode] = useState<'pack' | 'unpack'>('pack');
   const fileInput = useRef<HTMLInputElement>(null);
   const folderInput = useRef<HTMLInputElement>(null);
   const preview = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const sourcesRef = useRef(sources); sourcesRef.current = sources;
   const sheetsRef = useRef(sheets); sheetsRef.current = sheets;
-  const activeRef = useRef(active); activeRef.current = active;
+  const activeRef = useRef(active); activeRef.current = active && mode === 'pack';
   const lock = useRef(false);
   const mounted = useRef(true);
   const t = (key: string) => label(language, key);
@@ -150,11 +152,12 @@ export default function Packer({ language, active }: Props) {
   const select = (id: string) => { setSelected(id); const index = sheets.findIndex(item => item.frames.some(frame => frame.id === id)); if (index >= 0) setPageIndex(index); };
   const inputs = <><input hidden ref={fileInput} type="file" accept="image/png,image/jpeg,image/webp" multiple onChange={event => { void importImages(Array.from(event.target.files ?? []).map(file => ({ name: file.name, read: async () => file }))); event.target.value = ''; }} /><input hidden ref={folderInput} type="file" multiple {...{ webkitdirectory: '' }} onChange={event => { void importImages(Array.from(event.target.files ?? []).map(file => ({ name: file.webkitRelativePath || file.name, read: async () => file }))); event.target.value = ''; }} /></>;
   const actions = <div className="packer-import-actions"><button className="button primary" disabled={!!busy} onClick={() => void choose(false)}><FileImage size={15} />{t('files')}</button><button className="button secondary" disabled={!!busy} onClick={() => void choose(true)}><FolderOpen size={15} />{t('folder')}</button></div>;
-  return <div className="packer-root" onDragOver={event => event.preventDefault()} onDrop={event => { event.preventDefault(); if (!isTauri()) void importImages(Array.from(event.dataTransfer.files).map(file => ({ name: file.name, read: async () => file }))); }}>
+  return <div className="packer-root" onDragOver={event => event.preventDefault()} onDrop={event => { event.preventDefault(); if (!isTauri() && mode === 'pack') void importImages(Array.from(event.dataTransfer.files).map(file => ({ name: file.name, read: async () => file }))); }}>
     {inputs}
+    <div className="packer-mode" role="tablist">{(['pack', 'unpack'] as const).map(value => <button key={value} role="tab" aria-selected={mode === value} className={mode === value ? 'active' : ''} onClick={() => setMode(value)}>{t(value)}</button>)}</div>
     {error && <div className="notice" role="alert"><span>{diagnostic(language, error)}</span><button onClick={() => setError('')} aria-label={t('remove')}><X size={15} /></button></div>}
     {saved && <div className="packer-saved" role="status">{saved === 'download' ? t('download') : `${t('saved')}：${saved}`}</div>}
-    {!sources.length ? <section className="packer-empty"><div className="packer-empty-icon"><Grid2X2 size={38} /></div><h2>{t('emptyTitle')}</h2><p>{t('emptyHint')}</p>{actions}<div className="packer-empty-notes"><span>✓ {t('local')}</span><span>✓ {t('formats')}</span></div>{busy && <span role="status"><LoaderCircle className="spin" size={16} /> {t(busy)}</span>}</section> : <div className="packer-workbench">
+    {mode === 'unpack' ? <Unpacker language={language} /> : !sources.length ? <section className="packer-empty"><div className="packer-empty-icon"><Grid2X2 size={38} /></div><h2>{t('emptyTitle')}</h2><p>{t('emptyHint')}</p>{actions}<div className="packer-empty-notes"><span>✓ {t('local')}</span><span>✓ {t('formats')}</span></div>{busy && <span role="status"><LoaderCircle className="spin" size={16} /> {t(busy)}</span>}</section> : <div className="packer-workbench">
       <aside className="packer-sources"><div className="packer-panel-heading"><strong>{t('sprites')}</strong><span>{sources.length} {t('image')}</span></div>{actions}<input className="packer-search" aria-label={t('search')} placeholder={t('search')} value={search} onChange={event => setSearch(event.target.value)} /><div className="packer-source-list">{sources.filter(source => source.name.toLowerCase().includes(search.toLowerCase())).map(source => <div key={source.id} className={selected === source.id ? 'packer-source selected' : 'packer-source'}><button className="packer-source-select" title={source.name} onClick={() => select(source.id)}><img src={source.thumbnail} alt="" /><span>{source.name}<small>{source.image.width} × {source.image.height}</small></span></button><button className="packer-remove" disabled={!!busy} aria-label={`${t('remove')} ${source.name}`} onClick={() => remove(source)}><X size={13} /></button></div>)}</div><small className="packer-list-hint">{t('select')}</small></aside>
       <section className="packer-preview"><div className="packer-preview-toolbar"><strong>{t('preview')}</strong>{sheet && <span className="packer-badge">{sheet.canvas.width} × {sheet.canvas.height}</span>}{sheet && <span className="packer-occupancy">{Math.round(sheet.occupancy * 100)}%</span>}<button title={t('fit')} aria-label={t('fit')} onClick={fit}><Maximize size={15} /></button><div className="packer-zoom"><button aria-label="−" onClick={() => setZoom(value => Math.max(.02, value / 1.25))}><Minus size={13} /></button><span>{Math.round(zoom * 100)}%</span><button aria-label="+" onClick={() => setZoom(value => Math.min(4, value * 1.25))}><Plus size={13} /></button></div><label><input type="checkbox" checked={borders} onChange={event => setBorders(event.target.checked)} />{t('borders')}</label></div>
         <div className="packer-sheet-tabs">{sheets.map((_, index) => <button key={index} className={index === pageIndex ? 'active' : ''} onClick={() => setPageIndex(index)}>A{index + 1}</button>)}<span role="status">{busy ? t(busy) : packing ? `${t('packing')} ${progress}/${sources.length}` : `${sheets.length} ${t('pages')}`}</span></div>

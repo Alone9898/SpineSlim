@@ -10,7 +10,7 @@ const words: Record<string, [string, string]> = {
   'format.godot': ['生成 Godot 4 的 .tres 资源，保留裁剪边距。', 'Generate Godot 4 .tres resources with trim margins.'],
   'format.unity': ['附带 Editor 导入脚本，自动切片为 Multiple Sprites。脚本只需安装一次。', 'Includes an Editor importer for Multiple Sprites. Install the script once.'],
   'format.phaser': ['使用 Phaser 3 的 load.multiatlas 加载全部页面。', 'Load all pages with Phaser 3 load.multiatlas.'],
-  title: ['图集打包', 'Atlas packer'], description: ['将零散图片整理成图集，预览布局并导出引擎资源。', 'Pack images into atlases, inspect the layout and export engine assets.'],
+  title: ['图集工具', 'Atlas tools'], description: ['打包或解析图集，预览布局并导出引擎资源。', 'Pack or unpack atlases, inspect the layout and export engine assets.'],
   emptyTitle: ['选择或拖入图片、文件夹', 'Choose or drop images and folders'], emptyHint: ['本地打包，实时预览。支持 Cocos、Unity、Godot、PixiJS、Phaser 和 Spine。', 'Pack locally with a live preview. Export for Cocos, Unity, Godot, PixiJS, Phaser and Spine.'],
   files: ['选择图片', 'Choose images'], folder: ['选择文件夹', 'Choose folder'], local: ['完全本地处理，无需 TexturePacker', 'Fully local · No TexturePacker required'], formats: ['支持 PNG / JPG / WebP · 保留相对路径', 'PNG / JPG / WebP · Relative paths preserved'],
   sprites: ['素材', 'Sprites'], preview: ['图集预览', 'Atlas preview'], settings: ['打包设置', 'Packing settings'], layout: ['布局', 'Layout'], width: ['最大宽度', 'Max width'], height: ['最大高度', 'Max height'], pot: ['2 的幂尺寸', 'Power of two'], fixed: ['固定为最大尺寸', 'Use maximum size'], multipage: ['允许多页', 'Allow multiple pages'],
@@ -23,6 +23,11 @@ const words: Record<string, [string, string]> = {
   invalidName: ['名称不能包含换行、冒号或上级路径。', 'Names cannot contain line breaks, colons or parent traversal.'], invalidOptions: ['请检查尺寸、边距和缩放参数。', 'Check the size, spacing and scale options.'],
   oversize: ['图片超过图集尺寸，请增加尺寸或降低缩放：', 'Image exceeds atlas size. Increase the size or reduce the scale:'], multiple: ['一页放不下，请开启多页或增加尺寸。', 'Images do not fit one page. Enable multiple pages or increase the size.'],
   trimHint: ['裁剪信息会写入元数据，保留原始画布尺寸。', 'Trim metadata preserves each image’s original canvas size.'],
+  pack: ['打包', 'Pack'], unpack: ['解析', 'Unpack'],
+  unpackTitle: ['解析图集', 'Unpack atlas'], unpackHint: ['选择或拖入图集的 JSON 与 PNG（支持 PixiJS / TexturePacker 格式），还原为独立小图并导出 ZIP。', 'Choose or drop an atlas JSON and its PNG (PixiJS / TexturePacker format) to restore the sprites as a ZIP.'],
+  chooseAtlas: ['选择 JSON 与 PNG', 'Choose JSON and PNG'], unpacking: ['正在解析', 'Unpacking'], unpacked: ['已还原', 'restored'], exportSprites: ['导出小图 ZIP', 'Export sprites ZIP'],
+  atlasJson: ['图集 JSON 格式不正确，需包含 frames 与 meta.image。', 'Invalid atlas JSON: it needs frames and meta.image.'],
+  atlasMissing: ['未找到 meta.image 指定的 PNG，请一并选择。', 'The PNG named in meta.image was not found. Select it too.'],
 };
 export const label = (language: 'zh' | 'en', key: string) => words[key]?.[language === 'zh' ? 0 : 1] ?? key;
 export const diagnostic = (language: 'zh' | 'en', error: unknown) => {

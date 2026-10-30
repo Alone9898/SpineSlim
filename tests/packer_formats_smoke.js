@@ -34,7 +34,7 @@ async (page) => {
     setTimeout(() => URL.revokeObjectURL(url), 10000);
   });
   await (await downloadPromise).saveAs('output/packer-formats.zip');
-  await page.getByRole('button', { name: '图集打包', exact: true }).click();
+  await page.getByRole('button', { name: '图集工具', exact: true }).click();
   await page.locator('.packer-root input[type=file]').first().setInputFiles({ name: 'hero.png', mimeType: 'image/png', buffer: Buffer.from(image) });
   const selector = page.getByRole('combobox', { name: '元数据格式', exact: true });
   for (const format of ['cocos', 'unity', 'godot', 'phaser', 'pixi', 'spine', 'both']) {

@@ -50,7 +50,7 @@ async (page) => {
     }
     return files;
   });
-  await page.getByRole('button', { name: '图集打包', exact: true }).click();
+  await page.getByRole('button', { name: '图集工具', exact: true }).click();
   await page.locator('.packer-root input[type=file]').first().setInputFiles(files.map(file => ({ name: file.name, mimeType: 'image/png', buffer: Buffer.from(file.bytes) })));
   await page.getByRole('button', { name: '导出 ZIP', exact: true }).waitFor();
   await page.waitForFunction(() => !document.querySelector('.packer-busy') && document.querySelectorAll('.packer-frame').length === 15);

@@ -113,6 +113,25 @@ pub fn packer_read(
 }
 
 #[tauri::command]
+pub fn packer_read_file(path: String) -> Result<tauri::ipc::Response, String> {
+    let path = crate::viewer::checked(&PathBuf::from(path)).map_err(|_| "read")?;
+    let extension = path
+        .extension()
+        .and_then(|value| value.to_str())
+        .unwrap_or("")
+        .to_ascii_lowercase();
+    if !["json", "png"].contains(&extension.as_str()) || !path.is_file() {
+        return Err("read".into());
+    }
+    if fs::metadata(&path).map_err(|_| "read")?.len() > 32 * 1024 * 1024 {
+        return Err("limit".into());
+    }
+    fs::read(&path)
+        .map(tauri::ipc::Response::new)
+        .map_err(|_| "read".into())
+}
+
+#[tauri::command]
 pub async fn packer_save(target: String, bytes: Vec<u8>) -> Result<(), String> {
     tauri::async_runtime::spawn_blocking(move || {
         let target = PathBuf::from(target);
