@@ -25,7 +25,7 @@ SpineSlim is a Windows desktop game asset toolkit for Unity, Cocos Creator, Godo
 
 Tauri 2 + React + TypeScript + Python 后台。中文默认，支持 English；桌面使用无需另开浏览器，资源在本机处理。
 
-本文对应 **2.0 开发线**，当前源码版本为 `2.0.0-alpha.8`。可前往[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [GitHub Releases](https://github.com/Alone9898/SpineSlim/releases) 下载；旧版 1.x 不包含全部新模块。当前主要支持 Windows x64，尚未提供 macOS 安装包。
+本文对应 **2.0 开发线**，当前源码版本为 `2.0.0-alpha.9`。可前往[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [GitHub Releases](https://github.com/Alone9898/SpineSlim/releases) 下载；旧版 1.x 不包含全部新模块。当前主要支持 Windows x64，尚未提供 macOS 安装包。
 
 ## Unity、Cocos、Godot、PixiJS 和 Phaser 怎么接入？
 
@@ -136,7 +136,7 @@ SpineSlim 的独立「图集打包」模块可将 PNG / JPG / WebP 打包为 PNG
 
 ## 文档与许可
 
-- [2.0.0-alpha.8 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.8.md)：字体裁剪、字形查看、元信息编辑与导航重组
+- [2.0.0-alpha.9 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.9.md)：字体裁剪、字形查看、元信息编辑与导航重组
 - [2.0.0-alpha.7 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.7.md)：真实本地体检、报告导出和可选 AI 对话。
 - [匿名使用统计](docs/TELEMETRY.md)：事件枚举、隐私范围与 PostHog Cloud 配置。
 - [2.0.0-alpha.6 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.6.md)：AI 智能体检交互预览与匿名统计改进。

@@ -1,7 +1,7 @@
 VSVersionInfo(
     ffi=FixedFileInfo(
-        filevers=(2, 0, 0, 8),
-        prodvers=(2, 0, 0, 8),
+        filevers=(2, 0, 0, 9),
+        prodvers=(2, 0, 0, 9),
         mask=0x3f,
         flags=0x0,
         OS=0x40004,
@@ -17,9 +17,9 @@ VSVersionInfo(
                 StringStruct('FileVersion', '2.0.0.8'),
                 StringStruct('InternalName', 'SpineSlim'),
                 StringStruct('LegalCopyright', 'Copyright (c) 2026 Alone9898'),
-                StringStruct('OriginalFilename', 'SpineSlim-2.0.0-alpha.8-windows-x64.exe'),
+                StringStruct('OriginalFilename', 'SpineSlim-2.0.0-alpha.9-windows-x64.exe'),
                 StringStruct('ProductName', 'SpineSlim'),
-                StringStruct('ProductVersion', '2.0.0-alpha.8'),
+                StringStruct('ProductVersion', '2.0.0-alpha.9'),
             ]),
         ]),
         VarFileInfo([VarStruct('Translation', [1033, 1200])]),

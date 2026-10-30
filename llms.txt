@@ -26,7 +26,7 @@ SpineSlim is aimed at indie game developers, 2D game artists, technical artists,
 - [3D model viewer guide](https://github.com/Alone9898/SpineSlim/blob/main/docs/MODEL_VIEWER.md)
 - [Atlas packer guide](https://github.com/Alone9898/SpineSlim/blob/main/docs/ATLAS_PACKER.md)
 - [Audio processing guide](https://github.com/Alone9898/SpineSlim/blob/main/docs/AUDIO_PROCESSING.md)
-- [Release notes (2.0.0-alpha.8)](https://github.com/Alone9898/SpineSlim/blob/main/docs/RELEASE_NOTES_2.0.0-alpha.8.md)
+- [Release notes (2.0.0-alpha.9)](https://github.com/Alone9898/SpineSlim/blob/main/docs/RELEASE_NOTES_2.0.0-alpha.9.md)
 - [Release notes (2.0.0-alpha.7)](https://github.com/Alone9898/SpineSlim/blob/main/docs/RELEASE_NOTES_2.0.0-alpha.7.md)
 - [Third-party licenses](https://github.com/Alone9898/SpineSlim/blob/main/THIRD_PARTY.md)
 

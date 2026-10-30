@@ -6,7 +6,7 @@ SpineSlim helps indie developers, 2D game artists and technical artists preview 
 
 [Official Website](https://www.jyhzai.com/en/spineslim/) · [中文官网](https://www.jyhzai.com/spineslim/) · [Project Home](README.md) · [中文](README.zh-CN.md) · [Download / Releases](https://github.com/Alone9898/SpineSlim/releases) · [Telegram group](https://t.me/+XlcsJcxyKZtlNGYy) · [Star ⭐](https://github.com/Alone9898/SpineSlim)
 
-This guide covers the Tauri 2.0 development line, with source version `2.0.0-alpha.8`. Visit the [SpineSlim official website](https://www.jyhzai.com/en/spineslim/) for the product overview and check the release notes for your downloaded build. Older 1.x packages do not include all new modules. Windows x64 is the primary platform; no macOS installer is available yet.
+This guide covers the Tauri 2.0 development line, with source version `2.0.0-alpha.9`. Visit the [SpineSlim official website](https://www.jyhzai.com/en/spineslim/) for the product overview and check the release notes for your downloaded build. Older 1.x packages do not include all new modules. Windows x64 is the primary platform; no macOS installer is available yet.
 
 ## Quick start
 
