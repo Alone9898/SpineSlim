@@ -4,7 +4,7 @@
 
 SpineSlim 是 Windows 本地游戏资源工具，面向独立游戏开发者、2D 游戏美术、技术美术和 HTML5 / Web 游戏团队。可用于查看 Spine JSON / SKEL 动画、制作 sprite sheet / texture atlas，以及为 Howler.js / Phaser 生成 audio sprite。各引擎的导出格式和限制见下文。
 
-[产品官网](https://www.jyhzai.com/spineslim/) · [English Website](https://www.jyhzai.com/en/spineslim/) · [项目首页](README.md) · [English](README.en-US.md) · [下载 Releases](https://github.com/Alone9898/SpineSlim/releases) · [TG 交流群](https://t.me/+XlcsJcxyKZtlNGYy) · [Star ⭐](https://github.com/Alone9898/SpineSlim)
+[产品官网](https://www.jyhzai.com/spineslim/) · [English Website](https://www.jyhzai.com/en/spineslim/) · [English](README.md) · [下载 Releases](https://github.com/Alone9898/SpineSlim/releases) · [TG 交流群](https://t.me/+XlcsJcxyKZtlNGYy) · [Star ⭐](https://github.com/Alone9898/SpineSlim)
 
 当前文档对应 Tauri 2.0 开发线，源码版本 `2.0.0-alpha.9`。访问 [SpineSlim 产品官网](https://www.jyhzai.com/spineslim/)可查看产品介绍，发行包功能以对应 Release 为准。旧版 1.x 不包含全部新功能。主要支持 Windows x64；macOS 安装包尚未提供。
 

@@ -44,7 +44,7 @@ Use the complete Windows package, not the main EXE alone. Python, Node.js and Ru
 
 This is an alpha line, with no macOS installer yet. Viewer versions/textures and exports have the limits described in the guide. Unity/Godot/Cocos editor imports need project validation; Unity uses an included importer rather than a native `.spriteatlas`. Audio is limited to 500 clips/two hours, with preview of the first ten minutes. Development checks do not replace clean-machine installer acceptance.
 
-[English guide](../README.en-US.md) · [Issues](https://github.com/Alone9898/SpineSlim/issues) · [Telegram](https://t.me/+XlcsJcxyKZtlNGYy)
+[English guide](../README.md) · [Issues](https://github.com/Alone9898/SpineSlim/issues) · [Telegram](https://t.me/+XlcsJcxyKZtlNGYy)
 
 ## 发布前补全 / Before publishing
 

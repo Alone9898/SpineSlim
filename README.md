@@ -1,152 +1,310 @@
-# SpineSlim：面向 Unity、Cocos、Godot、PixiJS 和 Phaser 开发者的本地游戏资源工具箱
+# SpineSlim: Free Spine Viewer, Sprite Sheet Packer & Game Asset Toolkit for Windows
 
-**Spine / Rive 动画预览、3D 模型查看、精灵图集打包、纹理压缩与音频处理，全部在本机完成。**
+**English** | [简体中文](README.zh-CN.md)
 
-SpineSlim is a Windows desktop game asset toolkit for Unity, Cocos Creator, Godot, PixiJS and Phaser developers. Preview Spine and Rive animations, inspect 3D models, pack sprite sheets and texture atlases, optimize textures, and build audio sprites locally.
+**SpineSlim is a free, local Windows desktop toolkit for Unity, Cocos Creator, Godot, PixiJS and Phaser developers. Preview Spine JSON / SKEL and Rive animations, inspect 3D models, pack sprite sheets and texture atlases, compress textures, subset fonts, build Howler.js / Phaser audio sprites, and audit game assets, all offline on your own machine.**
 
-[产品官网](https://www.jyhzai.com/spineslim/) · [English Website](https://www.jyhzai.com/en/spineslim/) · [下载 / Releases](https://github.com/Alone9898/SpineSlim/releases) · [中文使用说明](README.zh-CN.md) · [English](README.en-US.md) · [TG 交流群](https://t.me/+XlcsJcxyKZtlNGYy) · [反馈问题](https://github.com/Alone9898/SpineSlim/issues)
+[Official Website](https://www.jyhzai.com/en/spineslim/) · [中文官网](https://www.jyhzai.com/spineslim/) · [Download / Releases](https://github.com/Alone9898/SpineSlim/releases) · [简体中文](README.zh-CN.md) · [Telegram group](https://t.me/+XlcsJcxyKZtlNGYy) · [Report an issue](https://github.com/Alone9898/SpineSlim/issues)
 
-如果 SpineSlim 帮你节省了时间，欢迎点个 **[Star ⭐](https://github.com/Alone9898/SpineSlim)**。
+If SpineSlim saves you time, please give it a **[Star ⭐](https://github.com/Alone9898/SpineSlim)**.
 
-## 现在可以做什么
+## What is SpineSlim?
 
-适合独立游戏开发者、2D 游戏美术和技术美术整理项目素材，也适合 HTML5 / Web 游戏开发者生成精灵图集（sprite sheet / texture atlas）与音频图集（audio sprite）。各引擎的接入方式见下表；SpineSlim 是独立桌面工具。
+SpineSlim is an open-source (MIT) desktop application for indie game developers, 2D game artists, technical artists and HTML5 / web game teams. It replaces a pile of separate tools with one app: a Spine animation viewer, a Rive viewer, a 3D model viewer, a sprite sheet / texture atlas packer, a texture and Spine asset optimizer, a font subsetter, an audio processor and a local asset auditor. Files are processed locally; nothing is uploaded unless you explicitly send an AI audit summary.
 
-| 模块 | 主要功能 |
+Built with Tauri 2, React, TypeScript and a Python worker. Chinese is the default UI language; English is available in Settings.
+
+**Quick facts**
+
+| | |
 | --- | --- |
-| **Spine 预览器** | 本地目录扫描，3.8 / 4.0 / 4.1 / 4.2 JSON 与 SKEL，动画与皮肤切换、缩放平移、全屏、GIF / MP4 导出 |
-| **Rive 预览器** | 打开本地 `.riv` 及目录，切换画板、动画与状态机，测试输入和查看事件日志 |
-| **3D 模型预览器** | GLB / GLTF / FBX / OBJ / STL 预览、渲染模式、动画、测距和 MP4 导出 |
-| **图集工具** | 自动排列、透明裁剪、边缘扩展、多页预览，导出 Cocos / Unity / Godot / PixiJS / Phaser / Spine 格式 |
-| **Spine 动画 / UI 图片 / 视频转换** | Spine JSON 升级、纹理压缩、UI 分类处理、位图字体、WebM / VP9 视频转换 |
-| **字体裁剪** | 按字符集裁剪 TTF / OTF，快速预设、WOFF 输出、字形查看与元信息编辑 |
-| **音频处理** | 批量转换压缩、试听、裁剪、淡入淡出、短音频合并、Howler.js / Phaser 音频图集 |
-| **AI 智能体检** | 本地扫描重复资源、缺失依赖、图片尺寸、命名与格式问题；按风险筛选并导出报告，可选择模型讨论结果 |
+| Platform | Windows x64 (no macOS or Linux installer yet) |
+| Current source version | `2.0.0-alpha.9` (2.0 development line; 1.x builds lack the newer modules) |
+| License | [MIT](LICENSE) for project code; third-party components keep their own terms |
+| Spine versions previewed | 3.8 / 4.0 / 4.1 / 4.2 (JSON and SKEL) |
+| Atlas export targets | Unity, Cocos Creator / cocos2d-x, Godot 4, PixiJS, Phaser 3, Spine |
+| Needs the Spine editor? | No |
+| Needs TexturePacker? | No, for the standalone atlas packer |
 
-Tauri 2 + React + TypeScript + Python 后台。中文默认，支持 English；桌面使用无需另开浏览器，资源在本机处理。
+## Features at a glance
 
-本文对应 **2.0 开发线**，当前源码版本为 `2.0.0-alpha.9`。可前往[产品官网](https://www.jyhzai.com/spineslim/)了解功能，或从 [GitHub Releases](https://github.com/Alone9898/SpineSlim/releases) 下载；旧版 1.x 不包含全部新模块。当前主要支持 Windows x64，尚未提供 macOS 安装包。
-
-## Unity、Cocos、Godot、PixiJS 和 Phaser 怎么接入？
-
-| 游戏引擎 / 框架 | 资源接入方式 |
+| Module | What it does |
 | --- | --- |
-| **Unity 2D** | 导出 PNG、切片清单和 Editor 脚本，导入为 Multiple Sprites；不是原生 `.spriteatlas` |
-| **Cocos Creator / cocos2d-x** | 导出 PNG + plist 精灵图集，包含透明裁剪偏移 |
-| **Godot 4** | 导出 PNG + AtlasTexture `.tres`，供 Sprite2D / TextureRect / SpriteFrames 使用 |
-| **PixiJS（Pixi）** | 导出 spritesheet JSON 与 PNG，支持多页图集关联 |
-| **Phaser 3** | 导出 multiatlas JSON；音频模块另提供 audio sprite JSON |
-| **Spine / Howler.js** | 分别导出 Spine Atlas 和 Howler.js 音效时间配置 |
+| **Spine viewer** | Scan local folders; Spine 3.8 / 4.0 / 4.1 / 4.2 JSON and SKEL; switch animations and skins; zoom, pan, fullscreen; export GIF / MP4 |
+| **Rive viewer** | Open local `.riv` files or folders; switch artboards, animations and state machines; test inputs and read event logs |
+| **3D model viewer** | GLB / GLTF / FBX / OBJ / STL; render modes, animations, two-point measurement, MP4 export |
+| **Atlas tools** | Sprite sheet / texture atlas packing with alpha trimming, edge extrusion and multipage preview; export for Cocos, Unity, Godot, PixiJS, Phaser and Spine |
+| **Asset processing** | Spine JSON / SKEL version conversion, texture compression (WebP / PNG / JPG / Basis), UI image classification, bitmap fonts, WebM / VP9 video conversion |
+| **Font subsetting** | Trim TTF / OTF to the characters you use, WOFF output, glyph browser, metadata editing |
+| **Audio processing** | Batch convert and compress, trim, fade, merge short clips, Howler.js / Phaser audio sprites |
+| **AI Asset Audit** | Local scan for duplicates, missing dependencies, oversized images, naming and format issues; JSON / HTML reports; optional model chat |
 
-Unity / Godot / Cocos 导出已验证文件结构与坐标，实际编辑器导入仍需在目标项目测试。图片图集和音频图集是两种独立输出，具体格式见各模块说明。
+## How do I use SpineSlim with Unity, Cocos Creator, Godot, PixiJS and Phaser?
 
-## AI 智能体检：本地扫描与可选模型对话
-
-选择或拖入游戏资源目录后，本地规则会检查精确重复、缺失依赖、图片尺寸与透明边距、文件体积、命名和格式异常。结果按风险筛选，可定位文件并导出 JSON / HTML 报告；检测不会修改原文件。完成后可选择自己的模型服务，手动发送体检摘要并讨论修复顺序。默认摘要不包含文件名和路径；只有主动勾选才附带有限的相对文件名与证据。AI 建议需人工核对，当前不提供自动清理。[查看功能设计与范围 →](docs/SpineSlim_AI智能体检_功能设计文档.md)
-
-![SpineSlim AI 智能体检：本地资源扫描、风险列表与可选 AI 对话](assets/screenshots/ai-audit-en.png)
-
-## Spine 预览器：JSON / SKEL 与 GIF / MP4 导出
-
-打开包含骨骼、Atlas 和贴图的目录，即可浏览资源并切换动画。选中动画后可反复一键复制名称，方便在游戏代码中使用。支持播放、暂停、循环、速度、时间轴、网格、透明棋盘、Alpha 模式及 GIF / MP4 导出。
-
-![SpineSlim Windows Spine 动画预览器：JSON 与 SKEL、动画皮肤切换和播放控制](assets/screenshots/viewer-zh.png)
-
-预览不要求安装 Spine 编辑器，也不改写骨骼文件。GIF / MP4 导出需要 FFmpeg；Spine Runtime 的使用与分发适用其自身许可。
-
-## Rive 预览器：动画与状态机
-
-打开本地 `.riv` 文件或目录，切换画板、动画和状态机；可在画布上测试点击与长按交互，查看传统输入、状态时间轴和事件日志。支持播放速度、布局、全屏及会话 JSON 导出。[查看 Rive 预览说明 →](docs/RIVE_VIEWER.md)
-
-![SpineSlim Rive 预览器：画板、状态机与交互控制](assets/screenshots/rive-zh.png)
-
-## 3D 模型预览器：GLB、GLTF、FBX、OBJ、STL
-
-打开模型文件或目录，在本地检查材质、动画、尺寸、网格和骨骼。支持旋转缩放、照明、线框 / 法线模式、两点测距，以及使用 FFmpeg 导出 MP4；外部贴图和 `.bin` 文件需随模型放在同一目录。[查看格式与限制 →](docs/MODEL_VIEWER.md)
-
-![SpineSlim 3D 模型预览器：GLB 模型、渲染设置、尺寸与 MP4 导出](assets/screenshots/model-zh.png)
-
-## 图集工具：Sprite Sheet / Texture Atlas Tools
-
-拖入 PNG / JPG / WebP，自动预览打包布局。可调整尺寸、缩放、间距、边缘扩展、透明裁剪与多页设置，导出 PNG 和引擎元数据 ZIP。**独立图集模块无需 TexturePacker。**
-
-![SpineSlim 精灵图集打包器：透明裁剪、多页预览和游戏引擎元数据导出](assets/screenshots/atlas-zh.png)
-
-支持 Cocos plist、PixiJS JSON、Spine Atlas、Godot 4 AtlasTexture、Unity 导入脚本和 Phaser 3 多页 JSON。[查看格式与导入说明 →](docs/ATLAS_PACKER.md)
-
-## 资源处理
-
-批量整理 Spine、UI 图片与视频。纹理可选择原格式、WebP、PNG、JPG 或 Basis，处理过程显示当前文件、阶段进度和日志。
-
-![SpineSlim 资源处理：Spine 动画的纹理格式、质量、版本转换与输出设置](assets/screenshots/processing-zh.png)
-
-保留 Spine 源目录层级，默认将 JSON 升级至 4.2.11；高级选项可指定 3.5–4.2 的完整目标版本，对 JSON / SKEL 升级或降级，并写入独立的 `spine-converted` 目录。UI 提供背景图、图集及位图字体处理；视频输出 WebM / VP9。外部工具按使用的功能准备。[完整流程与输出规则 →](README.zh-CN.md#资源处理)
-
-### 一个直观的压缩结果
-
-**背景图案例：JPG 2,249 KB → WebP 165 KB，体积减少约 92.7%，节省约 2,084 KB。** 原图 `base_bg.jpg` 与输出 `base_bg.webp` 的文件大小对比如下：
-
-![背景图压缩对比：原 JPG 2,249 KB，输出 WebP 165 KB](assets/screenshots/background-compression.png)
-
-你提供的同一组 Spine 资源截图中，贴图从 PNG **359 KB** 转为 WebP **74 KB**，体积减少约 **79%**（节省约 **285 KB**）。转换时同步更新 Atlas 的贴图引用，`.skel` 无需转换。这是单张贴图的文件大小对比，数值按资源管理器显示值计算；实际压缩比例和画质取决于素材及质量设置。
-
-| 处理前 | 处理后 |
+| Engine / framework | What SpineSlim exports |
 | --- | --- |
-| ![Spine 贴图处理前：PNG 359 KB](assets/screenshots/processing-before.png) | ![Spine 贴图处理后：WebP 74 KB](assets/screenshots/processing-after.png) |
+| **Unity 2D** | PNG + slice manifest (`.spineslim.json`) + Editor importer script, imported as Multiple Sprites. This is **not** a native `.spriteatlas` |
+| **Cocos Creator / cocos2d-x** | PNG + plist (format 3) sprite sheet, including trim offsets |
+| **Godot 4** | PNG + AtlasTexture `.tres` resources for Sprite2D / TextureRect / SpriteFrames |
+| **PixiJS** | PNG + spritesheet JSON with multipack references |
+| **Phaser 3** | PNG + multiatlas JSON; the audio module also exports audio sprite JSON |
+| **Spine / Howler.js** | Spine Atlas (multipage) and Howler.js sound timing configuration |
 
-## 游戏音频处理：音效压缩、合并与 Audio Sprite
+Unity, Godot and Cocos exports have been verified for file structure and coordinates; always test the final editor import in your own project. Image atlases and audio atlases are separate outputs.
 
-把零散音效统一转换为 MP3 / OGG / WAV，或按顺序合成一个音频。选择音频图集，还会生成每段音效的播放时间，供 Howler.js / Phaser 按名称播放。
+## Quick start
 
-![SpineSlim 游戏音效处理：裁剪淡化、音频合并与 Howler.js Phaser 音频图集](assets/screenshots/audio-zh.png)
+1. Download a Windows x64 build from [GitHub Releases](https://github.com/Alone9898/SpineSlim/releases) (2.0 builds may be marked Pre-release), or see the [official website](https://www.jyhzai.com/en/spineslim/).
+2. Run the installer, or fully extract the portable archive. Packaged builds do not require Python, Node.js or Rust.
+3. Pick a module in the sidebar and import local files or folders, with buttons or drag and drop.
+4. Install the external tools your workflow needs (see [External tools](#external-tools)). Asset processing source and output folders must not overlap.
 
-支持目录导入、排序、原音频试听、裁剪、淡入淡出、采样率与声道设置、VBR / 目标码率、进度与取消。每次导出写入独立结果目录，不覆盖源文件。[音频使用说明 →](docs/AUDIO_PROCESSING.md)
+Windows needs WebView2; check each release's notes for whether an offline runtime is included. Settings are at the bottom of the sidebar in development builds; packaged builds may hide them by product configuration.
 
-## 字体裁剪：按字符集精简 TTF / OTF
+## AI Asset Audit: local checks and optional model chat
 
-![SpineSlim 字体裁剪页面：快速预设、保留字符、输出格式与裁剪结果](assets/screenshots/fonts-zh.png)
+Choose or drop an asset directory to run local checks for exact duplicates, missing dependencies, image dimensions and padding, large files, naming and format issues. Filter and search findings, locate affected files, inspect rule coverage, and export JSON or HTML reports. The audit never changes original files, and assets not covered by a rule are not treated as verified.
 
-- 选择 TTF 或 OTF 字体，粘贴游戏中会用到的文字，或使用快速预设：常用 3000 字、数字 + 英文、中文标点、全角数字。
-- 输出保持原格式，也可选择 WOFF（Web 字体封装）。裁剪完成后显示体积变化，结果通过保存对话框下载。
-- 字形查看：列出字体中的全部字形（包括未映射的字形），支持按字符、`U+` 码位或字形名搜索。
-- 元信息编辑：修改字体家族、样式、版本、版权等字段，导出为新文件，原字体不会被改动。
-- 裁剪时会去掉 hinting 以减小体积；小字号在部分渲染环境下可能不如原字体清晰，请在目标引擎中验证。
+After scanning, you may optionally connect your own DeepSeek, OpenAI-compatible, Anthropic or Gemini model and ask about the results. The default summary contains counts and issue types only; relative file names and evidence are included only when you explicitly select them. A network request is made only when you press Send, and provider charges may apply. AI suggestions need review, and SpineSlim never deletes assets automatically. [Design and scope →](docs/SpineSlim_AI智能体检_功能设计文档.md)
 
-## 开发者常见问题
+![SpineSlim AI Asset Audit with local findings and optional chat](assets/screenshots/ai-audit-en.png)
 
-### 如何在 Windows 上预览 Spine SKEL 文件？
+## Spine viewer for JSON and SKEL files
 
-在 SpineSlim 的「Spine 预览」中导入包含 SKEL、Atlas 和贴图的完整目录。当前接入 Spine 3.8 / 4.0 / 4.1 / 4.2，可切换动画与皮肤；无需安装 Spine 编辑器。
+![SpineSlim Windows Spine viewer with JSON and SKEL animation playback and skin controls](assets/screenshots/viewer-en.png)
 
-### 有没有不依赖 TexturePacker 的游戏图集打包方式？
+- Scan directories, browse and search skeletons, and match Atlas files and textures.
+- Load Spine **3.8 / 4.0 / 4.1 / 4.2** JSON and SKEL files with PNG / JPG / WebP textures.
+- Switch animations and skins; play, pause, loop, adjust speed and seek on the timeline. Copy the selected animation name repeatedly for use in game code.
+- Zoom, pan, fit, fullscreen, grid, origin, checkerboard, background color and bone debug.
+- Inspect export / runtime versions and texture information; select Alpha modes and copy diagnostics.
+- Export the current animation, skin, framing and speed as **GIF / MP4** using FFmpeg. Exports are limited to 30 seconds; GIF supports optional transparency, MP4 uses the background color. Grid and debug overlays are excluded.
 
-SpineSlim 的独立「图集打包」模块可将 PNG / JPG / WebP 打包为 PNG 图集，导出 Unity、Cocos、Godot、PixiJS、Phaser 和 Spine 对应元数据，无需 TexturePacker。资源处理中的 UI 自动分类图集流程仍使用 TexturePacker。
+Preview does not need the Spine editor and never modifies source skeletons. **Preview support differs from JSON upgrade support.** Spine 3.5–3.7, 4.3 and Basis / KTX textures are not supported by the viewer. Test unusual assets in your project. Spine Runtime use and redistribution are governed by its own license.
 
-### 如何把多个短音效合并后在游戏中分别播放？
+## Rive viewer: animations and state machines
 
-选择「音频处理 → 音频图集」，输出合并音频与 Howler.js / Phaser 时间配置，按片段名称播放。仅需要连续播放时选择「按顺序拼接」；Unity、Godot、Cocos 项目也可使用批量输出的独立音频文件。
+![Rive viewer with artboard, interactive state machine, timeline and layout controls](assets/screenshots/rive-zh.png)
 
-## 下载与使用
+Open a local `.riv` file or scan a folder, switch artboards, animations and state machines, and test click or hold interactions. Adjust playback and layout, inspect traditional inputs, state timelines and event logs, and export a session JSON. The runtime is bundled and works offline; external assets are not downloaded automatically. [Features and limits →](docs/RIVE_VIEWER.md)
 
-1. 打开[产品官网](https://www.jyhzai.com/spineslim/)查看产品介绍，或前往 [Releases](https://github.com/Alone9898/SpineSlim/releases) 下载 Windows x64 版本；测试版本可能标记为 Pre-release。
-2. 安装版运行安装程序；便携版完整解压后启动。以该 Release 提供的文件类型为准。
-3. 选择模块并导入本地素材。预览与独立图集工具不需要外部处理工具；音频、视频及 GIF / MP4 导出需要 FFmpeg。
+## 3D model viewer: GLB, GLTF, FBX, OBJ, STL
 
-运行已打包程序无需自行安装 Python、Node.js 或 Rust。WebView2 和外部工具是否随包提供，以对应 Release 说明为准。
+![3D model viewer showing a GLB model, render settings, dimensions and MP4 export](assets/screenshots/model-zh.png)
 
-## 文档与许可
+Open a GLB, GLTF, FBX, OBJ / MTL or STL file or folder. Inspect materials, animations, dimensions, meshes and bones; switch lighting, wireframe and normals; measure between two surface points. MP4 export uses FFmpeg. Keep external GLTF buffers (`.bin`), OBJ materials and textures inside the selected folder. Measurements use model units, which may not be metres. [Features and format limits →](docs/MODEL_VIEWER.md)
 
-- [2.0.0-alpha.9 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.9.md)：字体裁剪、字形查看、元信息编辑与导航重组
-- [2.0.0-alpha.7 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.7.md)：真实本地体检、报告导出和可选 AI 对话。
-- [匿名使用统计](docs/TELEMETRY.md)：事件枚举、隐私范围与 PostHog Cloud 配置。
-- [2.0.0-alpha.6 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.6.md)：AI 智能体检交互预览与匿名统计改进。
-- [中文完整说明](README.zh-CN.md) / [English guide](README.en-US.md)：功能、依赖、源码运行、常见问题。
-- [2.0.0-alpha.5 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.5.md)：Spine 版本升降级、JSON / SKEL 转换与独立输出。
-- [2.0.0-alpha.4 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.4.md)：3D 模型查看器、预览导入体验与动画名复制。
-- [2.0.0-alpha.3 发布说明](docs/RELEASE_NOTES_2.0.0-alpha.3.md)：Rive 预览、软件更新检查与 Spine 转换优化。
-- [2.0.0-alpha.2 修复日志](docs/RELEASE_NOTES_2.0.0-alpha.2.md)：Windows 输出提交与 worker 打包修复。
-- [第三方组件说明](THIRD_PARTY.md)：Spine Runtime、FFmpeg、TexturePacker 等的许可说明。
+## Sprite sheet and texture atlas packer for game engines
 
-项目自有代码采用 [MIT License](LICENSE)。第三方组件、外部工具和素材遵循各自许可。SpineSlim 是独立第三方项目，与 Spine 官方无关联。
+![SpineSlim sprite sheet packer with alpha trimming, multipage preview and engine metadata export](assets/screenshots/atlas-en.png)
 
-部分截图使用自制几何图形和合成音频；3D / Rive 截图由用户提供，示例模型和动画的权利归原作者。开发版和正式打包版均可从侧栏底部打开设置。
+The standalone packer runs locally and **does not require TexturePacker**. Import PNG / JPG / WebP files or directories, append, search and remove images, inspect the layout and switch pages. Adjust dimensions, power-of-two or fixed sizing, scale, alpha trimming and threshold, padding and edge extrusion; packing updates automatically.
+
+| Target | Export |
+| --- | --- |
+| PixiJS | PNG + spritesheet JSON with multipack references |
+| Spine | PNG + multipage Atlas |
+| Cocos Creator / cocos2d-x | PNG + plist format 3 |
+| Godot 4 | PNG + AtlasTexture `.tres` resources |
+| Unity | PNG + `.spineslim.json` + Editor importer |
+| Phaser 3 | PNG + multiatlas JSON |
+
+Save a ZIP, optionally including both PixiJS JSON and Spine Atlas. Unity mode keeps full canvases and disables trimming. Install the importer once under `Assets/Editor`, then use `Tools → SpineSlim → Import Atlas` to create Multiple Sprites. It does not generate a Unity `.spriteatlas` asset.
+
+Rotation and duplicate-image merging are not implemented. Limits: 500 images, 32 Mi source pixels, 32 MiB per file, 16 output pages / 64 Mi output pixels, maximum dimension 8192. [Export formats and import instructions →](docs/ATLAS_PACKER.md)
+
+## Game asset processing and texture optimization
+
+![SpineSlim asset processing: texture format, quality, Spine version conversion and output settings](assets/screenshots/processing-zh.png)
+
+### Before and after: see the size reduction at a glance
+
+**Background image example: JPG 2,249 KB → WebP 165 KB, about 92.7% smaller, saving approximately 2,084 KB.**
+
+![Background image file sizes: original JPG at 2,249 KB and WebP output at 165 KB](assets/screenshots/background-compression.png)
+
+In the Spine example below, a PNG texture drops from **359 KB** to **74 KB** as WebP: about **79% smaller**, saving roughly **285 KB**. SpineSlim updates the Atlas texture reference; the `.skel` needs no conversion. Figures describe single textures and are calculated from the sizes shown in Windows Explorer; real compression ratios and visual quality vary with image content, quality settings and alpha data.
+
+| Before: PNG | After: WebP |
+| --- | --- |
+| ![Before processing: PNG texture at 359 KB](assets/screenshots/processing-before.png) | ![After processing: WebP texture at 74 KB](assets/screenshots/processing-after.png) |
+
+### Spine textures and version conversion
+
+Recursively process Spine folders, preserve relative paths and update Atlas texture references. Spine and UI texture settings are saved independently.
+
+| Format | Behavior |
+| --- | --- |
+| Original (default) | Preserve extensions; attempt lossless compression for PNGs |
+| WebP | Adjustable quality and transparency |
+| PNG | Lossless; keeps the existing PNG if compression makes it larger |
+| JPG | Adjustable quality; transparency is flattened onto white |
+| Basis | Exports `.basis`; requires support in your game runtime |
+
+Optionally upgrade JSON to **Spine 4.2.11**, migrate setup-pose attachments and preserve existing animation keys. Preflight accepts 3.5 / 3.6 / 3.7 / 3.8 / 4.0 / 4.1 and recognizes 4.2 as already upgraded. An accepted version does not guarantee conversion of every asset. The upgrade uses an external converter.
+
+Choose “Target version (advanced)” to enter a complete `x.y.z` version in the 3.5–3.8 or 4.0–4.2 range, keeping the source format or outputting JSON / SKEL. This mode handles both Spine JSON and SKEL and writes to a separate `program/spine-converted` folder; the source stays unchanged. Downgrades may alter newer curves, constraints and timelines, so verify in the target Spine runtime. A later run replaces existing `program/spine-converted` contents.
+
+### UI images, fonts and video
+
+- Classify UI assets into backgrounds, atlases and fonts, or enable “Process all images as backgrounds.”
+- The UI atlas pipeline uses TexturePacker, unlike the standalone atlas packer. Background-only mode does not require it.
+- Images whose names contain `guide` are skipped. A third underscore-separated segment of `pce` selects atlas packing; `pack` selects a background. Otherwise JPG / JPEG becomes a background, PNG smaller than 2048 × 1024 becomes a sprite, and larger PNG becomes a background.
+- `winnum` assets use Pillow-based bitmap font generation, without BMFont. The pipeline also handles TTF / OTF files and JSON under `part`.
+- Convert MOV / MP4 / M4V / WebM / MKV / AVI to WebM / VP9, with Opus audio when present. CRF ranges from 0–63; higher generally means smaller. Alpha requires a source and playback environment that support it.
+
+### Output and tasks
+
+![Video processing](assets/screenshots/video-en.png)
+
+```text
+output/program/
+├─ spine/           Original Spine folder hierarchy
+├─ bg/              UI backgrounds at original dimensions
+├─ atlas/           UI atlases
+├─ fonts/           Fonts
+├─ part/            Classified JSON
+└─ video/
+   ├─ pc/           Original-size WebM
+   └─ mobile/       Approximately half size, rounded to even dimensions
+```
+
+Current-file and stage progress, logs, size statistics and cancellation are available. Processing uses staging before committing results. **A successful commit replaces existing output in its scope:** Spine replaces `program/spine`; UI replaces everything under `program` except `spine`; video updates PC / Mobile WebM outputs. Use a dedicated output folder and review the confirmation dialog.
+
+## Game audio processing: compression, merging and audio sprites
+
+![SpineSlim game audio editor for trimming, fades, merging and Howler.js Phaser audio sprites](assets/screenshots/audio-en.png)
+
+- Import files or folders, or drag and drop MP3, OGG, WAV, FLAC, M4A, AAC, OPUS, AIFF and WMA.
+- Inspect duration, codec, sample rate, channels and size; preview source audio within an optional trim range.
+- Set start / end times and fade-in / out per clip. Reorder with arrow buttons or drag and drop.
+- Batch convert and compress to **MP3, OGG Vorbis or PCM 16-bit WAV**, with sample rate, mono / stereo, VBR quality or target bitrate.
+- **Merge short clips** in order, even with mixed formats or sample rates: normalize to PCM, concatenate, then encode.
+- **Audio sprites:** export one merged audio file with Howler.js / Phaser JSON, configurable gaps and named playback segments.
+- Track progress and input / output sizes, cancel work and open the result folder.
+
+Each export creates a unique `SpineSlim-audio-*` folder and preserves sources. Batch mode preserves the imported directory structure. Limits: 500 clips, two hours per source and total processing duration. Preview loads the first ten minutes; fades apply at export. All exports re-encode, so lossy processing may reduce quality and does not guarantee smaller files.
+
+MP3 VBR: 0 is best quality, 9 smallest. OGG VBR: 9 is best quality, 0 smallest. For strict timing or gapless playback, use WAV and validate in your game runtime. [Audio workflow and game integration →](docs/AUDIO_PROCESSING.md)
+
+## Font subsetting: trim TTF / OTF to the characters you use
+
+![SpineSlim font subsetting page with quick presets, kept characters, output format and result](assets/screenshots/fonts-zh.png)
+
+- Choose a TTF or OTF font, paste the text your game displays, or use a quick preset: common 3,000 Chinese characters, digits and English, Chinese punctuation, or full-width digits.
+- Output keeps the original format, or can be WOFF for the web. The size change is shown after subsetting and the result is saved through a save dialog.
+- The glyph view lists every glyph in the font, including unmapped ones, with search by character, `U+` code point or glyph name.
+- Metadata editing changes family, style, version, copyright and other name fields, and exports a new file. The original font is not modified.
+- Hinting is removed to reduce size. Small text may look different on some renderers, so verify in your target engine.
+
+## External tools
+
+| Feature | Dependency |
+| --- | --- |
+| Spine / Rive / 3D preview and standalone atlas packing | No external asset-processing executable; GIF / MP4 export additionally requires FFmpeg |
+| GIF / MP4 export, audio processing, video conversion | [FFmpeg](https://ffmpeg.org/download.html); audio needs libmp3lame / libvorbis, MP4 needs libx264 |
+| Standard image optimization and conversion | [ImageMagick](https://imagemagick.org/script/download.php) |
+| Basis textures | [Basis Universal](https://github.com/BinomialLLC/basis_universal/releases) |
+| UI atlases within Asset processing | [TexturePacker](https://www.codeandweb.com/texturepacker/download) |
+| Spine JSON upgrades | SpineSkeletonDataConverter |
+
+Discovery uses saved paths, application and `tools/<tool-key>/` folders, PATH and other supported locations. Open Settings at the bottom of the sidebar to detect tools or choose their paths. Keep portable tools' companion files; do not copy only the EXE.
+
+The default Tauri package does not bundle these external tools. The full-package script is for local testing and does not establish redistribution rights. Check each release's contents and the [third-party notices](THIRD_PARTY.md).
+
+## Build from source
+
+Requires Windows x64, Node.js 20.19+ or 22.12+, Python 3.12+, stable Rust, MSVC C++ build tools and WebView2.
+
+```powershell
+git clone https://github.com/Alone9898/SpineSlim.git
+cd SpineSlim
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt pyinstaller
+npm ci
+.\.venv\Scripts\python.exe scripts/build_worker.py
+npm run desktop
+```
+
+Rebuild the worker after editing Python code. `npm run dev` alone starts only the web development server, without full desktop capabilities. The Tauri app no longer starts through the legacy `python main.py` entry point.
+
+```powershell
+npm run build
+cargo check --manifest-path src-tauri/Cargo.toml
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+
+.\.venv\Scripts\python.exe scripts/build_worker.py
+npm run package
+```
+
+The default NSIS installer is generated under `src-tauri/target/release/bundle/nsis/`. The main EXE alone is not enough: the Python worker and other packaged files are required. Validate installation, tool discovery and core workflows on a clean computer before releasing.
+
+## FAQ
+
+### How can I preview Spine SKEL animations on Windows?
+
+Import the complete folder containing SKEL, Atlas and texture files into SpineSlim's Spine viewer. It loads Spine 3.8 / 4.0 / 4.1 / 4.2 and provides animation and skin controls without requiring the Spine editor. Previewing does not upgrade or rewrite source files.
+
+### Can I pack sprite sheets without TexturePacker?
+
+Yes. SpineSlim's standalone atlas packer packs PNG / JPG / WebP images locally without TexturePacker. Choose PixiJS spritesheet JSON, Phaser 3 multiatlas JSON, Cocos plist, Godot 4 AtlasTexture, Unity's included Editor importer, or Spine Atlas. The separate UI classification workflow in Asset processing still uses TexturePacker.
+
+### Which atlas format should I choose for PixiJS, Phaser, Unity, Cocos and Godot?
+
+PixiJS: spritesheet JSON. Phaser 3: multiatlas JSON. Cocos Creator / cocos2d-x: plist. Godot 4: AtlasTexture. Unity: the manifest with the Editor importer. Each export ships with PNG pages, and one engine's metadata cannot be used directly in another engine.
+
+### How do I combine short sound effects for an HTML5 game?
+
+Use audio sprite mode to merge clips and export timing metadata for Howler.js or Phaser, then play clips by name. Use Merge mode for continuous sequential playback, or Batch mode to keep separate files for Unity, Godot, Cocos and other workflows.
+
+### How do I reduce the size of Spine textures and game backgrounds?
+
+Use Asset processing to convert PNG / JPG textures to WebP (or optimized PNG / JPG / Basis). SpineSlim updates Atlas texture references automatically. See the [before and after examples](#before-and-after-see-the-size-reduction-at-a-glance); results depend on your images and quality settings.
+
+### What is the difference between Spine preview, texture compression and version upgrade?
+
+Preview only plays animations. Texture compression converts textures and updates Atlas references. Version conversion rewrites skeleton JSON / SKEL. Preview never upgrades source files, and being able to preview a version does not mean every asset of that version upgrades successfully.
+
+### Does SpineSlim support macOS or Linux?
+
+Not yet. Only Windows x64 is supported at present.
+
+### Is SpineSlim free? Does it upload my files?
+
+SpineSlim is free and MIT-licensed. Assets are processed locally. The only network feature is the optional AI audit chat, which sends a summary only after you press Send, using your own model account.
+
+### Troubleshooting
+
+| Problem | Answer |
+| --- | --- |
+| `Atlas PNG page missing` | A referenced texture is missing or has the wrong relative path; import the complete asset folder |
+| Compatibility summary passes, task fails | The summary only covers upgrades; inspect subsequent texture / video errors |
+| Does atlas packing require TexturePacker? | The standalone module does not; the UI classification atlas pipeline does |
+| FFmpeg or another tool is missing | Install the complete tool on PATH and restart, or set its path in Settings |
+| How do I play clips separately after merging? | Export an audio sprite and use the Howler.js / Phaser timing metadata |
+| New modules missing after download | Check whether you downloaded a legacy 1.x build; 2.0 builds may be under Pre-release |
+| Where is Settings? | Hidden in packaged builds by the current product configuration; shown in development |
+| Why white JPG backgrounds / little PNG savings? | JPG has no transparency; already optimized PNGs may not shrink |
+
+## Documentation
+
+- [2.0.0-alpha.9 release notes](docs/RELEASE_NOTES_2.0.0-alpha.9.md): font subsetting, glyph viewer, metadata editing and navigation changes
+- [2.0.0-alpha.7 release notes](docs/RELEASE_NOTES_2.0.0-alpha.7.md): local asset audit, report export and optional AI chat
+- [2.0.0-alpha.6 release notes](docs/RELEASE_NOTES_2.0.0-alpha.6.md): AI audit preview and anonymous statistics improvements
+- [2.0.0-alpha.5 release notes](docs/RELEASE_NOTES_2.0.0-alpha.5.md): Spine version upgrade / downgrade and separate output
+- [2.0.0-alpha.4 release notes](docs/RELEASE_NOTES_2.0.0-alpha.4.md): 3D model viewer and animation-name copying
+- [2.0.0-alpha.3 release notes](docs/RELEASE_NOTES_2.0.0-alpha.3.md): Rive viewer, update check and Spine conversion improvements
+- [2.0.0-alpha.2 fix log](docs/RELEASE_NOTES_2.0.0-alpha.2.md): Windows output commit and worker packaging fixes
+- [Anonymous usage statistics](docs/TELEMETRY.md): event list, privacy scope and PostHog Cloud configuration
+- [Third-party notices](THIRD_PARTY.md): Spine Runtime, FFmpeg, TexturePacker and other licenses
+- [简体中文完整说明](README.zh-CN.md): the full Chinese guide
+
+## Community and license
+
+Visit the [official website](https://www.jyhzai.com/en/spineslim/) for product information. Report issues through [GitHub Issues](https://github.com/Alone9898/SpineSlim/issues) or [Telegram](https://t.me/+XlcsJcxyKZtlNGYy), including the app and Windows versions, module, options, logs and a minimal sample you have the right to share.
+
+Project code uses the [MIT License](LICENSE). Spine runtimes, external tools and assets retain their own terms; see [THIRD_PARTY.md](THIRD_PARTY.md). SpineSlim is an independent third-party project and is not affiliated with Esoteric Software or Spine.
+
+Some screenshots use self-made geometric shapes and synthesized audio; 3D / Rive screenshots were provided by users, and the rights to sample models and animations belong to their original authors.
+
+**Keywords:** Spine viewer, Spine JSON SKEL preview, Spine version converter, Rive viewer, 3D model viewer, sprite sheet packer, texture atlas packer without TexturePacker, Unity sprite atlas, Cocos Creator plist, Godot AtlasTexture, PixiJS spritesheet, Phaser multiatlas, audio sprite generator, Howler.js, texture compression, WebP, font subsetting, game asset optimization, Windows.

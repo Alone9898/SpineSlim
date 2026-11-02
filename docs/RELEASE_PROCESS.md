@@ -16,7 +16,7 @@ git grep -n "2\.0\.0-alpha\.<旧号>" -- ':!docs'
 - `version_info.txt`（`filevers`、`prodvers`、`OriginalFilename`、`ProductVersion`）
 - `app_runtime.py`（`APP_VERSION`）
 - `frontend/src/App.tsx`（页脚回退版本号）
-- `README.md`、`README.zh-CN.md`、`README.en-US.md`（当前源码版本）
+- `README.md`、`README.zh-CN.md`（当前源码版本）
 - `llms.txt`
 
 ## 二、发布说明
