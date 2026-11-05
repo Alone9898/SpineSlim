@@ -16,6 +16,7 @@
     "@pixi-spine/runtime-3.8": "4.0.6",
     "@pixi-spine/runtime-4.0": "4.0.6",
     "@pixi-spine/runtime-4.1": "4.0.6",
+    "@pixi/particle-emitter": "^5.0.8",
     "@pixi/unsafe-eval": "7.4.3",
     "@rive-app/canvas": "2.45.0",
     "@tauri-apps/api": "^2.0.0",

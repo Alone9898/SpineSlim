@@ -5,6 +5,7 @@ mod model3d;
 mod audit_chat;
 mod packer;
 mod model_list;
+mod particle;
 mod rive;
 mod secrets;
 mod update;
@@ -406,6 +407,7 @@ fn main() {
         .manage(Runtime::default())
         .manage(viewer::ViewerState::default())
         .manage(rive::RiveState::default())
+        .manage(particle::ParticleState::default())
         .manage(model3d::ModelState::default())
         .manage(viewer_export::ExportState::default())
         .manage(packer::PackerState::default())
@@ -448,6 +450,9 @@ fn main() {
             rive::rive_scan,
             rive::rive_read,
             rive::rive_export_session,
+            particle::particle_scan,
+            particle::particle_read,
+            particle::particle_save,
             model3d::model_scan,
             model3d::model_read,
             viewer_export::viewer_export_begin,

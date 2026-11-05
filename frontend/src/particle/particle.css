@@ -1,0 +1,27 @@
+.particle-workbench{grid-template-columns:200px minmax(0,1fr) 340px}
+.particle-workbench.collapsed{grid-template-columns:38px minmax(0,1fr) 340px}
+.particle-group{margin:10px 0 4px;color:#93a0b3;font-size:11px;font-weight:600}
+.particle-files{max-height:520px;overflow:auto}
+.particle-files button{width:100%;display:flex;gap:7px;align-items:center;text-align:left;padding:8px 6px;border-radius:7px;background:transparent;color:#61728b}
+.particle-files button.selected{background:#eaf1ff;color:#2863ce}
+.particle-files button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.particle-form{display:flex;flex-direction:column;gap:6px}
+.particle-field{display:grid;grid-template-columns:minmax(70px,38%) minmax(0,1fr);align-items:center;gap:8px;font-size:12px;color:#51627c}
+.particle-field>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.particle-field input[type=number],.particle-field input[type=text]{width:100%;min-width:0;border:1px solid #dae3f0;border-radius:7px;padding:5px 7px;font-size:12px;background:#fff}
+.particle-inline{display:flex;gap:6px;min-width:0}
+.particle-inline label{display:flex;align-items:center;gap:4px;flex:1;min-width:0;font-size:11px;color:#8794a7}
+.particle-inline input{flex:1;min-width:0}
+.particle-nested{margin-left:8px;padding-left:10px;border-left:2px solid #e6edf8;display:flex;flex-direction:column;gap:6px}
+.particle-sub{margin:4px 0 0;font-size:12px;font-weight:600;color:#2f4263}
+.particle-muted{color:#93a0b3;font-size:12px}
+.particle-missing{color:#c2410c}
+.particle-save-bar{display:flex;gap:8px;align-items:center;padding:10px 12px;border-top:1px solid #dfe7f2;background:#fff}
+.particle-save-bar .badge{margin-right:auto;font-size:12px;color:#93a0b3}
+.particle-save-bar .badge.dirty{color:#c2410c}
+.particle-controls-row{display:flex;align-items:center;gap:8px;min-width:0;flex-wrap:wrap}
+.particle-controls-row label{display:flex;align-items:center;gap:6px;font-size:11px;color:#e4ebf6}
+.particle-controls-row input[type=range]{accent-color:#dbeafe;width:110px}
+.particle-controls-row select{border:1px solid #ffffff24;border-radius:8px;padding:6px;background:#2b3a56;color:#fff;font-size:11px}
+.particle-controls-row button{display:grid;place-items:center;color:#fff;background:#33455f;border-radius:8px;min-width:34px;height:34px;padding:0 8px;font-size:11px}
+.particle-controls-row button.active{background:#fff;color:#17233a}
