@@ -19,7 +19,7 @@ Built with Tauri 2, React, TypeScript and a Python worker. Chinese is the defaul
 | | |
 | --- | --- |
 | Platform | Windows x64 (no macOS or Linux installer yet) |
-| Current source version | `2.0.0-alpha.9` (2.0 development line; 1.x builds lack the newer modules) |
+| Current source version | `2.0.0-alpha.10` (2.0 development line; 1.x builds lack the newer modules) |
 | License | [MIT](LICENSE) for project code; third-party components keep their own terms |
 | Spine versions previewed | 3.8 / 4.0 / 4.1 / 4.2 (JSON and SKEL) |
 | Atlas export targets | Unity, Cocos Creator / cocos2d-x, Godot 4, PixiJS, Phaser 3, Spine |
@@ -288,6 +288,7 @@ SpineSlim is free and MIT-licensed. Assets are processed locally. The only netwo
 
 ## Documentation
 
+- [2.0.0-alpha.10 release notes](docs/RELEASE_NOTES_2.0.0-alpha.10.md): particle viewer and fix for Spine compression failing on existing compressed textures
 - [2.0.0-alpha.9 release notes](docs/RELEASE_NOTES_2.0.0-alpha.9.md): font subsetting, glyph viewer, metadata editing and navigation changes
 - [2.0.0-alpha.7 release notes](docs/RELEASE_NOTES_2.0.0-alpha.7.md): local asset audit, report export and optional AI chat
 - [2.0.0-alpha.6 release notes](docs/RELEASE_NOTES_2.0.0-alpha.6.md): AI audit preview and anonymous statistics improvements

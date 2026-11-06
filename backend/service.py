@@ -88,7 +88,11 @@ class TextureConverter:
         source = Path(path)
         output = source.with_suffix(self.get_output_ext())
         if output != source and output.exists():
-            raise ProcessingError("collision", path=str(output))
+            # A pre-existing compressed texture (e.g. stale .webp next to the .png) is
+            # replaced by the fresh conversion instead of aborting the run.
+            if not output.is_file():
+                raise ProcessingError("collision", path=str(output))
+            output.unlink()
         quality = service.options.get("quality", 50)
         if self.mode in ("original", "png"):
             return PngConverter(service.tools["imagemagick"], service.run).convert(path)
