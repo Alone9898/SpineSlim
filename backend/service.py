@@ -80,12 +80,14 @@ class TextureConverter:
         self.mode = service.options.get("format", "original")
 
     def get_output_ext(self):
-        return {"original": ".png", "png": ".png", "webp": ".webp", "jpg": ".jpg", "basis": ".basis"}[self.mode]
+        return {"original": ".png", "png": ".png", "webp": ".webp", "webp_keep": ".png", "jpg": ".jpg", "basis": ".basis"}[self.mode]
 
     def convert(self, path):
         service = self.service
         service.check_cancel()
         source = Path(path)
+        if self.mode == "webp_keep":
+            return self.convert_webp_keep(source)
         output = source.with_suffix(self.get_output_ext())
         if output != source and output.exists():
             # A pre-existing compressed texture (e.g. stale .webp next to the .png) is
@@ -105,6 +107,21 @@ class TextureConverter:
         if not output.is_file() or not output.stat().st_size:
             raise ProcessingError("empty_output", path=str(output))
         return str(output)
+
+
+    def convert_webp_keep(self, source):
+        """Re-encode as WebP data but keep the original file name and extension."""
+        service = self.service
+        temporary = source.with_name(source.stem + ".webp-keep.tmp" + source.suffix)
+        try:
+            service.run([service.tools["imagemagick"], str(source), "-quality", str(service.options.get("quality", 50)),
+                         "-define", "webp:method=6", "webp:" + str(temporary)])
+            if not temporary.is_file() or not temporary.stat().st_size:
+                raise ProcessingError("empty_output", path=str(source))
+            os.replace(temporary, source)
+        finally:
+            temporary.unlink(missing_ok=True)
+        return str(source)
 
 
 class Service:
@@ -202,7 +219,7 @@ class Service:
         if conversion_mode == "advanced" and (not isinstance(target_version, str) or not valid_target_version(target_version)):
             raise ProcessingError("invalid_spine_version", detail=str(target_version))
         texture_format = self.options.get("format", "original")
-        if mode not in ("spine", "ui", "video") or texture_format not in ("original", "png", "webp", "jpg", "basis"):
+        if mode not in ("spine", "ui", "video") or texture_format not in ("original", "png", "webp", "webp_keep", "jpg", "basis"):
             raise ProcessingError("invalid_request")
         for key, maximum, default in (("quality", 100, 50), ("crf", 63, 36)):
             value = self.options.get(key, default)
@@ -253,7 +270,7 @@ class Service:
             if mode == "spine":
                 self.spine(source, files, staging / output_name)
             elif mode == "ui":
-                self.ui(files, staging)
+                self.ui(source, files, staging)
             else:
                 if (program / "video").exists():
                     shutil.copytree(program / "video", staging / "video")
@@ -444,7 +461,7 @@ class Service:
             convert_video_pair(Path(self.tools["ffmpeg"]), path, destination / "pc" / f"{stem}.webm", destination / "mobile" / f"{stem}.webm",
                                preserve_alpha=self.options.get("alpha", True), crf=self.options.get("crf", 36), runner=self.run)
 
-    def ui(self, files, destination):
+    def ui(self, source, files, destination):
         groups, fonts, videos = set(), set(), []
         reserved = {"spine", "bg", "atlas", "fonts", "part", "video"}
         for path in self.stage("classifying", files):
@@ -478,10 +495,17 @@ class Service:
                     groups.add(group)
             else:
                 continue
-            copy_unique(path, destination / group)
+            folder = destination / group
+            if group == "bg":
+                # Keep the source sub-folders (e.g. mo / pc) under bg; a leading "bg" folder is the output root itself.
+                relative = path.parent.relative_to(source).parts
+                if relative and relative[0].lower() == "bg":
+                    relative = relative[1:]
+                folder = folder.joinpath(*relative)
+            copy_unique(path, folder)
         if groups & fonts:
             raise ProcessingError("collision", path=", ".join(groups & fonts))
-        for path in self.stage("textures", list((destination / "bg").glob("*"))):
+        for path in self.stage("textures", [path for path in (destination / "bg").rglob("*") if path.is_file()]):
             if self.options.get("format", "original") != "original" or path.suffix.lower() == ".png":
                 self.convert_image(path)
         for group in self.stage("packing", sorted(groups)):

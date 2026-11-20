@@ -47,7 +47,7 @@ const words: Record<string, [string, string]> = {
   paths: ['项目路径', 'Project paths'], source: ['源目录', 'Source folder'], target: ['输出目录', 'Output folder'],
   sourcePlaceholder: ['选择或拖入素材文件夹', 'Choose or drop an asset folder'], targetPlaceholder: ['选择独立的输出文件夹', 'Choose a separate output folder'],
   browse: ['选择文件夹', 'Browse'], options: ['处理选项', 'Processing options'], format: ['纹理格式', 'Texture format'],
-  original: ['原格式 · 默认', 'Original · default'], webp: ['WebP · 有损压缩', 'WebP · lossy'], png: ['PNG · 无损压缩', 'PNG · lossless'],
+  original: ['原格式 · 默认', 'Original · default'], webp: ['WebP · 有损压缩', 'WebP · lossy'], webp_keep: ['WebP · 保留原后缀', 'WebP · keep extension'], png: ['PNG · 无损压缩', 'PNG · lossless'],
   jpg: ['JPG · 白色背景', 'JPG · white background'], basis: ['Basis · GPU 纹理', 'Basis · GPU texture'],
   formatHint: ['原格式会保留扩展名，并尝试无损压缩 PNG。', 'Original keeps extensions and attempts lossless PNG compression.'],
   jpgHint: ['JPG 不支持透明通道，透明部分将合成为白底。', 'JPG flattens transparent areas onto white.'],

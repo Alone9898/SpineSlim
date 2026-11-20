@@ -239,6 +239,17 @@ class WorkerTests(unittest.TestCase):
         result = self.run_service(self.service(mode="ui", force_bg=True))
         self.assertTrue((result / "bg/hero.jpg").exists())
 
+    def test_background_mode_keeps_source_subfolders(self):
+        for name in ("mo", "pc", "bg/mo"):
+            (self.source / name).mkdir(parents=True)
+            Image.new("RGB", (5, 5)).save(self.source / name / "hero.jpg")
+        Image.new("RGB", (5, 5)).save(self.source / "top.jpg")
+        result = self.run_service(self.service(mode="ui", force_bg=True))
+        for relative in ("mo/hero.jpg", "pc/hero.jpg", "top.jpg"):
+            self.assertTrue((result / "bg" / relative).exists(), relative)
+        self.assertEqual(len(list((result / "bg/mo").iterdir())), 2)
+        self.assertFalse((result / "bg/bg").exists())
+
     def test_fonts_keep_alpha_pixels(self):
         source = self.source / "winnum"
         source.mkdir()

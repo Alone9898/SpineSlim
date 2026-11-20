@@ -1,5 +1,5 @@
 export type Mode = 'spine' | 'ui' | 'video';
-export type Format = 'original' | 'webp' | 'png' | 'jpg' | 'basis';
+export type Format = 'original' | 'webp' | 'webp_keep' | 'png' | 'jpg' | 'basis';
 export type Language = 'zh' | 'en';
 export type Settings = {
   schema_version: number; language: Language; source: string; target: string; mode: Mode;
@@ -67,7 +67,7 @@ function hydrateModels(data: Record<string, unknown>): ModelProfile[] {
 
 export function hydrate(input: unknown): Settings {
   const data = input && typeof input === 'object' ? input as Record<string, unknown> : {};
-  const formats = ['original', 'webp', 'png', 'jpg', 'basis'];
+  const formats = ['original', 'webp', 'webp_keep', 'png', 'jpg', 'basis'];
   const format = (value: unknown): Format => value === 'imagemagick' ? 'webp' : formats.includes(String(value)) ? value as Format : 'original';
   const bounded = (value: unknown, maximum: number, fallback: number) => typeof value === 'number' && Number.isInteger(value) && value >= 0 && value <= maximum ? value : fallback;
   const tools = data.tools ?? data.tool_paths;

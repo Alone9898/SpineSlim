@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 
 
-APP_VERSION = "2.0.0-alpha.10"
+APP_VERSION = "2.1.1-alpha.1"
 
 
 def get_application_directory() -> Path:
