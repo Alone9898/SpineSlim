@@ -288,7 +288,8 @@ SpineSlim is free and MIT-licensed. Assets are processed locally. The only netwo
 
 ## Documentation
 
-- [2.1.1-alpha.1 release notes](docs/RELEASE_NOTES_2.1.1-alpha.1.md): particle viewer, WebP keep-extension mode, UI background sub-folders and a fix for Spine compression failing on existing compressed textures
+- [2.1.1-alpha.1 release notes](docs/RELEASE_NOTES_2.1.1-alpha.1.md): WebP keep-extension mode and UI background sub-folders
+- [2.0.0-alpha.10 release notes](docs/RELEASE_NOTES_2.0.0-alpha.10.md): particle viewer and fix for Spine compression failing on existing compressed textures
 - [2.0.0-alpha.9 release notes](docs/RELEASE_NOTES_2.0.0-alpha.9.md): font subsetting, glyph viewer, metadata editing and navigation changes
 - [2.0.0-alpha.7 release notes](docs/RELEASE_NOTES_2.0.0-alpha.7.md): local asset audit, report export and optional AI chat
 - [2.0.0-alpha.6 release notes](docs/RELEASE_NOTES_2.0.0-alpha.6.md): AI audit preview and anonymous statistics improvements
