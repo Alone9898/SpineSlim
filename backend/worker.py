@@ -9,9 +9,11 @@ if __package__ in (None, ""):
 from backend.service import Cancelled, ProcessingError, Service
 from backend.audio import AudioService
 from backend.audit import run_audit
+from backend.basis_decode import decode_basis
 from backend.font_subset import font_info, subset_font
 from backend.font_tools import font_data, glyphs, metrics, names, save_names
 from backend.providers import build_model_config, list_presets
+from tool_manager import inspect_tools
 
 
 def main():
@@ -71,6 +73,12 @@ def main():
                 raise ProcessingError("font.output")
             target = Path(options["output_dir"]) / f"{source.stem}-edited{source.suffix.lower()}"
             emit("result", "font_names_save", **save_names(source, target, options.get("fields", {})))
+            return
+        if action == "decode_basis":
+            tools = inspect_tools(options.get("application_dir", str(Path.cwd())), options.get("tools", {}))
+            if not tools.get("basis"):
+                raise ProcessingError("missing_tool", tool="Basis Universal")
+            emit("result", "decode_basis", **decode_basis(options.get("path", ""), tools["basis"], options.get("output", "")))
             return
         if action == "providers":
             emit("result", "providers", providers=list_presets())

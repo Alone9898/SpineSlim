@@ -49,9 +49,12 @@ export async function loadRenderer(canvas: HTMLCanvasElement, catalog: Catalog, 
       const path = resolvePage(atlasAsset.path, page.name);
       const texture = catalog.assets.find(item => item.path === path && item.kind === 'texture');
       if (!texture) throw new Error(`viewer.missing|${path}`);
-      if (!/\.(png|jpe?g|webp)$/i.test(path)) throw new Error(`viewer.texture|${path}`);
-      const bytes = await read(catalog, texture);
-      const bitmap = await createImageBitmap(new Blob([bytes as BlobPart]), { premultiplyAlpha: 'none', colorSpaceConversion: 'none' });
+      if (!/\.(png|jpe?g|webp|basis)$/i.test(path)) throw new Error(`viewer.texture|${path}`);
+      const basis = /\.basis$/i.test(path);
+      const bytes = basis
+        ? new Uint8Array(await invoke<ArrayBuffer | number[]>('viewer_texture_png', { session: catalog.session, id: texture.id }))
+        : await read(catalog, texture);
+      const bitmap = await createImageBitmap(new Blob([bytes as BlobPart], basis ? { type: 'image/png' } : {}), { premultiplyAlpha: 'none', colorSpaceConversion: 'none' });
       images.set(page.name, bitmap);
       pixels += bitmap.width * bitmap.height;
       if (bitmap.width > 8192 || bitmap.height > 8192 || pixels > 64 * 1024 * 1024) throw new Error('viewer.large');

@@ -246,6 +246,23 @@ pub fn viewer_release(state: State<'_, ViewerState>) {
     }
 }
 
+/// Resolves a session asset to a checked file path, without reading it.
+pub(crate) fn texture_path(state: &ViewerState, session: u64, id: usize) -> Result<PathBuf, String> {
+    let path = state
+        .sessions
+        .lock()
+        .map_err(|_| "viewer.read")?
+        .get(&session)
+        .and_then(|files| files.get(id))
+        .cloned()
+        .ok_or("viewer.expired")?;
+    let verified = checked(&path)?;
+    if verified != path {
+        return Err("viewer.link".into());
+    }
+    Ok(verified)
+}
+
 #[tauri::command]
 pub async fn viewer_read(
     state: State<'_, ViewerState>,

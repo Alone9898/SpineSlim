@@ -231,6 +231,52 @@ fn cancel_task(runtime: State<Runtime>) -> Result<(), String> {
     Ok(())
 }
 
+/// Folder searched for bundled tools. Dev builds have no installed `tools` folder,
+/// so they fall back to the local full package payload when it exists.
+fn tool_directory() -> Result<String, String> {
+    #[cfg(debug_assertions)]
+    {
+        let payload = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../output/local-full/payload");
+        if payload.join("tools").is_dir() {
+            return Ok(payload.to_string_lossy().to_string());
+        }
+    }
+    app_directory()
+}
+
+/// Decodes a .basis atlas page to PNG bytes with the bundled basisu tool.
+#[tauri::command]
+async fn viewer_texture_png(
+    app: tauri::AppHandle,
+    state: State<'_, viewer::ViewerState>,
+    session: u64,
+    id: usize,
+) -> Result<tauri::ipc::Response, String> {
+    let source = viewer::texture_path(&state, session, id)?;
+    let settings = load_settings(app.clone())?;
+    let stamp = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|value| value.as_nanos())
+        .unwrap_or(0);
+    let output = std::env::temp_dir().join(format!("spineslim-view-{session}-{id}-{stamp}.png"));
+    let result = query_worker(
+        "decode_basis",
+        json!({
+            "path": source.to_string_lossy(),
+            "output": output.to_string_lossy(),
+            "tools": settings["tools"].clone(),
+            "application_dir": tool_directory()?,
+        }),
+    )
+    .await;
+    let bytes = match result {
+        Ok(_) => fs::read(&output).map_err(|error| error.to_string()),
+        Err(error) => Err(error),
+    };
+    let _ = fs::remove_file(&output);
+    Ok(tauri::ipc::Response::new(bytes?))
+}
+
 #[tauri::command]
 async fn inspect_tools(options: Value) -> Result<Value, String> {
     query_worker("inspect", options).await
@@ -418,6 +464,7 @@ fn main() {
             save_audit_report,
             cancel_task,
             inspect_tools,
+            viewer_texture_png,
             package_stats,
             audio_query,
             font_subset,

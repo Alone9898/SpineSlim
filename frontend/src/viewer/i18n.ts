@@ -33,6 +33,7 @@ const labels: Record<string, [string, string]> = {
   'viewer.limit': ['目录超过 50,000 项，请选择更小的目录。', 'Folder exceeds 50,000 entries. Choose a smaller folder.'],
   'viewer.version': ['无法识别 Spine 导出版本。', 'Cannot identify the Spine export version.'],
   'viewer.unsupported': ['此版本尚未接入，当前支持加载 3.8 / 4.0 / 4.1 / 4.2。', 'No adapter for this version. Currently loads 3.8 / 4.0 / 4.1 / 4.2.'],
+  missing_tool: ['缺少 Basis Universal 工具，无法解码 .basis 纹理。请在设置中指定 basisu.exe 路径。', 'Basis Universal tool not found, cannot decode .basis textures. Set the basisu.exe path in Settings.'], tool_failed: ['Basis 纹理解码失败。', 'Basis texture decoding failed.'],
   'viewer.missing': ['Atlas 引用的纹理未找到', 'Atlas texture not found'], 'viewer.texture': ['此纹理格式尚不支持，请使用 PNG/JPG/WebP', 'Unsupported texture format. Use PNG/JPG/WebP'],
   'viewer.atlas': ['Atlas 无有效页面。', 'Atlas contains no valid pages.'], 'viewer.expired': ['目录会话已过期，请刷新。', 'Folder session expired. Refresh the folder.'],
   'viewer.webgl': ['无法创建 WebGL 画布，请检查显卡和 WebView2。', 'Cannot create a WebGL canvas. Check the GPU and WebView2.'],
